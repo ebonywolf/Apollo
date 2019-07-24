@@ -1,0 +1,6 @@
+[submodule "GeneticAI"]
+	path = GeneticAI
+	url = git@github.com:ebonywolf/GeneticAI.git
+[submodule "NeuralNetwork"]
+	path = NeuralNetwork
+	url = git@github.com:ebonywolf/NeuralNetwork.git
