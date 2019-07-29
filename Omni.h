@@ -28,6 +28,9 @@ template<class Data>
 struct Entity : std::enable_shared_from_this<Entity<Data>> {
     using Entityptr = std::shared_ptr<Entity<Data>> ;
     using EntityMap = std::unordered_map<Entityptr, Data>;
+    using EntityBoolMap = std::unordered_map<Entityptr, bool>;
+
+
     using EntitySet = std::unordered_set<Entityptr>;
     using Memoryptr = std::shared_ptr<Memory<Data>>;
 
@@ -35,8 +38,8 @@ struct Entity : std::enable_shared_from_this<Entity<Data>> {
     void add(Entityptr ptr) ;
     void remove(Entityptr ptr) const;
 
-    bool warnOmniChange(Entityptr ptr, Data dat);
-    bool warnEurusChange(Entityptr ptr);
+    void sendData(Entityptr ptr, Data dat);
+    void warnEurusChange(Entityptr ptr);
     Data getValue(Entityptr pt ) const;
 
     const EntitySet& getChangedEntities() const;
@@ -48,7 +51,7 @@ struct Entity : std::enable_shared_from_this<Entity<Data>> {
 protected:
 
     bool omniChanged=0;///Changed to true when received Info
-    bool eurusChanged=0;///Changed to true when sending Info
+    EntityBoolMap eurusChangedMap;
 
     EntitySet changedEntities;
     EntityMap entities;
@@ -69,7 +72,7 @@ void Entity<Data>::add(Entityptr ptr)
 template <class Data>
 Data Entity<Data>::getValue(Entityptr pt ) const
 {
-    entities[pt];
+    return entities[pt];
 }
 
 template <class Data>
@@ -79,24 +82,29 @@ void Entity<Data>::omniUpdate()
         updateFunc(this->shared_from_this());
     }
 
+    for(auto& it:eurusChangedMap)
+    {
+        Entityptr ent = it.first;
+        ent->sendData(this->shared_from_this(), it.second);
+        it.second = false;
+    }
+    /*
     if( eurusChanged ) {
         for(auto& it:entities) {
-            Entityptr ent = it.first;
 
-            ent->warnOmniChange(this->shared_from_this(), it.second);
+            entities[pt]=
+            ent->sendData(this->shared_from_this(), it.second);
         }
-    } else {
-
     }
-    eurusChanged=false;
+    */
+  //  eurusChanged=false;
 }
 
 
 template <class Data>
-bool Entity<Data>::warnOmniChange(Entityptr ptr, Data dat)
+void Entity<Data>::sendData(Entityptr ptr, Data dat)
 {
     if(memoryFunc) {
-
         memoryFunc(ptr,dat);
     }
     changedEntities.insert(ptr);
@@ -105,9 +113,10 @@ bool Entity<Data>::warnOmniChange(Entityptr ptr, Data dat)
 
 
 template <class Data>
-bool Entity<Data>::warnEurusChange(Entityptr ptr)
+void Entity<Data>::setEurusChange(Entityptr ptr,Data dat)
 {
-
+    eurusChangedMap[ptr];
+    entities[ptr]=dat;
     eurusChanged = true;
 }
 
