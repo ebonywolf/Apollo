@@ -32,6 +32,7 @@ struct Renderer
     std::thread* assync = 0;
     void onEvent( sf::Event event);
 
+    bool running = false;
 };
 
 } /* namespace pg */

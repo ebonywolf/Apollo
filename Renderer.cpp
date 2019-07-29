@@ -23,8 +23,11 @@ void  Renderer::add( Spriteptr pt)
 void Renderer::onEvent( sf::Event event)
 {
 
-    if (event.type == sf::Event::Closed)
+    if (event.type == sf::Event::Closed){
         window->close();
+        running= false;
+    }
+
 
 }
 void Renderer::begin()
@@ -53,7 +56,6 @@ void Renderer::begin()
         }
         window->display();
         //  std::this_thread::sleep_for ( std::chrono::milliseconds ( 16 ) );
-
     }
 }
 void Renderer::beginAssync()
