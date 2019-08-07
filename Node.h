@@ -12,8 +12,29 @@ namespace pg
 {
 
 
+struct Color{
+    int r,g,b;
+    bool operator==(const Color& cor){
+        return r==cor.r && g==cor.g && b == cor.b;
+    }
 
-struct Node : public sf::RectangleShape, public Entity<std::array<unsigned char,3>> {
+    bool operator!=(const Color& cor){
+        return  !(*this==cor);
+    }
+    Color operator^(const Color& cor)const{
+        Color c = {r^cor.r, g^cor.g, b^cor.b};
+        return c;
+    }
+
+    friend
+    std::ostream& operator<<(std::ostream& os, const Color c){
+        os<<c.r<<" "<<c.g<<" "<<c.b;
+        return os;
+    }
+};
+
+
+struct Node : public sf::RectangleShape, public Entity<Color> {
     int N;
 
     Node()
@@ -31,59 +52,62 @@ struct Node : public sf::RectangleShape, public Entity<std::array<unsigned char,
     }
     void update()
     {
-        Entity<std::array<unsigned char,3>>::omniUpdate();
+        Entity<Color>::omniUpdate();
+    }
+    void setState(Color c){
+        state =c;
+    }
+    void warnAll()
+    {
+        for( auto& it: getEntities() ) {
+            auto x = it.first;
+            sendValue(x, state );
+        }
     }
 
     static void doShit(Entityptr me)
     {
-        auto node = std::static_pointer_cast<Node>(me);
-        auto& myval = node->state;
 
-        //    myval = !myval;
-
+        auto alce = std::static_pointer_cast<Node>(me);
+        Color& myval = alce->state;
         auto previousVal=myval;
 
-        for( auto& it: me->getChangedEntities() ) {
-            auto x = it;
-            auto val = x->getValue(me);
-            for (int i = 0; i < 3; i++) {
-                myval[i]=  (myval[i] ^val[i]);
+        bool emit = false;
+        auto changed = me->getChangedEntities() ;
+        for(auto& it: changed)
+        {
+            auto node = it;
+            auto val = node->getValue(me);
+         //   auto val = it.second;
+            if(previousVal!=val){
+               myval = val;
+               emit = true;
             }
         }
-
-        bool changed=0;
-        for (int i = 0; i < 3; i++) {
-            if( previousVal[i] != myval[i] ) {
-                changed = true;
-            }
-        }
-
-
-
-
-        unsigned char red=myval[0],green=myval[1],blue=myval[2] ;
-        node->setFillColor( sf::Color (red,green,blue) );
-        if(me->getChangedEntities().size()==0) {
-            for( auto& it: me->getEntities() ) {
-                auto x = it.first;
-                me->sendData(x, myval );
-            }
-        }else{
-            if(changed){
-                for( auto& it: me->getEntities() ) {
-                    auto x = it.first;
+       // std::cerr<<"Painting:"<<alce->pos<< " with "<< myval <<std::endl;
+        if(emit){
+            auto& entities=me->getEntities() ;
+            for(auto& it: entities)
+            {
+                auto node = it.first;
+                auto alce = std::static_pointer_cast<Node>(me);
+           //     std::cerr<<"Sending it to:"<<alce->pos<<std::endl;
+                auto val = it.second;
+                if(myval!=val){
+                    me->sendValue(node, myval);
                 }
             }
-
         }
 
 
+        unsigned char red=myval.r,green=myval.g,blue=myval.b ;
+        alce->setFillColor( sf::Color (red,green,blue) );
         //  std::cout<< "State:"<<(int)blue << std::endl;
 
     }
     Position pos;
     double size;
-    std::array<unsigned char,3> state;
+    Color state;
 
 };
 using Nodeptr = std::shared_ptr<Node>;

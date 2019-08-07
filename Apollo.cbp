@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="Apollo" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug">
+				<Option output="bin/Debug/Apollo" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Debug/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-std=c++11" />
+					<Add option="-g" />
+					<Add option="-DSFML_STATIC" />
+					<Add option="-DFREEGLUT_STATIC" />
+					<Add directory="../Apollo" />
+					<Add directory="D:/Dropbox/Wagner/C++/Apollo/ProjGaia" />
+					<Add directory="include" />
+				</Compiler>
+				<Linker>
+					<Add library="sfml-main-d" />
+					<Add library="sfml-graphics-s-d" />
+					<Add library="sfml-window-s-d" />
+					<Add library="sfml-system-s-d" />
+					<Add library="opengl32" />
+					<Add library="gdi32" />
+					<Add library="winmm" />
+					<Add library="jpeg" />
+				</Linker>
+			</Target>
+			<Target title="Release">
+				<Option output="bin/Release/Apollo" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Release/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+					<Add option="-DSFML_STATIC" />
+					<Add option="-DFREEGLUT_STATIC" />
+					<Add directory="include" />
+					<Add directory="../Apollo" />
+					<Add directory="D:/Dropbox/Wagner/C++/Apollo/ProjGaia" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+					<Add library="sfml-main" />
+					<Add library="sfml-graphics-s" />
+					<Add library="sfml-window-s" />
+					<Add library="sfml-system-s" />
+					<Add library="opengl32" />
+					<Add library="gdi32" />
+					<Add library="winmm" />
+					<Add library="jpeg" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-Wall" />
+			<Add option="-fexceptions" />
+		</Compiler>
+		<Unit filename="Entity.h" />
+		<Unit filename="EntityArray.h" />
+		<Unit filename="EntityList.h" />
+		<Unit filename="Eurus.h" />
+		<Unit filename="Memory.h" />
+		<Unit filename="Node.cpp" />
+		<Unit filename="Node.h" />
+		<Unit filename="Object.cpp" />
+		<Unit filename="Object.h" />
+		<Unit filename="Omni.h" />
+		<Unit filename="Operators.h" />
+		<Unit filename="Position.h" />
+		<Unit filename="ProjGaia/Graphics/Camera.cpp" />
+		<Unit filename="ProjGaia/Graphics/Camera.h" />
+		<Unit filename="ProjGaia/Graphics/DrawableButton.cpp" />
+		<Unit filename="ProjGaia/Graphics/DrawableButton.h" />
+		<Unit filename="ProjGaia/Graphics/DrawableType.h" />
+		<Unit filename="ProjGaia/Graphics/KeyBoardReader.h" />
+		<Unit filename="ProjGaia/Graphics/MouseReader.h" />
+		<Unit filename="ProjGaia/Graphics/PainterType.h" />
+		<Unit filename="ProjGaia/Graphics/Sprite.cpp" />
+		<Unit filename="ProjGaia/Graphics/Sprite.h" />
+		<Unit filename="ProjGaia/Graphics/Text.cpp" />
+		<Unit filename="ProjGaia/Graphics/Text.h" />
+		<Unit filename="ProjGaia/Graphics/WindowType.h" />
+		<Unit filename="ProjGaia/Tools/Actor.cpp" />
+		<Unit filename="ProjGaia/Tools/Actor.h" />
+		<Unit filename="ProjGaia/Tools/Angle.cpp" />
+		<Unit filename="ProjGaia/Tools/Angle.h" />
+		<Unit filename="ProjGaia/Tools/Button.cpp" />
+		<Unit filename="ProjGaia/Tools/Button.h" />
+		<Unit filename="ProjGaia/Tools/CameraMouseControl.cpp" />
+		<Unit filename="ProjGaia/Tools/CameraMouseControl.h" />
+		<Unit filename="ProjGaia/Tools/ClickableManager.cpp" />
+		<Unit filename="ProjGaia/Tools/ClickableManager.h" />
+		<Unit filename="ProjGaia/Tools/Coord.cpp" />
+		<Unit filename="ProjGaia/Tools/Coord.h" />
+		<Unit filename="ProjGaia/Tools/CurvedHitBox.cpp" />
+		<Unit filename="ProjGaia/Tools/CurvedHitBox.h" />
+		<Unit filename="ProjGaia/Tools/HasCollison.h" />
+		<Unit filename="ProjGaia/Tools/HitBox.cpp" />
+		<Unit filename="ProjGaia/Tools/HitBox.h" />
+		<Unit filename="ProjGaia/Tools/HitBox3d.cpp" />
+		<Unit filename="ProjGaia/Tools/HitBox3d.h" />
+		<Unit filename="ProjGaia/Tools/KeyBoardEvent.h" />
+		<Unit filename="ProjGaia/Tools/LineSeg.cpp" />
+		<Unit filename="ProjGaia/Tools/LineSeg.h" />
+		<Unit filename="ProjGaia/Tools/Listener.h" />
+		<Unit filename="ProjGaia/Tools/MouseEvent.cpp" />
+		<Unit filename="ProjGaia/Tools/MouseEvent.h" />
+		<Unit filename="ProjGaia/Tools/MouseTriggered.h" />
+		<Unit filename="ProjGaia/Tools/NeedsUpdate.h" />
+		<Unit filename="ProjGaia/Tools/Observer.h" />
+		<Unit filename="ProjGaia/Tools/Polygon.cpp" />
+		<Unit filename="ProjGaia/Tools/Polygon.h" />
+		<Unit filename="ProjGaia/Tools/SquareHitBox.cpp" />
+		<Unit filename="ProjGaia/Tools/SquareHitBox.h" />
+		<Unit filename="ProjGaia/Tools/TimedThread.cpp" />
+		<Unit filename="ProjGaia/Tools/TimedThread.h" />
+		<Unit filename="ProjGaia/Tools/Utilities.cpp" />
+		<Unit filename="ProjGaia/Tools/Utilities.h" />
+		<Unit filename="Renderer.cpp" />
+		<Unit filename="Renderer.h" />
+		<Unit filename="main.cpp" />
+		<Extensions>
+			<code_completion />
+			<envvars />
+			<debugger />
+			<lib_finder disable_auto="1" />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

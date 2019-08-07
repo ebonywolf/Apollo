@@ -15,8 +15,8 @@
 using namespace std;
 using namespace pg;
 
-double maxY = 700;
-double maxX = 700;
+double maxY = 900;
+double maxX = 900;
 int N = 100;
 
 //Entity<Position> enti;
@@ -45,7 +45,10 @@ void populateGrid( double n )
 }
 int mod(int a,int b)
 {
-    return(b + (a%b)) % b;
+    if(a<0)return 0;
+    if(a>=b)return b-1;
+    return a;
+   //return(b + (a%b)) % b;
 }
 
 void populateSegs(int segs)
@@ -56,6 +59,7 @@ void populateSegs(int segs)
           //  auto s= make_shared<Omni<Position>>();
             auto s = grid[{i,j}];
 
+
             for (int w=0; w<= segs ; w++ ) {
                 for (int z=0; z<= segs ; z++ ) {
                     if(abs(w) + abs(z)>segs)
@@ -65,14 +69,22 @@ void populateSegs(int segs)
                     int _x =mod( i - w,N);
                     int y = mod(j +z,N);
                     int _y =mod( j-z,N);
+                    Position a = {_x,y};
+                     Position b = {_x,_y};
+                     Position c = {x,_y};
+                     Position d = {x,y};
+
                    // Omniptr opt =grid[Position(_x,y)];
-                    s->add(grid[{_x,y}]);
-                    s->add(grid[{_x,_y}]);
-                    s->add(grid[{x,_y}]);
-                    s->add(grid[{x,y}]);
+                    s->add(grid[a]);
+                    s->add(grid[b]);
+                    s->add(grid[c]);
+                    s->add(grid[d]);
                 }
-                s->remove(s);
             }
+
+            s->remove(s);
+
+
         }
     }
 }
@@ -90,6 +102,35 @@ struct A{
 using Aptr = std::shared_ptr<A>;
 
 std::unordered_map<Aptr,int> mapa;
+
+void func(int cont){
+static bool started = false;
+
+
+if(cont<300){
+    std::cerr<<cont<<std::endl;
+    return;
+}
+std::cerr<<grid[{90,1}]->state<<std::endl;
+//if(grid[{90,1}]->state == {0,0,255})return
+grid[{90,1}]->setState( {0,0,255});
+grid[{90,1}]->warnAll();
+
+ for ( int i = 0 ; i < N ; i++ ) {
+            for ( int j = 0 ; j < N ; j++ ) {
+                grid[{i,j}]->omniUpdate(  );
+            }
+        }
+        for ( int i = 0 ; i < N ; i++ ) {
+            for ( int j = 0 ; j < N ; j++ ) {
+                grid[{i,j}]->eurusUpdate(  );
+
+            }
+        }
+
+
+
+}
 
 
 int main()
@@ -109,19 +150,26 @@ int main()
     win.beginAssync();
     win.running=true;
 
-
     int i =0;
 
-    grid[{50,50}]->state= {0,255,0};
+  //  grid[{50,50}]->setState( {255,255,0});
+  //  grid[{50,50}]->warnAll();
 
-    Node::doShit( grid[{50,50}]);
+    grid[{9,1}]->setState( {0,255,0});
+    grid[{9,1}]->warnAll();
 
+    grid[{90,1}]->setState( {0,0,255});
+    grid[{90,1}]->warnAll();
+
+
+
+  //  Node::doShit( grid[{50,50}]);
+
+    int cont=0;
     while ( win.running) {
-    //    grid[{80,80}]->sendData(grid[{80,81}],{255,0,0});
-
-     //   grid[{80,5}]->sendData(grid[{80,6}], {-254} );
-
-    std::this_thread::sleep_for ( std::chrono::milliseconds ( 1000) );
+           // std::cerr<<cont<<std::endl;
+            func(cont++);
+    //  std::this_thread::sleep_for ( std::chrono::milliseconds ( 800) );
         for ( int i = 0 ; i < N ; i++ ) {
             for ( int j = 0 ; j < N ; j++ ) {
                 grid[{i,j}]->omniUpdate(  );
@@ -129,8 +177,8 @@ int main()
         }
         for ( int i = 0 ; i < N ; i++ ) {
             for ( int j = 0 ; j < N ; j++ ) {
-//                 grid[{i,j}]->doShit();
-        //        segfield[i][j]->update(vals);
+                grid[{i,j}]->eurusUpdate(  );
+
             }
         }
     }
