@@ -48,7 +48,6 @@ int mod(int a,int b)
     return(b + (a%b)) % b;
 }
 
-
 void populateSegs(int segs)
 {
 
@@ -72,17 +71,26 @@ void populateSegs(int segs)
                     s->add(grid[{x,_y}]);
                     s->add(grid[{x,y}]);
                 }
+                s->remove(s);
             }
         }
     }
 }
 
 
-
 int mysin(int a){
     double y= sin(a)*100;
     return y;
 }
+
+struct A{
+    A(){}
+    int x;
+};
+using Aptr = std::shared_ptr<A>;
+
+std::unordered_map<Aptr,int> mapa;
+
 
 int main()
 {
@@ -102,10 +110,18 @@ int main()
     win.running=true;
 
 
-    grid[{50,50}]->warnEurusChange(grid[{5,50}]);
     int i =0;
+
+    grid[{50,50}]->state= {0,255,0};
+
+    Node::doShit( grid[{50,50}]);
+
     while ( win.running) {
- std::this_thread::sleep_for ( std::chrono::milliseconds ( 1000) );
+    //    grid[{80,80}]->sendData(grid[{80,81}],{255,0,0});
+
+     //   grid[{80,5}]->sendData(grid[{80,6}], {-254} );
+
+    std::this_thread::sleep_for ( std::chrono::milliseconds ( 1000) );
         for ( int i = 0 ; i < N ; i++ ) {
             for ( int j = 0 ; j < N ; j++ ) {
                 grid[{i,j}]->omniUpdate(  );
