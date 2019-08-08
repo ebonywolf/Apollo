@@ -4,7 +4,6 @@
 
 #include <bits/stdc++.h>
 #include <SFML/Graphics.hpp>
-#include <Tools/Coord.h>
 #include <unordered_map>
 #include "Entity.h"
 #include "Position.h"

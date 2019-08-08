@@ -6,11 +6,11 @@
  */
 
 #include "Renderer.h"
-
+#include "Position.h"
 namespace pg
 {
 
-Renderer::Renderer(Coord size):window()
+Renderer::Renderer(pg::Position size):window()
 {
     window = new   sf::RenderWindow(sf::VideoMode(size.x,size.y), "My window");
 }

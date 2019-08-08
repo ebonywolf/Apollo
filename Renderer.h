@@ -12,7 +12,8 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
 #include <SFML/Window/Event.hpp>
-#include <Tools/Coord.h>
+
+#include "Position.h"
 #include <Object.h>
 #include <memory>
 #include <list>
@@ -23,7 +24,7 @@ using Spriteptr = std::shared_ptr<sf::Shape>;
 
 struct Renderer
 {
-    Renderer(Coord size);
+    Renderer(pg::Position size);
     sf::RenderWindow* window;
     void begin();
     void beginAssync();
