@@ -14,7 +14,6 @@
 #include <SFML/Window/Event.hpp>
 
 #include "Position.h"
-#include <Object.h>
 #include <memory>
 #include <list>
 #include <thread>
