@@ -6,9 +6,10 @@
 #include <SFML/Graphics.hpp>
 #include <unordered_map>
 #include "Entity.h"
-#include "Position.h"
+#include "Coord.h"
 namespace pg
 {
+
 
 
 struct Color{
@@ -33,15 +34,27 @@ struct Color{
 };
 
 
-struct Node : public sf::RectangleShape, public Entity<Color> {
+struct NodeData{
+    Color color;
+    Coord size;
+    Coord position;
+};
+using NodeDataptr = std::shared_ptr<NodeData>;
+
+
+
+
+struct Node : public sf::RectangleShape, public Entity<NodeData,Void>, public MultiInstance<Node> {
+    using nodeConn = Entity<NodeData,Void>;
+
     int N;
 
-    Node()
+    Node(): sf::RectangleShape()
     {
-        //  value = ramd
+        nodeConn::setRunFunction(draw);
     }
-
-    Node( int i, int j, double size, int n ) :
+/*
+    Node( double i, double j, double size, int n ) :
         sf::RectangleShape( sf::Vector2f( size, size ) )
     {
         pos = {   i,j };
@@ -49,62 +62,28 @@ struct Node : public sf::RectangleShape, public Entity<Color> {
         this->setPosition(i*size, j*size);
         updateFunc = Node::doShit;
     }
+    */
     void update()
     {
-        Entity<Color>::omniUpdate();
     }
     void setState(Color c){
         state =c;
     }
-    void warnAll()
+
+
+    static void draw(nodeConn::Entityptr me)
     {
-        for( auto& it: getEntities() ) {
-            auto x = it.first;
-            sendValue(x, state );
-        }
-    }
-
-    static void doShit(Entityptr me)
-    {
-
-        auto alce = std::static_pointer_cast<Node>(me);
-        Color& myval = alce->state;
-        auto previousVal=myval;
-
-        bool emit = false;
-        auto changed = me->getChangedEntities() ;
-        for(auto& it: changed)
-        {
-            auto node = it;
-            auto val = node->getValue(me);
-         //   auto val = it.second;
-            if(previousVal!=val){
-               myval = val;
-               emit = true;
-            }
-        }
-       // std::cerr<<"Painting:"<<alce->pos<< " with "<< myval <<std::endl;
-        if(emit){
-            auto& entities=me->getEntities() ;
-            for(auto& it: entities)
-            {
-                auto node = it.first;
-                auto alce = std::static_pointer_cast<Node>(me);
-           //     std::cerr<<"Sending it to:"<<alce->pos<<std::endl;
-                auto val = it.second;
-                if(myval!=val){
-                    me->sendValue(node, myval);
-                }
-            }
-        }
+        auto root = getRoot(me);
+        auto changed = me->getChanged();
+       // Strtuple val = changed->getValue(me);
 
 
-        unsigned char red=myval.r,green=myval.g,blue=myval.b ;
-        alce->setFillColor( sf::Color (red,green,blue) );
-        //  std::cout<< "State:"<<(int)blue << std::endl;
+      //  unsigned char red=myval.r,green=myval.g,blue=myval.b ;
+      //  alce->setFillColor( sf::Color (red,green,blue) );
+
 
     }
-    Position pos;
+    Coord pos;
     double size;
     Color state;
 

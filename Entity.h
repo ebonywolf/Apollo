@@ -101,7 +101,6 @@ struct GlobalRunner: Singleton<GlobalRunner> {
             auto omniCopy = omni;
             auto eurusCopy = eurus;
 
-            std::cerr<<"Updating:"<<omni.size()<<" "<<eurus.size()<<std::endl;
             omni.clear();
             eurus.clear();
 
@@ -112,9 +111,7 @@ struct GlobalRunner: Singleton<GlobalRunner> {
             for(auto& x: eurusCopy) {
                 x->eurusUpdate();
             }
-
         }
-
     }
     std::set<Omniptr> omni;
     std::set<Eurusptr> eurus;
@@ -200,17 +197,18 @@ protected:
     {
         updateFunc = func;
     }
-    void setMemoryFunction(std::function<void(Entityptr)> func)
+    void setMemoryFunction(std::function<void(Entityptr,Negaptr, INPUT)> func)
     {
-        updateFunc = func;
+        memoryFunc = func;
     }
-    std::function<void(Entityptr)> updateFunc;
-//   std::function<void(Entityptr, INPUT)> memoryFunc;
-    std::function<void(Inputptr, INPUT)> memoryFunc;
+    //Todo these need to be static
+     std::function<void(Entityptr)> updateFunc;
+     std::function<void(Entityptr,Negaptr, INPUT)> memoryFunc;
 public:
     bool omniChanged=0;///Changed to true when received Info
-    EntityBoolMap eurusChangedMap;
 
+    ///Todo optimze these out, so a common object is used
+    EntityBoolMap eurusChangedMap;
     EntitySet changedEntities;
     EntityMap entities;
 };
@@ -257,7 +255,7 @@ template <class INPUT,class OUTPUT>
 void Entity<INPUT, OUTPUT>::receiveData(Negaptr ptr, INPUT dat)
 {
     if(memoryFunc) {
-        memoryFunc(ptr,dat);
+        memoryFunc(this->shared_from_this(),ptr,dat);
     }
     changedEntities.insert(ptr);
     omniChanged=true;
