@@ -5,87 +5,67 @@
 #include <bits/stdc++.h>
 #include <SFML/Graphics.hpp>
 #include <unordered_map>
-#include "Entity.h"
+
+#include "Templates.h"
+#include "Renderer.h"
 #include "Coord.h"
+
 namespace pg
 {
 
-
-
-struct Color{
-    int r,g,b;
-    bool operator==(const Color& cor){
-        return r==cor.r && g==cor.g && b == cor.b;
-    }
-
-    bool operator!=(const Color& cor){
-        return  !(*this==cor);
-    }
-    Color operator^(const Color& cor)const{
-        Color c = {r^cor.r, g^cor.g, b^cor.b};
-        return c;
-    }
-
-    friend
-    std::ostream& operator<<(std::ostream& os, const Color c){
-        os<<c.r<<" "<<c.g<<" "<<c.b;
-        return os;
-    }
-};
-
-
-struct NodeData{
-    Color color;
+struct NodeData
+{
+    sf::Color color;
     Coord size;
     Coord position;
 };
 using NodeDataptr = std::shared_ptr<NodeData>;
 
+struct Node : public sf::RectangleShape,
+    //    public Entity<Void, Spriteptr>,
+        public CommandOriented,
+        public enable_shared_from_this_virtual<Node>,
+        public MultiInstance<Node>
+{
 
+//;  using nodeConn = Entity<NodeDataptr,Void>;
+ // using renderConn = Entity<Void,Spriteptr>;
 
-
-struct Node : public sf::RectangleShape, public Entity<NodeData,Void>, public MultiInstance<Node> {
-    using nodeConn = Entity<NodeData,Void>;
-
-    int N;
-
-    Node(): sf::RectangleShape()
+    NodeDataptr data;
+    bool changed = false;
+    Node( NodeDataptr data ) :
+            sf::RectangleShape(), data( data )
     {
-        nodeConn::setRunFunction(draw);
-    }
-/*
-    Node( double i, double j, double size, int n ) :
-        sf::RectangleShape( sf::Vector2f( size, size ) )
-    {
-        pos = {   i,j };
-        this->size = size;
-        this->setPosition(i*size, j*size);
-        updateFunc = Node::doShit;
-    }
-    */
-    void update()
-    {
-    }
-    void setState(Color c){
-        state =c;
+        auto ren = Renderer::get();
+        CommandOriented::sendValue(ren, CREATE);
     }
 
+    virtual void update(CommandOriented::Negaptr sender){
+        this->setPosition( data->position.x , data->position.y );
+        this->setFillColor( sf::Color( data->color ) );
+        this->setSize( { data->size.x, data->size.y } );
+    }
+    virtual void ack(CommandOriented::Negaptr sender,  Commands cmd ){
+        if(cmd.test(CREATE)){
+            auto ren = Renderer::get();
+            if(ren == sender){
 
-    static void draw(nodeConn::Entityptr me)
-    {
-        auto root = getRoot(me);
-        auto changed = me->getChanged();
-       // Strtuple val = changed->getValue(me);
-
-
-      //  unsigned char red=myval.r,green=myval.g,blue=myval.b ;
-      //  alce->setFillColor( sf::Color (red,green,blue) );
-
+              //  ren->add(getMe(this) );
+            }else{
+                throw std::runtime_error("Invalid response from renderer");
+            }
+        }
+    }
+    virtual void create(CommandOriented::Negaptr sender){
 
     }
-    Coord pos;
-    double size;
-    Color state;
+    virtual void destroy(CommandOriented::Negaptr sender){
+        auto ren = Renderer::get();
+        CommandOriented::sendValue(ren, DESTROY);
+    }
+
+
+private:
 
 };
 using Nodeptr = std::shared_ptr<Node>;
