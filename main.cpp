@@ -4,11 +4,9 @@
 #include <SFML/OpenGL.hpp>
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
-
 #include "Renderer.h"
 
 #include "Node.h"
-#include "Omni.h"
 #include "Entity.h"
 #include "Position.h"
 
@@ -45,10 +43,11 @@ void populateGrid( double n )
 }
 int mod(int a,int b)
 {
-    if(a<0)return 0;
-    if(a>=b)return b-1;
+    return(b + (a%b)) % b;
+   // if(a<0)return 0;
+ //   if(a>=b)return b-1;
     return a;
-   //return(b + (a%b)) % b;
+
 }
 
 void populateSegs(int segs)
@@ -127,9 +126,6 @@ grid[{90,1}]->warnAll();
 
             }
         }
-
-
-
 }
 
 
@@ -152,18 +148,12 @@ int main()
 
     int i =0;
 
-  //  grid[{50,50}]->setState( {255,255,0});
-  //  grid[{50,50}]->warnAll();
 
     grid[{9,1}]->setState( {0,255,0});
     grid[{9,1}]->warnAll();
 
     grid[{90,1}]->setState( {0,0,255});
     grid[{90,1}]->warnAll();
-
-
-
-  //  Node::doShit( grid[{50,50}]);
 
     int cont=0;
     while ( win.running) {

@@ -66,7 +66,6 @@ struct Node : public sf::RectangleShape, public Entity<Color> {
 
     static void doShit(Entityptr me)
     {
-
         auto alce = std::static_pointer_cast<Node>(me);
         Color& myval = alce->state;
         auto previousVal=myval;
