@@ -5,112 +5,236 @@
 #include <unordered_map>
 #include <unordered_set>
 #include <functional>
+#include "Specials.h"
 namespace pg
 {
 
 
-enum State {
-    NIL,MAYBE,NO,YES,
+struct OmniBase {
+    virtual void omniUpdate()=0;
+};
+using Omniptr = std::shared_ptr<OmniBase>;
+
+struct EurusBase {
+    virtual void eurusUpdate()=0;
+};
+using Eurusptr = std::shared_ptr<EurusBase>;
+
+template <class OUTPUT>
+class Sender;
+
+template <class OUTPUT>
+class Sender;
+
+template <class INPUT>
+struct Receiver:public EurusBase {
+    INPUT inputType() {};
+    using Inputptr = std::shared_ptr<Sender<INPUT>> ;
+};
+
+template <class OUTPUT>
+struct Sender:public OmniBase {
+    OUTPUT outputType() {};
 };
 
 
-template<class Data>
-struct Entity : std::enable_shared_from_this<Entity<Data>> {
-    using Entityptr = std::shared_ptr<Entity<Data>> ;
-    using EntityMap = std::unordered_map<Entityptr, Data>;
-    using EntityBoolMap = std::unordered_map<Entityptr, bool>;
-    using EntitySet = std::unordered_set<Entityptr>;
+
+struct GlobalRunner: Singleton<GlobalRunner> {
+    //TODO create per request entity runner
+    template<class T>
+    void addOmni(T ent)
+    {
+        omni.insert( ent->getOmniPtr() );
+    }
+
+    template<class T>
+    void addEurus(T ent)
+    {
+        eurus.insert( ent->getEurusPtr() );
+    }
+
+    void update()
+    {
+        while(omni.size() || eurus.size()) {
+            auto omniCopy = omni;
+            auto eurusCopy = eurus;
+
+            omni.clear();
+            eurus.clear();
+
+            for(auto& x:omniCopy) {
+
+                x->omniUpdate();
+            }
+            for(auto& x: eurusCopy) {
+                x->eurusUpdate();
+            }
+        }
+    }
+    std::set<Omniptr> omni;
+    std::set<Eurusptr> eurus;
+};
 
 
-    void add(const Entityptr ptr)
+
+template<class INPUT,class OUTPUT>
+struct Entity : enable_shared_from_this_virtual<Entity<INPUT, OUTPUT>>, public Receiver<INPUT>, public Sender<OUTPUT>  {
+    using Entityptr = std::shared_ptr<Entity<INPUT, OUTPUT>> ;
+    using Negaptr = std::shared_ptr<Entity<OUTPUT, INPUT>> ;
+
+    using Inputptr = std::shared_ptr<Sender<INPUT>> ;
+    using Outputptr = std::shared_ptr<Receiver< OUTPUT>> ;
+
+    using EntityMap = std::unordered_map<Negaptr,  OUTPUT>;
+    using EntityBoolMap = std::unordered_map<Negaptr, bool>;
+    using EntitySet = std::unordered_set< Negaptr >;
+
+    void omniUpdate();
+    void eurusUpdate();
+
+    void sendValue(const Negaptr,OUTPUT dat);
+    void receiveData(Negaptr ptr, INPUT dat);
+    // void receiveData(Inputptr ptr, INPUT dat);
+
+    INPUT inputType() {};
+    OUTPUT outputType() {};
+
+    Omniptr getOmniPtr()
+    {
+        auto me =this->shared_from_this();
+        auto ret = std::static_pointer_cast<OmniBase>(me);
+        return ret;
+    }
+    Eurusptr getEurusPtr()
+    {
+        auto me =this->shared_from_this();
+        auto ret = std::static_pointer_cast<EurusBase>(me);
+        return ret;
+    }
+
+    std::shared_ptr<Receiver<INPUT>> getInput()
+    {
+        auto me =this->shared_from_this();
+        auto ret = std::static_pointer_cast<Receiver<INPUT>>(me);
+        return ret;
+    }
+    std::shared_ptr<Sender<OUTPUT>> getOutput()
+    {
+        auto me =this->shared_from_this();
+        auto ret = std::static_pointer_cast<Sender<OUTPUT>>(me);
+        return ret;
+    }
+
+
+    virtual void add(const Negaptr ptr)
     {
         entities[ptr];
     }
-    void remove(const Entityptr ptr)
+    virtual void remove(const Negaptr ptr)
     {
         entities.erase(ptr);
     };
 
-    void sendValue(const Entityptr ptr,Data dat);
-    Data getValue(const Entityptr pt ) ;
+
+    OUTPUT getValue(const Negaptr pt );
 
     const EntitySet& getChangedEntities() const
     {
         return changedEntities;
     };
+    const Negaptr getChanged() const
+    {
+        return *changedEntities.begin();
+    };
+
     const EntityMap& getEntities() const;
 
-    void omniUpdate();
-    void eurusUpdate();
-    std::function<void(Entityptr)> updateFunc;
-    std::function<void(Entityptr, Data)> memoryFunc;
-public:
-    void receiveData(Entityptr ptr, Data dat);
-    bool omniChanged=0;///Changed to true when received Info
-    EntityBoolMap eurusChangedMap;
+protected:
 
+    void setRunFunction(std::function<void(Entityptr)> func)
+    {
+        updateFunc = func;
+    }
+    void setMemoryFunction(std::function<void(Entityptr,Negaptr, INPUT)> func)
+    {
+        memoryFunc = func;
+    }
+    //Todo these need to be static
+     std::function<void(Entityptr)> updateFunc;
+     std::function<void(Entityptr,Negaptr, INPUT)> memoryFunc;
+public:
+    bool omniChanged=0;///Changed to true when received Info
+
+    ///Todo optimze these out, so a common object is used
+    EntityBoolMap eurusChangedMap;
     EntitySet changedEntities;
     EntityMap entities;
-
 };
 
-#define Entityptr std::shared_ptr<Entity<Data>>
-#define EntityMap std::unordered_map<Entityptr, Data>
-#define EntitySet std::unordered_set<Entityptr>
+#define Entityptr std::shared_ptr<Entity<INPUT, OUTPUT>>
+#define Negaptr std::shared_ptr<Entity<OUTPUT, INPUT>>
+
+#define Inputptr std::shared_ptr<Sender<INPUT>>
+#define Outputptr std::shared_ptr<Receiver< OUTPUT>>
 
 
-template <class Data>
-Data Entity<Data>::getValue(const Entityptr pt )
+#define EntityMap std::unordered_map<Negaptr,  OUTPUT>
+#define EntitySet std::unordered_set<Inputptr>
+
+
+template <class INPUT,class OUTPUT>
+OUTPUT Entity<INPUT, OUTPUT>::getValue(const Negaptr pt )
 {
     return entities[pt];
 }
 
-template <class Data>
-void Entity<Data>::omniUpdate()
+template <class INPUT,class OUTPUT>
+void Entity<INPUT, OUTPUT>::omniUpdate()
 {
     for(auto& it:eurusChangedMap) {
-        Entityptr ent = it.first;
+        Negaptr ent = it.first;
         ent->receiveData(this->shared_from_this(), entities[ent]);
         changedEntities.erase(ent);
     }
     eurusChangedMap.clear();
-
-
 }
 
-template <class Data>
-void Entity<Data>::eurusUpdate()
+template <class INPUT,class OUTPUT>
+void Entity<INPUT, OUTPUT>::eurusUpdate()
 {
     if(omniChanged && updateFunc) {
         updateFunc(this->shared_from_this());
-        omniChanged = false;
     }
+    omniChanged = false;
 }
 
 
-template <class Data>
-void Entity<Data>::receiveData(Entityptr ptr, Data dat)
+template <class INPUT,class OUTPUT>
+void Entity<INPUT, OUTPUT>::receiveData(Negaptr ptr, INPUT dat)
 {
     if(memoryFunc) {
-        memoryFunc(ptr,dat);
+        memoryFunc(this->shared_from_this(),ptr,dat);
     }
     changedEntities.insert(ptr);
-    omniChanged = true;
+    omniChanged=true;
+    GlobalRunner::get()->addEurus( this->shared_from_this());
 }
 
 
-template <class Data>
-void Entity<Data>::sendValue(const Entityptr ptr,Data dat)
+template <class INPUT,class OUTPUT>
+void Entity<INPUT, OUTPUT>::sendValue(const Negaptr ptr,OUTPUT dat)
 {
-    if(changedEntities.count(ptr)==0) {
-        //    std::cerr<<"Sending data to unmodified entity"<<std::endl;
-    }
+    //TODO have not lose multiple send messages to same destination
+    // if(changedEntities.count(ptr)==0) {
+    //    std::cerr<<"Sending data to unmodified entity"<<std::endl;
+    // }
     eurusChangedMap[ptr]=1;
     entities[ptr]=dat;
+    GlobalRunner::get()->addOmni( this->shared_from_this());
 }
 
-template <class Data>
-const EntityMap& Entity<Data>::getEntities() const
+template <class INPUT,class OUTPUT>
+const EntityMap& Entity<INPUT, OUTPUT>::getEntities() const
 {
     return entities;
 }
@@ -118,6 +242,10 @@ const EntityMap& Entity<Data>::getEntities() const
 }
 
 #undef Entityptr
+#undef Negaptr
+#undef Inputptr
+#undef Outputptr
+
 #undef EntityMap
 #undef EntitySet
 

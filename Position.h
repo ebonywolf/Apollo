@@ -20,18 +20,3 @@ struct Position{
 
 }
 
-
-namespace std {
-
-  template <>
-  struct hash< pg::Position>
-  {
-    std::size_t operator()(const pg::Position& k) const
-    {
-      auto alce =std::hash<int>();
-
-      return alce(k.x * k.y);
-    }
-  };
-
-}
