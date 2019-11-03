@@ -7,6 +7,7 @@ namespace pg
 {
 
 using DataId = int;
+
 struct Datatype { //defines dataTypes, not data itself
 
     static const Datatype NULL_DATA;

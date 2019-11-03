@@ -1,7 +1,7 @@
 
 #pragma once
 #include "Datatype.h"
-
+#include <memory>
 
 namespace pg
 {
@@ -10,19 +10,22 @@ struct Base_Data {
 
 };
 
-struct Data : protected std::unique_ptr<Base_Data> {
-    Data(){
+struct Data //:protected std::unique_ptr<Base_Data>
+ {
+    Data():_id(id_cont++){
+
     }
 
     virtual Datatype getType() const=0;
+
     friend std::ostream& operator<<(std::ostream& os, const Data& data )
     {
-        os<<"Data:"<<data.getType();
+     //   os<<"Data:"<<data.getType();
         return os;
     }
-
+    const long int _id;
+    static long int id_cont;
 };
-
 
 template <class T>
 struct GenericData: public Data {
@@ -30,7 +33,7 @@ struct GenericData: public Data {
     {
     }
 
-    GenericData(std::string id):name_id(id)
+    GenericData(std::string type_id):name_id(type_id)
     {
     }
 
@@ -41,14 +44,13 @@ struct GenericData: public Data {
 
     friend std::ostream& operator<<(std::ostream& os, const GenericData<T>& data )
     {
-        os<<"Data:"<<data.getType()<<":"<<data.get();
+   //     os<<"Data:"<<data.getType()<<":"<<data.get();
 
         return os;
     }
     std::string name_id;
-
 };
-;
+using Dataptr = std::shared_ptr<Data>;
 
 }
 
@@ -61,7 +63,6 @@ struct hash<pg::Datatype> {
         using std::size_t;
         using std::hash;
         using std::string;
-
         return hash<string>()(k.getName());
 
     }
@@ -77,6 +78,8 @@ struct hash<pg::DataPair> {
 
     }
 };
-
-
 }
+
+
+
+
