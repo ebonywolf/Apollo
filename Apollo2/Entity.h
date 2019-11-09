@@ -9,6 +9,7 @@
 #include <json/json.h>
 #include "Data.h"
 #include "Process.h"
+#include "Packet.h"
 
 namespace pg
 {
@@ -18,22 +19,27 @@ struct EntityptrHash{
 };
 
 
-struct EntitySet: std::unordered_set<Entityptr,EntityptrHash>
+struct Entitycmp
+{
+  bool operator() (const Entityptr& t1, const Entityptr& t2) const;
+};
+
+struct EntitySet: public std::unordered_set<Entityptr,EntityptrHash,Entitycmp>
 {
     bool contains(std::string name) const;
     Entityptr get(std::string name) const;
 
 };
 
-struct EntityMap : public std::unordered_map<DataPair,EntitySet> {
-    using  std::unordered_map<DataPair,EntitySet>::unordered_map;
+struct EntityMap : public std::unordered_map<DataPair,Entityptr> {
+    using  std::unordered_map<DataPair,Entityptr>::unordered_map;
 
-    EntitySet& operator()(const Datatype& from,const Datatype& to)
+    Entityptr& operator()(const Datatype& from,const Datatype& to)
     {
         DataPair par (from,to);
         return operator [] (par);
     }
-    const  EntitySet& operator()(const Datatype& from,const Datatype& to) const
+    const  Entityptr& operator()(const Datatype& from,const Datatype& to) const
     {
         DataPair par (from,to);
         if(!count(par))throw "foo";
@@ -47,20 +53,6 @@ struct Entity_Base : public enable_shared_from_this_virtual<Entity> {
 };
 
 
-struct Packet{
-    Entityptr from;
-    Entityptr to;
-    Dataptr data;
-    DataPair channel;
-    Packet(){
-    }
-    Packet(Entityptr from,Entityptr to , Dataptr data, DataPair channel):
-        from(from),to(to),
-        data(data),channel(channel){
-
-    }
-};
-
 #define GLOBAL "_Global"
 
 struct Entity : Entity_Base  {//Defines object that runs many functions and has many dataTypes
@@ -68,15 +60,15 @@ struct Entity : Entity_Base  {//Defines object that runs many functions and has 
     using SendBuffer = std::unordered_map<Entityptr, std::unordered_map<Entityptr,Packet>>;
     using PacketList = std::vector<Packet>;
 
-    PacketList sentData;
-    PacketList receivedData;
+    PacketMap _sentBuffer;
+    PacketMap _receivedBuffer;
+    EntitySet _senders;
+    EntitySet _receivers;
 
    // SendBuffer _sentBuffer;
     EntitySet _omni;
     EntityMap _eurus;
     ProcessList processes;
-
-
 
     template <class INPUT, class OUTPUT>
     void addProcess( OUTPUT(func)(INPUT) )
@@ -85,13 +77,14 @@ struct Entity : Entity_Base  {//Defines object that runs many functions and has 
         processes.insert(p);
     }
 
-
     template <class INPUT, class OUTPUT,class ...T>
     void addProcess(OUTPUT(func)(INPUT), T ...t)
     {
         addProcess(func);
         addProcess(t...);
     }
+
+    void handle(Packet p);
 
     ProcessList getProcess() const
     {
@@ -116,7 +109,7 @@ struct Entity : Entity_Base  {//Defines object that runs many functions and has 
     {
         return _omni.contains(name);
     }
-    void addOmni(std::string name,const Entityptr obj)
+    void addOmni(const Entityptr obj)
     {
         _omni.insert(obj);
     }
@@ -124,101 +117,99 @@ struct Entity : Entity_Base  {//Defines object that runs many functions and has 
     void addEurus( const Entityptr obj);
     void omniUpdate(const Entityptr context)
     {
-/*
-        for(auto& it : _sentBuffer[context] )
-        {
-            auto to = it.first;
-            auto data = it.second;
-            to->receiveData(shared_from_this(), data);
+        auto packets = _sentBuffer.pull(context);
+        for (auto& pack: packets) {
+            auto thisPtr = this->shared_from_this();
+            Packet request(thisPtr,pack.data, pack.futureAnswer, pack.context);
+            pack.destination->receiveData(context, request);
         }
-        */
     }
+    void eurusUpdate(const Entityptr context)
+    {
+        auto packets = _receivedBuffer.pull(context);
+        for (auto& pack: packets) {
+            auto handler =_eurus[pack.getChannel()];
+            handler->handle(pack);
+        }
+
+    }
+    Future send(Dataptr sentData, const Datatype fromType, Entityptr context );
+
 
     template<class T>
-    Data& send( Dataptr sentData, Entityptr context=getGlobal() )
+    Future send( Dataptr sentData  )
     {
+        Entityptr context= this->shared_from_this();
         T received;
         const auto fromType = received.getType();
-        const auto toType = sentData->getType();
-        DataPair pair(fromType, toType);
-        DataPair reversePair = pair.getInverse();
-
-        bool sent=false;
-        for (auto& it: _omni) {
-            auto to = it.second;
-            if(to->hasMethod(reversePair)) {
-                sent=true;
-            }
-            Packet packet(this->shared_from_this(),to,sentData,reversePair  );
-            context->sendPacket(packet);
-
-        }
-        if(!sent) {
-            throw std::runtime_error(std::string("no handler for: ")+reversePair.getHashKey());
-        }
+        return send(sentData, fromType,context );
     }
-    void receiveData(Entityptr from, Packet data)
+    void receiveData(Entityptr context, Packet packet)
     {
-        auto channel = data.channel;
-        if(_eurus.count(channel))throw "Unhandled Method";
-
-       std::cout<< "Received Data from:"<<from->getName()<<" Data: "<<data.data->getType() <<std::endl;
-      //  changedEntities.insert(ptr);
-       //   omniChanged=true;
-        //  GlobalRunner::get()->addEurus( this->shared_from_this());
+        //TODO MEMORY FUNCTION
+        _receivedBuffer.push(context, packet);
+        context->warnEurusChange(this->shared_from_this());
     }
 
     void extend(Entityptr other){
         addEurus(other);
-        for(auto& x: other->_omni)
+        for(auto ent: other->_omni)
         {
-            std::string name=x.first;
-            auto otherOmni = x.second;
-            addOmni(name,otherOmni);
+            addOmni(ent);
         }
     }
 
-    virtual std::string getName() const
+    virtual std::string getName() const=0;
+    /*
     {
         throw "Its actually pure virtual method, it must be extended";
     }
+    */
 
     Entityptr getOmni(std::string name) const
     {
-        if(_omni.count(name)) {
-            return _omni.at(name);
+        if(_omni.contains(name)) {
+            return _omni.get(name);
         } else {
             throw std::runtime_error(std::string("entity not present in context: ")+name);
         }
     }
 
 
-    void sendPacket(Packet ent)
+    void warnOmniChange(Entityptr context)
     {
-        packets
+        _senders.insert(context);
     }
-    void addReceiver(Entityptr ent, Packet)
+    void warnEurusChange(Entityptr context)
     {
-        receivedData.insert( ent );
+        _receivers.insert( context );
     }
 
     void update(){
-        for(auto& pack:sentData)
-        {
-           // ent->omniUpdate(shared_from_this());
+        while(_senders.size() || _receivers.size()){
+
+            if(_senders.size()){
+                auto clone = _senders;
+                auto context = this->shared_from_this();
+                _senders.clear();
+                for(auto& ent : clone){
+                    ent->omniUpdate(context);
+                }
+            }
+            if(_receivers.size()){
+                auto clone = _receivers;
+                auto context = this->shared_from_this();
+                _receivers.clear();
+                for(auto& ent : clone){
+                    ent->eurusUpdate(context);
+                }
+            }
+
         }
+
     }
 
-
-    static Entityptr getGlobal()
-    {
-        static Entityptr global;
-        if(!global) {
-            global = Entityptr(new Entity());
-            // global->["GLOBAL"] = global;//shared ptr pointing to itself,
-        }
-        return global;
-    }
+    static Entityptr getGlobal();
 
 protected:
     Entity()
@@ -240,124 +231,15 @@ protected:
     static PlaceHolder createGlobalEntity(){
         Entityptr novo = Entityptr(new T());
         auto global = Entity::getGlobal();
-
-        global->addOmni(novo->getName(), novo);
+        global->addOmni(novo);
         global->addEurus( novo);
+
     }
 
 
     Entity(PlaceHolder) //Especial constructor
     {
     }
-};
-
-#define TO_STR(X) #X
-template <class T>
-class GenericEntity: public Entity
-{
-public:
-    template <class ...D>
-    GenericEntity(std::string name, D... t ) : Entity(t...), _name(name)
-    {
-    };
-
-
-    std::string getName() const
-    {
-        return _name;
-    }
-    static PlaceHolder _instance;
-    static_assert(&_instance);
-    GenericEntity(PlaceHolder)
-    {
-
-    }
-private:
-    std::string _name;
-
-} ;
-
-template <class T>
-Entity::PlaceHolder GenericEntity<T>::_instance = Entity::createGlobalEntity<T>();
-//std::make_shared<GenericEntity<T>>(PlaceHolder());
-
-class UniqueEntity :public Entity{
-public:
-    UniqueEntity(std::string name):_name(name){
-    }
-    std::string getName() const
-    {
-        return _name;
-    }
-private:
-    std::string _name;
-    static int _cont;
-
-
-};
-
-class JsonEntity : public Entity
-{
-public:
-    JsonEntity(std::string _name,Json::Value val):_name(_name)
-    {
-        std::cerr<<"EurusSize:"<<_name<<" "<<_eurus.size()<<std::endl;
-
-        for(auto& name: val.getMemberNames()) {
-            Json::Value& subval = val[name];
-            if(subval.isObject()) {
-                std::cerr<<"Sub:"<<name<<std::endl;
-                Entityptr toadd = Entityptr(new JsonEntity(name, subval));
-
-                auto global = getGlobal();
-                if( global->hasOmni(name) ) {
-                    std::cerr<<"Adding "<<name<<std::endl;
-                    auto current = global->getOmni(name);
-                    current->extend(toadd);
-                    global->addEurus(current);
-                    addEurus(current);
-
-
-                }else{
-                    std::cerr<<"Creating "<<name<<std::endl;
-                    global->addOmni(name,toadd);
-                    global->addEurus(toadd);
-                    addEurus(toadd);
-                }
-
-            } else {
-                //  throw "foo";
-            }
-
-        }
-    std::cerr<<"EurusSize:"<<_name<<" "<<_eurus.size()<<std::endl;
-
-
-    }
-    virtual std::string getName() const
-    {
-        return _name;
-    }
-    std::string _name;
-};
-
-
-struct ContextCreator {
-
-    static Entityptr createFromJson(std::string file)
-    {
-        std::ifstream in(file);
-        if(!in.is_open()) {
-            throw "unable to open file";
-        }
-        Json::Value val;
-
-        in>>val;
-        Entityptr novo = Entityptr(new JsonEntity(file,val));
-
-        return novo;
-    }
-
 };
 
 }

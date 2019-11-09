@@ -4,7 +4,8 @@
 #include <unordered_set>
 #include <memory>
 #include <fstream>
-#include <future>
+#include <functional>
+#include <iostream>
 
 #include <json/json.h>
 #include "Data.h"
@@ -65,6 +66,11 @@ public:
         return *this;
     }
 
+    virtual Dataptr process(Dataptr)const{
+        throw "foo";
+        return 0;
+    }
+
 
 };
 
@@ -73,6 +79,11 @@ struct GenericProcess: Process {
 
     GenericProcess(std::function<OUTPUT(INPUT)> func):Process(GenericDataPair<INPUT,OUTPUT>()),func(func)
     {
+    }
+    Dataptr process(Dataptr d) const {
+        INPUT* input = static_cast<INPUT*>(d.get());
+        OUTPUT output =func(*input);
+        return std::make_shared<OUTPUT>(output);
     }
 
 private:
@@ -111,20 +122,38 @@ using C_Entityptr = std::shared_ptr<const Entity>;
 struct ProcessptrHash{
     std::size_t operator()(const pg::Processptr& k) const
     {
+        if(!k)throw "foo";
         return std::hash<std::string>()(k->getHashKey());
     }
+};
+struct Processcmp
+{
+  bool operator() (const Processptr& t1, const Processptr& t2) const{
+      t1->getHashKey() == t2->getHashKey();
+  }
 };
 
 
 
-class ProcessList :public std::unordered_set<Processptr,ProcessptrHash >
+class ProcessList :public std::unordered_set<Processptr,ProcessptrHash,Processcmp >
 {
 public:
     ProcessList()
     {
     }
     bool count(Processptr alce)const{
-        return unordered_set::count(alce);
+        std::cout<< "Size:"<<size() << std::endl;
+        std::cout<< "Alce"<< *alce.get() << std::endl;
+        for (auto x: *this) {
+            std::cout<< *x.get() << std::endl;
+        }
+        bool a  = unordered_set::count(alce);
+
+        return a ;
+    }
+    Processptr get(DataPair datahash)const{
+           Processptr alce = std::make_shared<Process>(datahash);
+           return *find(alce);
     }
 
     bool count(DataPair datahash)const{

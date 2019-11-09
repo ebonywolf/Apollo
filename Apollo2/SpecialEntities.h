@@ -3,6 +3,7 @@
 
 namespace pg{
 
+template<typename T, T> struct Dummy { };
 
 
 #define TO_STR(X) #X
@@ -11,23 +12,25 @@ class GenericEntity: public Entity
 {
 public:
     template <class ...D>
-    GenericEntity(std::string name, D... t ) : Entity(t...), name(name)
+    GenericEntity(std::string name, D... t ) : Entity(t...), _name(name)
     {
     };
+    virtual ~GenericEntity(){}
 
 
     std::string getName() const
     {
-        return name;
+        return _name;
     }
     static PlaceHolder _instance;
-    static_assert(&_instance);
+
+    typedef Dummy<PlaceHolder&, _instance> __dummmy;
     GenericEntity(PlaceHolder)
     {
 
     }
-protected:
-    std::string name;
+private:
+    std::string _name;
 
 } ;
 
@@ -35,39 +38,40 @@ template <class T>
 Entity::PlaceHolder GenericEntity<T>::_instance = Entity::createGlobalEntity<T>();
 //std::make_shared<GenericEntity<T>>(PlaceHolder());
 
-
 class JsonEntity : public Entity
 {
 public:
     JsonEntity(std::string _name,Json::Value val):_name(_name)
     {
+
         for(auto& name: val.getMemberNames()) {
             Json::Value& subval = val[name];
             if(subval.isObject()) {
-
                 Entityptr toadd = Entityptr(new JsonEntity(name, subval));
 
                 auto global = getGlobal();
 
-                std::cerr<<"Global Size:"<<global->_eurus.size()<<std::endl;
+
                 if( global->hasOmni(name) ) {
-                    std::cerr<<"Adding"<<name<<std::endl;
                     auto current = global->getOmni(name);
                     current->extend(toadd);
                     global->addEurus(current);
-
                     addEurus(current);
+
+
                 }else{
-                    std::cerr<<"Creating"<<name<<std::endl;
-                    global->addOmni(name,toadd);
+                    global->addOmni(toadd);
                     global->addEurus(toadd);
                     addEurus(toadd);
                 }
+
             } else {
                 //  throw "foo";
             }
 
         }
+    std::cout<<"EurusSize:"<<_name<<" "<<_eurus.size()<<std::endl;
+
 
     }
     virtual std::string getName() const
@@ -77,6 +81,22 @@ public:
     std::string _name;
 };
 
+
+
+class UniqueEntity :public Entity{
+public:
+    UniqueEntity(std::string name):_name(name){
+    }
+    std::string getName() const
+    {
+        return _name;
+    }
+private:
+    std::string _name;
+    static int _cont;
+
+
+};
 
 struct ContextCreator {
 

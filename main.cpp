@@ -5,7 +5,7 @@
 #include <SFML/Graphics.hpp>
 #include "Coord.h"
 #include "Apollo2/Process.h"
-#include "Apollo2/Entity.h"
+#include "Apollo2/SpecialEntities.h"
 
 using namespace std;
 using namespace pg;
@@ -76,6 +76,9 @@ inline std::string className(const std::string& prettyFunction)
 
 
 struct Ack: public GenericData<Ack>{
+    int a;
+    Ack(){}
+    Ack(int a):a(a){}
 };
 
 struct BoxInfo: public GenericData<BoxInfo>{
@@ -90,30 +93,41 @@ struct BoxInfo: public GenericData<BoxInfo>{
 class BoxDrawer: public GenericEntity<BoxDrawer>{
 public:
     BoxDrawer():GenericEntity(__CLASS_NAME__,drawBox){
+        std::cout<< "Constructor" <<std::endl;
+    }
+    static Ack func(Ack, Ack){
+
     }
 
     static Ack drawBox(BoxInfo box){
-        std::cerr<<"Got box:"<<box<<std::endl;
+        std::cout<<"Got box:"<<box<<std::endl;
+
+        return Ack(666);
+
     }
+
 };
 
 
 int main(int argc,char** argv)
 {
-
+   // BoxDrawer::_instance;
     try{
         Entityptr context = ContextCreator::createFromJson("test.json");
         Dataptr box = make_shared<BoxInfo>();
         Entityptr alce= Entityptr(new UniqueEntity("Alce"));
-        alce->addOmni("BoxCreator",context);
-        std::cerr<<"Handlers:"<<context->_eurus.size()<<std::endl;
+        alce->addOmni(context);
+        std::cout<<"Handlers:"<<context->_eurus.size()<<std::endl;
         for(auto& it:context->_eurus)
         {
-            std::cerr<<"Pair for:"<<it.first<<std::endl;
+            std::cout<<"Pair for:"<<it.first<<std::endl;
         }
+        Future f = alce->send<Ack>(box);
+        std::cout<< "Ready:"<<f.ready() << std::endl;
+        alce->update();
+        std::cout<< "Ready2:"<<f.ready() << std::endl;
+      //  Ack c = f.getData();
 
-        alce->send<Ack>(box);
-        context->update();
 
     }catch(runtime_error& e){
         std::cout<<e.what()<<std::endl;

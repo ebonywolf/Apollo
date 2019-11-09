@@ -52,6 +52,52 @@ struct GenericData: public Data {
 };
 using Dataptr = std::shared_ptr<Data>;
 
+struct FutureBase: public Dataptr{
+    FutureBase(Datatype type):type(type){
+    }
+    virtual Datatype getType() const
+   {
+       return type;
+   }
+    Datatype type;
+    Dataptr _actualObject;
+
+};
+
+
+struct Future : public std::shared_ptr<FutureBase>{
+
+    //Future():std::shared_ptr<FutureBase>(new FutureBase()){}
+    Future(Datatype type):std::shared_ptr<FutureBase>(new FutureBase(type)){
+
+    }
+    void set(Dataptr p){
+        get()->_actualObject = p;
+    }
+    Dataptr getData(){
+        auto alce = get();
+        Dataptr data = alce->_actualObject;
+        return  data;
+    }
+
+    auto getObject(){
+        if(!ready())throw "foo";
+
+
+        // Dataptr data = alce->_actualObject;
+       //  return  data->getRoot();
+    }
+
+    bool ready(){
+        if(get()->_actualObject)return true;
+        return false;
+    }
+    virtual Datatype getType() const
+    {
+        return get()->getType();
+    }
+};
+
 }
 
 namespace std
