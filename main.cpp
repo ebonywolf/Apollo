@@ -93,7 +93,6 @@ struct BoxInfo: public GenericData<BoxInfo>{
 class BoxDrawer: public GenericEntity<BoxDrawer>{
 public:
     BoxDrawer():GenericEntity(__CLASS_NAME__,drawBox){
-        std::cout<< "Constructor" <<std::endl;
     }
     static Ack func(Ack, Ack){
 
@@ -103,9 +102,7 @@ public:
         std::cout<<"Got box:"<<box<<std::endl;
 
         return Ack(666);
-
     }
-
 };
 
 
@@ -117,18 +114,12 @@ int main(int argc,char** argv)
         Dataptr box = make_shared<BoxInfo>();
         Entityptr alce= Entityptr(new UniqueEntity("Alce"));
         alce->addOmni(context);
-        std::cout<<"Handlers:"<<context->_eurus.size()<<std::endl;
-        for(auto& it:context->_eurus)
-        {
-            std::cout<<"Pair for:"<<it.first<<std::endl;
-        }
+
         Future f = alce->send<Ack>(box);
-        std::cout<< "Ready:"<<f.ready() << std::endl;
         alce->update();
-        std::cout<< "Ready2:"<<f.ready() << std::endl;
-      //  Ack c = f.getData();
 
-
+        Ack c = f.getObject<Ack>();
+        std::cout<< "Result:"<<c.a << std::endl;
     }catch(runtime_error& e){
         std::cout<<e.what()<<std::endl;
     }

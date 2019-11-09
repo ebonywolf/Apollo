@@ -42,7 +42,6 @@ Entityptr Entity::getGlobal(){
 }
 
 void Entity::handle(Packet p){
-    std::cout << "Handler:" << this->getName() << std::endl;
     if(processes.count(p.getChannel())){
         auto func = getProcess().get(p.getChannel());
         Dataptr answer = func->process(p.data);
@@ -73,7 +72,6 @@ Future Entity::send(Dataptr sentData, const Datatype fromType, Entityptr context
             sent = true;
         }
         Packet packet(to, sentData, future, context);
-        std::cout << "Adding:" << context->getName() << std::endl;
         _sentBuffer.push(context, packet);
         context->warnOmniChange(this->shared_from_this());
     }

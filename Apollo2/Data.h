@@ -79,13 +79,12 @@ struct Future : public std::shared_ptr<FutureBase>{
         Dataptr data = alce->_actualObject;
         return  data;
     }
-
+    template<class T>
     auto getObject(){
         if(!ready())throw "foo";
 
-
-        // Dataptr data = alce->_actualObject;
-       //  return  data->getRoot();
+        Dataptr data = get()->_actualObject;
+        return *std::static_pointer_cast<T>(data).get() ;
     }
 
     bool ready(){

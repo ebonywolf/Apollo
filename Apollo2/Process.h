@@ -142,14 +142,7 @@ public:
     {
     }
     bool count(Processptr alce)const{
-        std::cout<< "Size:"<<size() << std::endl;
-        std::cout<< "Alce"<< *alce.get() << std::endl;
-        for (auto x: *this) {
-            std::cout<< *x.get() << std::endl;
-        }
-        bool a  = unordered_set::count(alce);
-
-        return a ;
+        return unordered_set::count(alce);
     }
     Processptr get(DataPair datahash)const{
            Processptr alce = std::make_shared<Process>(datahash);

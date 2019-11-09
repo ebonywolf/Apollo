@@ -43,7 +43,6 @@ class JsonEntity : public Entity
 public:
     JsonEntity(std::string _name,Json::Value val):_name(_name)
     {
-
         for(auto& name: val.getMemberNames()) {
             Json::Value& subval = val[name];
             if(subval.isObject()) {
@@ -70,9 +69,6 @@ public:
             }
 
         }
-    std::cout<<"EurusSize:"<<_name<<" "<<_eurus.size()<<std::endl;
-
-
     }
     virtual std::string getName() const
     {
@@ -99,7 +95,6 @@ private:
 };
 
 struct ContextCreator {
-
     static Entityptr createFromJson(std::string file)
     {
         std::ifstream in(file);
