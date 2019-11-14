@@ -11,6 +11,11 @@ template <class T>
 class GenericEntity: public Entity
 {
 public:
+    GenericEntity() :_name( typeid(T).name())
+    {
+
+    }
+
     template <class ...D>
     GenericEntity(std::string name, D... t ) : Entity(t...), _name(name)
     {

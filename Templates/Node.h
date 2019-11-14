@@ -2,10 +2,9 @@
 #ifndef NODE_H
 #define NODE_H
 
-#include <bits/stdc++.h>
 #include <SFML/Graphics.hpp>
 #include <unordered_map>
-#include "Entity.h"
+#include "../Entities/SpecialEntities.h"
 #include "Position.h"
 namespace pg
 {
@@ -32,8 +31,7 @@ struct Color{
     }
 };
 
-
-struct Node : public sf::RectangleShape, public Entity<Color> {
+struct Node : public sf::RectangleShape, public GenericEntity<Node> {
     int N;
 
     Node()
@@ -47,59 +45,27 @@ struct Node : public sf::RectangleShape, public Entity<Color> {
         pos = {   i,j };
         this->size = size;
         this->setPosition(i*size, j*size);
-        updateFunc = Node::doShit;
+//        updateFunc = Node::doShit;
     }
     void update()
     {
-        Entity<Color>::omniUpdate();
+//        Entity<Color>::omniUpdate();
     }
     void setState(Color c){
         state =c;
     }
     void warnAll()
     {
-        for( auto& it: getEntities() ) {
-            auto x = it.first;
-            sendValue(x, state );
-        }
+
     }
 
     static void doShit(Entityptr me)
     {
         auto alce = std::static_pointer_cast<Node>(me);
-        Color& myval = alce->state;
-        auto previousVal=myval;
-
-        bool emit = false;
-        auto changed = me->getChangedEntities() ;
-        for(auto& it: changed)
-        {
-            auto node = it;
-            auto val = node->getValue(me);
-         //   auto val = it.second;
-            if(previousVal!=val){
-               myval = val;
-               emit = true;
-            }
-        }
-       // std::cerr<<"Painting:"<<alce->pos<< " with "<< myval <<std::endl;
-        if(emit){
-            auto& entities=me->getEntities() ;
-            for(auto& it: entities)
-            {
-                auto node = it.first;
-                auto alce = std::static_pointer_cast<Node>(me);
-           //     std::cerr<<"Sending it to:"<<alce->pos<<std::endl;
-                auto val = it.second;
-                if(myval!=val){
-                    me->sendValue(node, myval);
-                }
-            }
-        }
 
 
-        unsigned char red=myval.r,green=myval.g,blue=myval.b ;
-        alce->setFillColor( sf::Color (red,green,blue) );
+//        unsigned char red=myval.r,green=myval.g,blue=myval.b ;
+       // alce->setFillColor( sf::Color (red,green,blue) );
         //  std::cout<< "State:"<<(int)blue << std::endl;
 
     }

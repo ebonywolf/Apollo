@@ -69,9 +69,9 @@ struct Future : public std::shared_ptr<FutureBase>{
 
     //Future():std::shared_ptr<FutureBase>(new FutureBase()){}
     Future(Datatype type):std::shared_ptr<FutureBase>(new FutureBase(type)){
-
     }
     void set(Dataptr p){
+        if(ready())throw "foo";
         get()->_actualObject = p;
     }
     Dataptr getData(){

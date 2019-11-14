@@ -10,14 +10,14 @@
 namespace pg
 {
 
-Renderer::Renderer():window()
+Renderer::Renderer()
 {
     window = new   sf::RenderWindow(sf::VideoMode(500,500), "My window");
 }
 
 
 
-Renderer::Renderer(pg::Coord size):window()
+Renderer::Renderer(pg::Position size)
 {
     window = new   sf::RenderWindow(sf::VideoMode(size.x,size.y), "My window");
 }

@@ -54,19 +54,13 @@ class Process;
 using Processptr = std::shared_ptr<Process>;
 class Process : public DataPair {//Defines function
 public:
-    Process( )
-    {
-    }
+    Process(){}
     Process(const DataPair& data):
         DataPair(data)
     {
     }
-    operator DataPair() const
-    {
-        return *this;
-    }
 
-    virtual Dataptr process(Dataptr)const{
+    virtual Dataptr handle(Dataptr)const{
         throw "foo";
         return 0;
     }
@@ -75,12 +69,10 @@ public:
 };
 
 template<class INPUT, class OUTPUT>
-struct GenericProcess: Process {
+struct GenericProcess: public Process {
 
-    GenericProcess(std::function<OUTPUT(INPUT)> func):Process(GenericDataPair<INPUT,OUTPUT>()),func(func)
-    {
-    }
-    Dataptr process(Dataptr d) const {
+    GenericProcess(std::function<OUTPUT(INPUT)> func):Process(GenericDataPair<INPUT,OUTPUT>()),func(func){}
+    Dataptr handle(Dataptr d) const {
         INPUT* input = static_cast<INPUT*>(d.get());
         OUTPUT output =func(*input);
         return std::make_shared<OUTPUT>(output);

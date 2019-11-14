@@ -1,11 +1,10 @@
 //#include <bits/stdc++.h>
 
-#include <any>
 #include <iostream>
 #include <SFML/Graphics.hpp>
 #include "Coord.h"
-#include "Apollo2/Process.h"
-#include "Apollo2/SpecialEntities.h"
+#include "Entities/Process.h"
+#include "Entities/SpecialEntities.h"
 
 using namespace std;
 using namespace pg;
@@ -90,6 +89,11 @@ struct BoxInfo: public GenericData<BoxInfo>{
 
 };
 
+class Box: public BoxInfo{
+
+
+};
+
 class BoxDrawer: public GenericEntity<BoxDrawer>{
 public:
     BoxDrawer():GenericEntity(__CLASS_NAME__,drawBox){
@@ -98,10 +102,11 @@ public:
 
     }
 
-    static Ack drawBox(BoxInfo box){
+    static Ack drawBox(std::shared_ptr<BoxDrawer> This, BoxInfo box){
         std::cout<<"Got box:"<<box<<std::endl;
-
-        return Ack(666);
+        shared_ptr<Box> b = make_shared<Box>(box);
+        auto future = This->send<Ack>(b);
+        return future;
     }
 };
 

@@ -136,9 +136,11 @@ struct Entity : Entity_Base  {//Defines object that runs many functions and has 
     Future send(Dataptr sentData, const Datatype fromType, Entityptr context );
 
 
-    template<class T>
-    Future send( Dataptr sentData  )
+    template<class T,class D>
+    Future send( D d  )
     {
+
+        Dataptr sentData = std::static_pointer_cast(d);
         Entityptr context= this->shared_from_this();
         T received;
         const auto fromType = received.getType();

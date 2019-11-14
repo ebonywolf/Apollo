@@ -44,7 +44,7 @@ Entityptr Entity::getGlobal(){
 void Entity::handle(Packet p){
     if(processes.count(p.getChannel())){
         auto func = getProcess().get(p.getChannel());
-        Dataptr answer = func->process(p.data);
+        Dataptr answer = func->handle(p.data);
         p.futureAnswer.set(answer);
 
     }
