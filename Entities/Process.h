@@ -9,58 +9,26 @@
 
 #include <json/json.h>
 #include "Data.h"
+#include "EntityBase.h"
 namespace pg
 {
 
-template<typename T>
-struct enable_shared_from_this_virtual;
 
-class enable_shared_from_this_virtual_base : public std::enable_shared_from_this<enable_shared_from_this_virtual_base>
-{
-    typedef std::enable_shared_from_this<enable_shared_from_this_virtual_base> base_type;
-    template<typename T>
-    friend struct enable_shared_from_this_virtual;
-
-    std::shared_ptr<enable_shared_from_this_virtual_base> shared_from_this()
-    {
-        return base_type::shared_from_this();
-    }
-    std::shared_ptr<enable_shared_from_this_virtual_base const> shared_from_this() const
-    {
-        return base_type::shared_from_this();
-    }
-};
-
-template<typename T>
-struct enable_shared_from_this_virtual: virtual enable_shared_from_this_virtual_base {
-    typedef enable_shared_from_this_virtual_base base_type;
-
-public:
-    std::shared_ptr<T> shared_from_this()
-    {
-        std::shared_ptr<T> result(base_type::shared_from_this(), static_cast<T*>(this));
-        return result;
-    }
-
-    std::shared_ptr<T const> shared_from_this() const
-    {
-        std::shared_ptr<T const> result(base_type::shared_from_this(), static_cast<T const*>(this));
-        return result;
-    }
-};
-/////////////////////////////
-
+class Entity;
 class Process;
-using Processptr = std::shared_ptr<Process>;
-class Process : public DataPair {//Defines function
+//using Processptr = std::shared_ptr<Process>;
+class Process : public Process_Base, public DataPair{//Defines function
 public:
     Process(){}
     Process(const DataPair& data):
         DataPair(data)
     {
     }
+    std::string getHashKey()const{
+        return DataPair::getHashKey();
+    }
 
-    virtual Dataptr handle(Dataptr)const{
+    virtual  Dataptr handle(std::shared_ptr<Entity> ent, Dataptr d) const {
         throw "foo";
         return 0;
     }
@@ -68,20 +36,35 @@ public:
 
 };
 
+
 template<class INPUT, class OUTPUT>
 struct GenericProcess: public Process {
+    using Functiontype= std::function<OUTPUT(std::shared_ptr<Entity>,INPUT)>;
 
-    GenericProcess(std::function<OUTPUT(INPUT)> func):Process(GenericDataPair<INPUT,OUTPUT>()),func(func){}
-    Dataptr handle(Dataptr d) const {
+    template <class T>
+    static GenericProcess* createProcess( OUTPUT(myfunc)( std::shared_ptr<T>, INPUT) ){
+        //Creates new Process object with a function pointer as executer
+        auto lambdaFunc = [myfunc](std::shared_ptr<Entity> entity, INPUT input ){
+          std::shared_ptr<T> alce = std::dynamic_pointer_cast<T>(entity);
+          return myfunc(alce, input);
+      };
+      auto novo = new GenericProcess<INPUT,OUTPUT>();
+      novo->_func=lambdaFunc;
+      return novo;
+    }
+
+    virtual Dataptr handle(std::shared_ptr<Entity> ent, Dataptr d) const override{
         INPUT* input = static_cast<INPUT*>(d.get());
-        OUTPUT output =func(*input);
-        return std::make_shared<OUTPUT>(output);
+        OUTPUT output =_func(ent, *input);
+        return _getObj(output);
     }
 
 private:
+    GenericProcess():Process(GenericDataPair<INPUT,OUTPUT>())
+    {
+    }
 
-    std::function<OUTPUT(INPUT)> func;
-
+    Functiontype _func;
 };
 
 
@@ -107,103 +90,10 @@ namespace pg
 {
 
 
-class Entity;
-using Entityptr = std::shared_ptr<Entity>;
-using C_Entityptr = std::shared_ptr<const Entity>;
-
-struct ProcessptrHash{
-    std::size_t operator()(const pg::Processptr& k) const
-    {
-        if(!k)throw "foo";
-        return std::hash<std::string>()(k->getHashKey());
-    }
-};
-struct Processcmp
-{
-  bool operator() (const Processptr& t1, const Processptr& t2) const{
-      t1->getHashKey() == t2->getHashKey();
-  }
-};
-
-
-
-class ProcessList :public std::unordered_set<Processptr,ProcessptrHash,Processcmp >
-{
-public:
-    ProcessList()
-    {
-    }
-    bool count(Processptr alce)const{
-        return unordered_set::count(alce);
-    }
-    Processptr get(DataPair datahash)const{
-           Processptr alce = std::make_shared<Process>(datahash);
-           return *find(alce);
-    }
-
-    bool count(DataPair datahash)const{
-        Processptr alce = std::make_shared<Process>(datahash);
-        return count(alce);
-    }
-
-private:
-
-
-};
 
 
 
 /*
-template <class MY_TYPE>
-struct Common: public enable_shared_from_this_virtual<MY_TYPE>{
-
-    template<class T>
-    static std::shared_ptr<MY_TYPE> getRoot(T t)
-    {
-        return std::static_pointer_cast<MY_TYPE>(t);
-    }
-
-   // template<class T>
-    std::shared_ptr<MY_TYPE> getRoot(){
-    //    return std::static_pointer_cast<MY_TYPE>(t);
-        return  std::static_pointer_cast<MY_TYPE>( this->shared_from_this() );
-             //   enable_shared_from_this_virtual<MY_TYPE>::shared_from_this();
-    }
-};
-
-
-class Attributes{
-public:
-    using Keyset = std::unordered_set<std::string>;
-    Attributes(){//TODO delete default cons
-    };
-    Attributes(Keyset keys):_keys(keys){}
-
-protected:
-    std::unordered_map<std::string, std::any> _values;
-    Keyset _keys;
-};
-
-
-template <class MY_TYPE>
-class Object: public Common<MY_TYPE>{
-public:
-    Object(){}
-    template<class... T>
-    Object(T&&... t ){
-    }
-private:
-    template<class F, class... T>
-    void __init(F&& f, T&&... t){
-        std::string key = typeof(f);
-
-        _attributes._keys.insert( typeof(f));
-    }
-
-    const Attributes _attributes;
-};
-
-
 
 template <class MY_TYPE>
 struct Singleton: public Object<MY_TYPE>

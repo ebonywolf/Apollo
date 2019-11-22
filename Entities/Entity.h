@@ -1,174 +1,138 @@
 #pragma once
 
-#include <unordered_map>
-#include <unordered_set>
-#include <memory>
 #include <fstream>
 #include <future>
 #include <iostream>
 #include <json/json.h>
 #include "Data.h"
 #include "Process.h"
-#include "Packet.h"
+#include "Tools.h"
+#include "EntityBase.h"
 
+#include "Packet.h"
 namespace pg
 {
 
-struct EntityptrHash{
-    std::size_t operator()(const pg::Entityptr& k) const;
-};
-
-
-struct Entitycmp
-{
-  bool operator() (const Entityptr& t1, const Entityptr& t2) const;
-};
-
-struct EntitySet: public std::unordered_set<Entityptr,EntityptrHash,Entitycmp>
-{
-    bool contains(std::string name) const;
-    Entityptr get(std::string name) const;
-
-};
-
-struct EntityMap : public std::unordered_map<DataPair,Entityptr> {
-    using  std::unordered_map<DataPair,Entityptr>::unordered_map;
-
-    Entityptr& operator()(const Datatype& from,const Datatype& to)
-    {
-        DataPair par (from,to);
-        return operator [] (par);
-    }
-    const  Entityptr& operator()(const Datatype& from,const Datatype& to) const
-    {
-        DataPair par (from,to);
-        if(!count(par))throw "foo";
-        return at(par);
-    }
-};
-
-
-struct Entity_Base : public enable_shared_from_this_virtual<Entity> {
-
-};
-
-
 #define GLOBAL "_Global"
 
-struct Entity : Entity_Base  {//Defines object that runs many functions and has many dataTypes
+
+
+struct Entity : public Entity_Base  {//Defines object that runs many functions and has many dataTypes
     using ContextMap = std::unordered_map<std::string,Entityptr>;
     using SendBuffer = std::unordered_map<Entityptr, std::unordered_map<Entityptr,Packet>>;
     using PacketList = std::vector<Packet>;
 
     PacketMap _sentBuffer;
     PacketMap _receivedBuffer;
-    EntitySet _senders;
-    EntitySet _receivers;
+    ProcessSet _senders;
+    ProcessSet _receivers;
 
    // SendBuffer _sentBuffer;
-    EntitySet _omni;
-    EntityMap _eurus;
-    ProcessList processes;
+    ProcessSet _omni;
+    EntitySet _eurus;
 
-    template <class INPUT, class OUTPUT>
-    void addProcess( OUTPUT(func)(INPUT) )
+    template<class T,class D>
+    Future send( D d  )
     {
-        Processptr p = Processptr (new GenericProcess<INPUT,OUTPUT>(func));
-        processes.insert(p);
+        Dataptr sentData = _getObj(d);
+       //  d;//
+        Processptr context= this->shared_from_this();
+        T received;
+        const auto fromType = _getType(received) ;//received.getType();
+        return send(sentData, fromType,context );
     }
 
-    template <class INPUT, class OUTPUT,class ...T>
-    void addProcess(OUTPUT(func)(INPUT), T ...t)
+
+
+    template <class INPUT,class D, class OUTPUT>
+    void addProcess( OUTPUT(func)(D, INPUT) )
+    {
+        auto alce = GenericProcess<INPUT,OUTPUT>::createProcess(func);
+        Processptr p = Processptr (  alce ) ;
+
+        addEurus(p);
+    }
+
+    template <class INPUT, class D, class OUTPUT,class ...T>
+    void addProcess(OUTPUT(func)(D, INPUT), T ...t)
     {
         addProcess(func);
         addProcess(t...);
     }
 
-    void handle(Packet p);
+//    void handle(Entityptr, Packet p) override;
 
-    ProcessList getProcess() const
-    {
-        ProcessList alce = processes;
-        for(auto& it: _eurus)
-        {
-            Processptr novo = std::make_shared<Process>(it.first);
-            alce.insert(novo);
-        }
-        return alce;
-    }
+/*
     bool hasMethod(Datatype from, Datatype to) const
     {
         DataPair par (from,to);
-        return hasMethod(par);
-    }
-    bool hasMethod( DataPair par ) const
+        return hasEurus(par);
+*/
+    bool hasEurus( DataPair par ) const override
     {
-        return processes.count(par) || _eurus.count(par);
+        return  _eurus.contains(par);
     }
-    bool hasOmni(std::string name) const
+
+    bool hasOmni(std::string name) const override
     {
         return _omni.contains(name);
     }
-    void addOmni(const Entityptr obj)
+    void addOmni(const Processptr obj) override
     {
         _omni.insert(obj);
     }
 
-    void addEurus( const Entityptr obj);
-    void omniUpdate(const Entityptr context)
+    void addEurus( const Processptr obj) override;
+    void omniUpdate(const Processptr context)
     {
         auto packets = _sentBuffer.pull(context);
         for (auto& pack: packets) {
             auto thisPtr = this->shared_from_this();
-            Packet request(thisPtr,pack.data, pack.futureAnswer, pack.context);
-            pack.destination->receiveData(context, request);
+            Entityptr enti = std::static_pointer_cast<Entity_Base>(thisPtr);
+            Packet request(   enti, pack.data, pack.futureAnswer, pack.context);
+
+            auto alce = pack.destination;
+            (*alce).receiveData(context, request);
         }
     }
-    void eurusUpdate(const Entityptr context)
+    void eurusUpdate(const Processptr context)
     {
         auto packets = _receivedBuffer.pull(context);
+
         for (auto& pack: packets) {
-            auto handler =_eurus[pack.getChannel()];
-            handler->handle(pack);
+          //  auto handler =_eurus[pack.getChannel()];
+            //TODO check first param
+            throw "Really todo";
+          //  handler->handle(this->shared_from_this(),pack);
         }
-
-    }
-    Future send(Dataptr sentData, const Datatype fromType, Entityptr context );
-
-
-    template<class T,class D>
-    Future send( D d  )
-    {
-
-        Dataptr sentData = std::static_pointer_cast(d);
-        Entityptr context= this->shared_from_this();
-        T received;
-        const auto fromType = received.getType();
-        return send(sentData, fromType,context );
-    }
-    void receiveData(Entityptr context, Packet packet)
-    {
-        //TODO MEMORY FUNCTION
-        _receivedBuffer.push(context, packet);
-        context->warnEurusChange(this->shared_from_this());
     }
 
-    void extend(Entityptr other){
+
+    Dataptr handle(Entityptr ent, Dataptr d) const ;
+
+    Future send(Dataptr sentData, const Datatype fromType, Processptr context ) override;
+
+
+    ProcessSet getOmniList() const{
+        return _omni;
+    }
+
+
+    void extend(Processptr other) override{
         addEurus(other);
-        for(auto ent: other->_omni)
+        for(auto ent: other->getOmniList())
         {
             addOmni(ent);
         }
     }
 
-    virtual std::string getName() const=0;
     /*
     {
         throw "Its actually pure virtual method, it must be extended";
     }
     */
 
-    Entityptr getOmni(std::string name) const
+    Processptr getOmni(std::string name) const override
     {
         if(_omni.contains(name)) {
             return _omni.get(name);
@@ -178,11 +142,11 @@ struct Entity : Entity_Base  {//Defines object that runs many functions and has 
     }
 
 
-    void warnOmniChange(Entityptr context)
+    void warnOmniChange(Processptr context) override
     {
         _senders.insert(context);
     }
-    void warnEurusChange(Entityptr context)
+    void warnEurusChange(Processptr context) override
     {
         _receivers.insert( context );
     }
@@ -213,29 +177,40 @@ struct Entity : Entity_Base  {//Defines object that runs many functions and has 
 
     static Entityptr getGlobal();
 
+
+protected:
+    void receiveData(Processptr context, Packet packet) override
+    {
+        //TODO MEMORY FUNCTION
+        _receivedBuffer.push(context, packet);
+        context->warnEurusChange(this->shared_from_this());
+    }
+
+
 protected:
     Entity()
     {
     };
 
+    /* Todo, make this work
     template <class ...T>
     Entity(T...t)
     {
         addProcess(t...);
     };
+    */
 
     struct PlaceHolder {
         PlaceHolder(){
         }
     };
-
     template<class T>
     static PlaceHolder createGlobalEntity(){
         Entityptr novo = Entityptr(new T());
         auto global = Entity::getGlobal();
         global->addOmni(novo);
         global->addEurus( novo);
-
+        return PlaceHolder();
     }
 
 
@@ -243,5 +218,8 @@ protected:
     {
     }
 };
+
+using Particle = std::shared_ptr<Entity>;
+
 
 }

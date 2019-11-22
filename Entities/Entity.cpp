@@ -4,21 +4,16 @@
 namespace pg {
 
 std::size_t EntityptrHash::operator()(const pg::Entityptr& k) const {
-    return std::hash<std::string>()(k->getName());
+    return std::hash<std::string>()(k->getHashKey());
 }
 
 bool Entitycmp::operator()(const Entityptr& t1, const Entityptr& t2) const {
-    return t1->getName() == t2->getName();
+    return t1->getHashKey() == t2->getHashKey();
 }
 
-void Entity::addEurus(const Entityptr obj){
-    //if(_eurus.count(obj))throw "repeated handler";
-    for(auto& proc : obj->getProcess()){
-        const Datatype from = proc->getFrom();
-        const Datatype to = proc->getTo();
-        _eurus(from, to) = obj;
-        //  myset.insert(obj);
-    }
+void Entity::addEurus(const Processptr obj){
+    //if(_eurus.count(obj))throw "repeat
+    _eurus.insert(obj);
 }
 
 bool EntitySet::contains(std::string name) const {
@@ -41,10 +36,11 @@ Entityptr Entity::getGlobal(){
     return global;
 }
 
-void Entity::handle(Packet p){
+Dataptr Entity::handle( Entityptr ent, Dataptr d) const {
+    /*
     if(processes.count(p.getChannel())){
         auto func = getProcess().get(p.getChannel());
-        Dataptr answer = func->handle(p.data);
+        Dataptr answer = func->handle(this->shared_from_this(),p.data);
         p.futureAnswer.set(answer);
 
     }
@@ -57,9 +53,10 @@ void Entity::handle(Packet p){
             throw "foo";
         }
     }
+    */
 }
 
-Future Entity::send(Dataptr sentData, const Datatype fromType, Entityptr context){
+Future Entity::send(Dataptr sentData, const Datatype fromType, Processptr context){
     const auto toType = sentData->getType();
     DataPair pair(fromType, toType);
     DataPair reversePair = pair.getInverse();
@@ -68,7 +65,8 @@ Future Entity::send(Dataptr sentData, const Datatype fromType, Entityptr context
     Future future(fromType);
 
     for(auto& to : _omni){
-        if(to->hasMethod(reversePair)){
+
+        if(to->hasEurus(reversePair)){
             sent = true;
         }
         Packet packet(to, sentData, future, context);

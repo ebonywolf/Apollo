@@ -1,14 +1,13 @@
 
 #pragma once
 #include "Datatype.h"
+#include "Tools.h"
+
 #include <memory>
 
 namespace pg
 {
 
-struct Base_Data {
-
-};
 
 struct Data //:protected std::unique_ptr<Base_Data>
  {
@@ -79,12 +78,15 @@ struct Future : public std::shared_ptr<FutureBase>{
         Dataptr data = alce->_actualObject;
         return  data;
     }
-    template<class T>
-    auto getObject(){
+
+    template <class T>
+    T getObject(){
         if(!ready())throw "foo";
 
         Dataptr data = get()->_actualObject;
-        return *std::static_pointer_cast<T>(data).get() ;
+        auto alce = data.get();
+        T* t = dynamic_cast<T*>(alce);
+        return *t;
     }
 
     bool ready(){

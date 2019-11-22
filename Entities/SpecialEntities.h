@@ -11,19 +11,24 @@ template <class T>
 class GenericEntity: public Entity
 {
 public:
+    using Myptr = std::shared_ptr<T>;
     GenericEntity() :_name( typeid(T).name())
     {
-
     }
+    GenericEntity(std::string name) :_name(name)
+   {
+   }
 
+/*Todo Make this work
     template <class ...D>
     GenericEntity(std::string name, D... t ) : Entity(t...), _name(name)
     {
     };
+    */
     virtual ~GenericEntity(){}
 
 
-    std::string getName() const
+    std::string getHashKey() const
     {
         return _name;
     }
@@ -32,13 +37,11 @@ public:
     typedef Dummy<PlaceHolder&, _instance> __dummmy;
     GenericEntity(PlaceHolder)
     {
-
     }
 private:
     std::string _name;
 
 } ;
-
 template <class T>
 Entity::PlaceHolder GenericEntity<T>::_instance = Entity::createGlobalEntity<T>();
 //std::make_shared<GenericEntity<T>>(PlaceHolder());
@@ -58,7 +61,9 @@ public:
 
                 if( global->hasOmni(name) ) {
                     auto current = global->getOmni(name);
-                    current->extend(toadd);
+                    auto c_current=  cast(current);
+
+                    c_current->extend(toadd);
                     global->addEurus(current);
                     addEurus(current);
 
@@ -75,7 +80,7 @@ public:
 
         }
     }
-    virtual std::string getName() const
+    virtual std::string getHashKey() const
     {
         return _name;
     }
@@ -88,7 +93,7 @@ class UniqueEntity :public Entity{
 public:
     UniqueEntity(std::string name):_name(name){
     }
-    std::string getName() const
+    std::string getHashKey() const
     {
         return _name;
     }
@@ -100,7 +105,7 @@ private:
 };
 
 struct ContextCreator {
-    static Entityptr createFromJson(std::string file)
+    static Particle createFromJson(std::string file)
     {
         std::ifstream in(file);
         if(!in.is_open()) {
@@ -109,7 +114,7 @@ struct ContextCreator {
         Json::Value val;
 
         in>>val;
-        Entityptr novo = Entityptr(new JsonEntity(file,val));
+        Particle novo = Particle(new JsonEntity(file,val));
 
         return novo;
     }

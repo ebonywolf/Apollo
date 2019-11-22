@@ -64,6 +64,7 @@ struct DataPair {
             return from.getName() + to.getName() ;
         }
     }
+
     bool operator==(const DataPair& other)const
     {
         return getHashKey() == other.getHashKey();
@@ -80,14 +81,14 @@ private:
 template <class FROM,class TO>
 class GenericDataPair:  public DataPair{
 public:
-    GenericDataPair():DataPair(getDataPair()) {
+    GenericDataPair():DataPair(getDataPair())
+    {
     }
-
-    DataPair getDataPair(){
+    DataPair getDataPair() {
         FROM from;
         TO to;
-        Datatype fromType(from.getType());
-        Datatype toType(to.getType());
+        Datatype fromType( _getType(from));
+        Datatype toType( _getType(to));
         return DataPair(fromType, toType);
     }
 

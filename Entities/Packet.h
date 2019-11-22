@@ -4,15 +4,13 @@
 #include "Process.h"
 namespace pg{
 
-
-
 struct Packet{
-    Entityptr destination;
+    Processptr destination;
     Dataptr data;
     Future futureAnswer;
-    Entityptr context;
+    Processptr context;
 
-    Packet(Entityptr destination, Dataptr data, Future futureAnswer,Entityptr context ):
+    Packet(Processptr destination, Dataptr data, Future futureAnswer,Processptr context ):
         destination(destination),
         data(data),futureAnswer(futureAnswer),context(context)
     {
@@ -27,16 +25,13 @@ using PacketList = std::vector<Packet>;
 
 struct PacketMap   {
 
-    int getSize(Entityptr) const;
-    void push(Entityptr context,Packet p);
-    PacketList pull(Entityptr context);
+    int getSize(Processptr) const;
+    void push(Processptr context,Packet p);
+    PacketList pull(Processptr context);
 private:
     std::unordered_map<std::string,PacketList > _base;
 
 };
-
-
-
 
 }
 
