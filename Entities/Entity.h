@@ -7,7 +7,7 @@
 #include "Data.h"
 #include "Process.h"
 #include "Tools.h"
-#include "EntityBase.h"
+#include "EntitySet.h"
 
 #include "Packet.h"
 namespace pg
@@ -24,12 +24,12 @@ struct Entity : public Entity_Base  {//Defines object that runs many functions a
 
     PacketMap _sentBuffer;
     PacketMap _receivedBuffer;
-    ProcessSet _senders;
-    ProcessSet _receivers;
+    Processptr _senders;
+    Processptr _receivers;
 
    // SendBuffer _sentBuffer;
-    ProcessSet _omni;
-    EntitySet _eurus;
+    Processptr _omni;
+    Processptr _eurus;
 
     template<class T,class D>
     Future send( D d  )
@@ -60,26 +60,22 @@ struct Entity : public Entity_Base  {//Defines object that runs many functions a
         addProcess(t...);
     }
 
-//    void handle(Entityptr, Packet p) override;
-
-/*
-    bool hasMethod(Datatype from, Datatype to) const
+    Processptr getOmni(Datatypeptr name) const{
+                return _omni->getOmni(name);
+    }
+    bool hasEurus( Datatypeptr par ) const override
     {
-        DataPair par (from,to);
-        return hasEurus(par);
-*/
-    bool hasEurus( DataPair par ) const override
-    {
-        return  _eurus.contains(par);
+        return  _eurus->hasEurus(par);
     }
 
-    bool hasOmni(std::string name) const override
+    bool hasOmni(Datatypeptr name) const override
     {
-        return _omni.contains(name);
+        return _omni->hasOmni(name);
     }
+
     void addOmni(const Processptr obj) override
     {
-        _omni.insert(obj);
+        _omni->extend(obj);
     }
 
     void addEurus( const Processptr obj) override;
@@ -110,65 +106,53 @@ struct Entity : public Entity_Base  {//Defines object that runs many functions a
 
     Dataptr handle(Entityptr ent, Dataptr d) const ;
 
-    Future send(Dataptr sentData, const Datatype fromType, Processptr context ) override;
+    Future send(Dataptr sentData, const Datatypeptr fromType, Processptr context ) override;
 
 
-    ProcessSet getOmniList() const{
+    Processptr getOmniList() const{
         return _omni;
     }
 
 
     void extend(Processptr other) override{
         addEurus(other);
-        for(auto ent: other->getOmniList())
-        {
-            addOmni(ent);
-        }
-    }
 
-    /*
-    {
-        throw "Its actually pure virtual method, it must be extended";
-    }
-    */
+        addOmni(other->getOmni());
 
-    Processptr getOmni(std::string name) const override
-    {
-        if(_omni.contains(name)) {
-            return _omni.get(name);
-        } else {
-            throw std::runtime_error(std::string("entity not present in context: ")+name);
-        }
     }
-
 
     void warnOmniChange(Processptr context) override
     {
-        _senders.insert(context);
+        _senders->extend(context);
+    }
+    int size() const override{
+        return _receivers->size() + _senders->size();
     }
     void warnEurusChange(Processptr context) override
     {
-        _receivers.insert( context );
+        _receivers->extend( context );
     }
-
+    Processptr getOmni() const override
+    {
+        return _omni;
+    }
     void update(){
-        while(_senders.size() || _receivers.size()){
 
-            if(_senders.size()){
+
+        while(_senders->size() || _receivers->size()){
+
+            if(_senders->size()){
                 auto clone = _senders;
                 auto context = this->shared_from_this();
-                _senders.clear();
-                for(auto& ent : clone){
-                    ent->omniUpdate(context);
-                }
+                _senders = _senders->getNull();
+                clone->omniUpdate(context);
+
             }
-            if(_receivers.size()){
+            if(_receivers->size()){
                 auto clone = _receivers;
                 auto context = this->shared_from_this();
-                _receivers.clear();
-                for(auto& ent : clone){
-                    ent->eurusUpdate(context);
-                }
+                _receivers = _receivers->getNull();
+                clone->eurusUpdate(context);
             }
 
         }
@@ -177,6 +161,11 @@ struct Entity : public Entity_Base  {//Defines object that runs many functions a
 
     static Entityptr getGlobal();
 
+    virtual Datatypeptr junction( Datatypeptr other)const ;
+    virtual Datatypeptr getFrom() const;
+    virtual Datatypeptr getTo() const;
+    virtual Datatypeptr getInverseDataPair()const;
+    virtual Datatypeptr getDataPair()const;
 
 protected:
     void receiveData(Processptr context, Packet packet) override
@@ -190,6 +179,10 @@ protected:
 protected:
     Entity()
     {
+        _eurus = std::make_shared<EurusSet>();
+        _omni = std::make_shared<OmniSet>();
+        _senders = std::make_shared<OmniSet>();
+        _receivers = std::make_shared<OmniSet>();
     };
 
     /* Todo, make this work

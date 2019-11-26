@@ -16,11 +16,7 @@ PacketList PacketMap::pull(Processptr context){
 }
 
 int PacketMap::getSize(Processptr context) const{
-    std::string name = context->getHashKey();
-    if(_base.count(name)){
-        return _base.at(name).size();
-    }else
-        return 0;
+    throw "todo";
 }
 
 

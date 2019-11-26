@@ -3,28 +3,12 @@
 
 namespace pg {
 
-std::size_t EntityptrHash::operator()(const pg::Entityptr& k) const {
-    return std::hash<std::string>()(k->getHashKey());
-}
-
-bool Entitycmp::operator()(const Entityptr& t1, const Entityptr& t2) const {
-    return t1->getHashKey() == t2->getHashKey();
-}
 
 void Entity::addEurus(const Processptr obj){
     //if(_eurus.count(obj))throw "repeat
-    _eurus.insert(obj);
+    _eurus->extend(obj);
 }
 
-bool EntitySet::contains(std::string name) const {
-    Entityptr alce = std::make_shared<UniqueEntity>(name);
-    return count(alce);
-}
-Entityptr EntitySet::get(std::string name) const {
-    Entityptr alce = std::make_shared<UniqueEntity>(name);
-    auto it = find(alce);
-    return *it;
-}
 
 Entityptr Entity::getGlobal(){
     static Entityptr global;
@@ -56,14 +40,16 @@ Dataptr Entity::handle( Entityptr ent, Dataptr d) const {
     */
 }
 
-Future Entity::send(Dataptr sentData, const Datatype fromType, Processptr context){
+Future Entity::send(Dataptr sentData,const Datatypeptr fromType, Processptr context){
     const auto toType = sentData->getType();
-    DataPair pair(fromType, toType);
-    DataPair reversePair = pair.getInverse();
+    Datatypeptr pair = std::make_shared<DataPair>(fromType, toType);
+    auto reversePair = pair->getInverseDataPair();
 
     bool sent = false;
     Future future(fromType);
 
+    throw "Todo";
+    /*
     for(auto& to : _omni){
 
         if(to->hasEurus(reversePair)){
@@ -73,8 +59,9 @@ Future Entity::send(Dataptr sentData, const Datatype fromType, Processptr contex
         _sentBuffer.push(context, packet);
         context->warnOmniChange(this->shared_from_this());
     }
+    */
     if(!sent){
-        throw std::runtime_error(std::string("no handler for: ") + reversePair.getHashKey());
+        throw std::runtime_error(std::string("no handler for: ") + reversePair->getHashKey()->toString());
     }
     return future;
 }

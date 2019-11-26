@@ -17,16 +17,10 @@ namespace pg
 class Entity;
 class Process;
 //using Processptr = std::shared_ptr<Process>;
-class Process : public Process_Base, public DataPair{//Defines function
+class Process : public Process_Base{//Defines function
 public:
     Process(){}
-    Process(const DataPair& data):
-        DataPair(data)
-    {
-    }
-    std::string getHashKey()const{
-        return DataPair::getHashKey();
-    }
+
 
     virtual  Dataptr handle(std::shared_ptr<Entity> ent, Dataptr d) const {
         throw "foo";
@@ -80,7 +74,7 @@ struct hash<pg::Process> {
         using std::size_t;
         using std::hash;
         using std::string;
-        return hash<string>()(k.getHashKey());
+        return hash<string>()(k.getHashKey()->toString());
 
     }
 };

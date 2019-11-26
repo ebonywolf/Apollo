@@ -6,6 +6,12 @@
 #include "Entities/Process.h"
 #include "Entities/SpecialEntities.h"
 
+#include <signal.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <signal.h>
+#include <stdio.h>
+#include <unistd.h>
 using namespace std;
 using namespace pg;
 /*
@@ -67,7 +73,6 @@ inline std::string className(const std::string& prettyFunction)
         return "::";
     size_t begin = prettyFunction.substr(0,colons).rfind(" ") + 1;
     size_t end = colons - begin;
-
     return prettyFunction.substr(begin,end);
 }
 
@@ -89,35 +94,69 @@ struct BoxInfo: public GenericData<BoxInfo>{
 
 };
 
-class Box: public BoxInfo{
+class Box: public BoxInfo,  public GenericEntity<Box>{
+public:
+
+    Box():GenericEntity(__CLASS_NAME__){
+        std::cerr<<"DD"<<std::endl;
+    }
+
+    Box(BoxInfo& b):BoxInfo(b){
+    }
+
+
+    static std::shared_ptr<Box> boxCreator(Myptr me, BoxInfo box){
+        std::cout<< "Me:"<<me->getHashKey() <<std::endl;
+        shared_ptr<Box> b = make_shared<Box>(box);
+        return b;
+    }
 
 
 };
+using Boxptr = std::shared_ptr<Box>;
 
 class BoxDrawer: public GenericEntity<BoxDrawer>{
 public:
-    BoxDrawer():GenericEntity(__CLASS_NAME__,drawBox){
-    }
-    static Ack func(Ack, Ack){
 
+    BoxDrawer():GenericEntity(__CLASS_NAME__){
     }
 
-    static Ack drawBox(std::shared_ptr<BoxDrawer> This, BoxInfo box){
-        std::cout<<"Got box:"<<box<<std::endl;
-        shared_ptr<Box> b = make_shared<Box>(box);
-        auto future = This->send<Ack>(b);
-        return future;
+    static Ack creator(Myptr me, BoxInfo info){
+        std::cout<<__PRETTY_FUNCTION__<<std::endl;
+        std::cout<<"Got box:"<<info<<std::endl;
+        auto fut =   me->send<Box>(info);
+        Box box = fut.getObject<Box>();
+        auto ack = me->send<Ack>(box);
+        return ack.getObject<Ack>();
     }
+
 };
 
 
+void ouch(int sig)
+{
+    printf("OUCH! - I got signal %d\n", sig);
+}
+
+ int start(){
+    struct sigaction act;
+    act.sa_handler = ouch;
+    sigemptyset(&act.sa_mask);
+    act.sa_flags = 0;
+    sigaction(SIGINT, &act, 0);
+
+    return 2;
+}
 int main(int argc,char** argv)
 {
+    int a = start();
+    std::cerr<<"A"<<a<<std::endl;
+    return 0;
    // BoxDrawer::_instance;
     try{
-        Entityptr context = ContextCreator::createFromJson("test.json");
+        Particle context = ContextCreator::createFromJson("test.json");
         Dataptr box = make_shared<BoxInfo>();
-        Entityptr alce= Entityptr(new UniqueEntity("Alce"));
+        Particle alce= Particle(new UniqueEntity("Alce"));
         alce->addOmni(context);
 
         Future f = alce->send<Ack>(box);
@@ -125,7 +164,10 @@ int main(int argc,char** argv)
 
         Ack c = f.getObject<Ack>();
         std::cout<< "Result:"<<c.a << std::endl;
-    }catch(runtime_error& e){
+    }catch(Json::RuntimeError& e){
+        std::cout<<e.what()<<std::endl;
+    }
+    catch(std::exception& e){
         std::cout<<e.what()<<std::endl;
     }
 

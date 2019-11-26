@@ -15,7 +15,7 @@ struct Data //:protected std::unique_ptr<Base_Data>
 
     }
 
-    virtual Datatype getType() const=0;
+    virtual Datatypeptr getType() const=0;
 
     friend std::ostream& operator<<(std::ostream& os, const Data& data )
     {
@@ -36,9 +36,10 @@ struct GenericData: public Data {
     {
     }
 
-    virtual Datatype getType() const
+    virtual Datatypeptr getType() const
     {
-        return Datatype(name_id);
+        throw "Todo";
+
     }
 
     friend std::ostream& operator<<(std::ostream& os, const GenericData<T>& data )
@@ -52,13 +53,13 @@ struct GenericData: public Data {
 using Dataptr = std::shared_ptr<Data>;
 
 struct FutureBase: public Dataptr{
-    FutureBase(Datatype type):type(type){
+    FutureBase(Datatypeptr type):type(type){
     }
-    virtual Datatype getType() const
+    virtual Datatypeptr getType() const
    {
        return type;
    }
-    Datatype type;
+    Datatypeptr type;
     Dataptr _actualObject;
 
 };
@@ -67,7 +68,7 @@ struct FutureBase: public Dataptr{
 struct Future : public std::shared_ptr<FutureBase>{
 
     //Future():std::shared_ptr<FutureBase>(new FutureBase()){}
-    Future(Datatype type):std::shared_ptr<FutureBase>(new FutureBase(type)){
+    Future(Datatypeptr type):std::shared_ptr<FutureBase>(new FutureBase(type)){
     }
     void set(Dataptr p){
         if(ready())throw "foo";
@@ -93,7 +94,7 @@ struct Future : public std::shared_ptr<FutureBase>{
         if(get()->_actualObject)return true;
         return false;
     }
-    virtual Datatype getType() const
+    virtual Datatypeptr getType() const
     {
         return get()->getType();
     }
@@ -110,7 +111,7 @@ struct hash<pg::Datatype> {
         using std::size_t;
         using std::hash;
         using std::string;
-        return hash<string>()(k.getName());
+        return hash<string>()(k.toString());
 
     }
 };
@@ -121,7 +122,7 @@ struct hash<pg::DataPair> {
         using std::size_t;
         using std::hash;
         using std::string;
-        return hash<string>()(k.getHashKey());
+        return hash<string>()(k.toString());
 
     }
 };

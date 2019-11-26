@@ -29,7 +29,7 @@ struct PacketMap   {
     void push(Processptr context,Packet p);
     PacketList pull(Processptr context);
 private:
-    std::unordered_map<std::string,PacketList > _base;
+    std::unordered_map< Datatypeptr,PacketList, HashFunction> _base;
 
 };
 
