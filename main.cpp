@@ -94,21 +94,24 @@ struct BoxInfo: public GenericData<BoxInfo>{
 
 };
 
+
+
 class Box: public BoxInfo,  public GenericEntity<Box>{
 public:
 
-    Box():GenericEntity(__CLASS_NAME__){
-        std::cerr<<"DD"<<std::endl;
+    Box():GenericEntity(__CLASS_NAME__,boxCreator  ){
+
     }
 
     Box(BoxInfo& b):BoxInfo(b){
     }
 
 
-    static std::shared_ptr<Box> boxCreator(Myptr me, BoxInfo box){
+    static Ack boxCreator(Myptr me, BoxInfo box){
         std::cout<< "Me:"<<me->getHashKey() <<std::endl;
-        shared_ptr<Box> b = make_shared<Box>(box);
-        return b;
+        //shared_ptr<Box> b = make_shared<Box>(box);
+        //return b;
+        return Ack(666);
     }
 
 
@@ -118,40 +121,23 @@ using Boxptr = std::shared_ptr<Box>;
 class BoxDrawer: public GenericEntity<BoxDrawer>{
 public:
 
-    BoxDrawer():GenericEntity(__CLASS_NAME__){
+    BoxDrawer():GenericEntity(__CLASS_NAME__,creator){
     }
 
-    static Ack creator(Myptr me, BoxInfo info){
+    static std::shared_ptr<Box> creator(Myptr me, BoxInfo info){
         std::cout<<__PRETTY_FUNCTION__<<std::endl;
         std::cout<<"Got box:"<<info<<std::endl;
-        auto fut =   me->send<Box>(info);
-        Box box = fut.getObject<Box>();
-        auto ack = me->send<Ack>(box);
-        return ack.getObject<Ack>();
+
+        return std::make_shared<Box>(info);
     }
 
 };
 
 
-void ouch(int sig)
-{
-    printf("OUCH! - I got signal %d\n", sig);
-}
 
- int start(){
-    struct sigaction act;
-    act.sa_handler = ouch;
-    sigemptyset(&act.sa_mask);
-    act.sa_flags = 0;
-    sigaction(SIGINT, &act, 0);
-
-    return 2;
-}
 int main(int argc,char** argv)
 {
-    int a = start();
-    std::cerr<<"A"<<a<<std::endl;
-    return 0;
+
    // BoxDrawer::_instance;
     try{
         Particle context = ContextCreator::createFromJson("test.json");
@@ -159,15 +145,13 @@ int main(int argc,char** argv)
         Particle alce= Particle(new UniqueEntity("Alce"));
         alce->addOmni(context);
 
-        Future f = alce->send<Ack>(box);
+        Future f = alce->send<std::shared_ptr<Box>>(box);
         alce->update();
 
-        Ack c = f.getObject<Ack>();
-        std::cout<< "Result:"<<c.a << std::endl;
-    }catch(Json::RuntimeError& e){
-        std::cout<<e.what()<<std::endl;
+        auto c = f.getObject<std::shared_ptr<Box>>();
+        std::cout<< "Result:"<<c << std::endl;
     }
-    catch(std::exception& e){
+    catch(Json::RuntimeError& e){
         std::cout<<e.what()<<std::endl;
     }
 

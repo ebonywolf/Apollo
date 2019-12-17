@@ -21,15 +21,15 @@ public:
    {
    }
 
-/*Todo Make this work
     template <class ...D>
-    GenericEntity(std::string name, D... t ) : Entity(t...), _name(name)
+    GenericEntity(std::string name, D... t ) : Entity(t...),
+    _key( std::make_shared<HashKey>(name))
     {
-    };
-    */
+    }
+
     virtual ~GenericEntity(){}
 
-    Processptr getNull() const override{
+    Processptr getBase() const override{
         return std::make_shared<UniqueEntity>(toString());
     }
 
@@ -56,56 +56,6 @@ template <class T>
 Entity::PlaceHolder GenericEntity<T>::_instance = Entity::createGlobalEntity<T>();
 //std::make_shared<GenericEntity<T>>(PlaceHolder());
 
-class JsonEntity : public Entity
-{
-public:
-    JsonEntity(std::string _name):
-        _key( std::make_shared<HashKey>(_name)){
-
-    }
-
-    JsonEntity(std::string _name,Json::Value val):
-        _key( std::make_shared<HashKey>(_name))
-    {
-        for(auto& name: val.getMemberNames()) {
-            Json::Value& subval = val[name];
-            if(subval.isObject()) {
-                Entityptr toadd = Entityptr(new JsonEntity(name, subval));
-                auto global = getGlobal();
-                auto key = std::make_shared<HashKey>(name);
-                if( global->hasOmni(key) ) {
-                    auto current = global->getOmni(key);
-                    auto c_current=  cast(current);
-
-                    c_current->extend(toadd);
-                    global->addEurus(current);
-                    addEurus(current);
-                }else{
-                    global->addOmni(toadd);
-                    global->addEurus(toadd);
-                    addEurus(toadd);
-                }
-
-            } else {
-                //  throw "foo";
-            }
-        }
-    }
-
-    Processptr getNull() const override{
-        return std::make_shared<JsonEntity>("null");
-    }
-
-    virtual Datatypeptr getHashKey() const
-    {
-        return _key;
-    }
-    virtual std::string toString() const
-    {
-        return _key->toString();
-    }
-    Datatypeptr _key;
-};
 
 
 
@@ -118,17 +68,63 @@ public:
     {
         return _key;
     }
+    Processptr getBase() const{
+        return std::make_shared<UniqueEntity>("null");
+    }
     std::string toString() const{
         return _key->toString();
-    }
-    Processptr getNull() const override{
-        return std::make_shared<UniqueEntity>(getHashKey()->toString());
     }
 
 private:
     Datatypeptr _key;
-    static int _cont;
 };
+
+
+
+class JsonEntity : public UniqueEntity
+{
+public:
+    JsonEntity(std::string _name):UniqueEntity(_name)
+    {
+
+    }
+
+    JsonEntity(std::string _name,Json::Value val):UniqueEntity(_name)
+    {
+        for(auto& name: val.getMemberNames()) {
+            Json::Value& subval = val[name];
+            if(subval.isObject()) {
+                Entityptr toadd = Entityptr(new JsonEntity(name, subval));
+
+                auto global = getGlobal();
+                auto key = std::make_shared<HashKey>(name);
+
+                if( global->hasOmni(key) ) {
+                    auto current = global->getOmni(key);
+
+                    std::cout<<"Editing:"<<current->toString()<<std::endl;
+                   // auto c_current=  cast(current);
+                   // c_current->extend(toadd);
+
+                    current->extend(toadd);
+                    global->addEurus(current);
+                    addEurus(current);
+                }else{
+                    std::cout<<"Creating:"<<toadd->toString()<<std::endl;
+
+                    global->addOmni(toadd);
+                    global->addEurus(toadd);
+                    addEurus(toadd);
+                }
+
+            } else {
+                //  throw "foo";
+            }
+        }
+    }
+};
+
+
 
 
 struct ContextCreator {

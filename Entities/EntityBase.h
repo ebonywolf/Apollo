@@ -7,7 +7,7 @@
 #include "Basic.h"
 #include "Data.h"
 #include "KeySet.h"
-
+#include "Future.h"
 namespace pg{
 
 
@@ -32,18 +32,34 @@ struct Process_Base : public  DatatypeBase, public enable_shared_from_this_virtu
 
     virtual void omniUpdate(const Processptr context) = 0;
     virtual void eurusUpdate(const Processptr context) = 0;
-    virtual void warnEurusChange(Processptr context) = 0;
-    virtual void warnOmniChange(Processptr context) = 0;
+    virtual void warnEurusChange(const Processptr context) = 0;
+    virtual void warnOmniChange(const Processptr context) = 0;
     virtual Processptr getOmni() const = 0;
-    virtual Processptr getNull() const = 0;
-    virtual bool hasEurus(Datatypeptr ) const=0;
-    virtual bool hasOmni(Datatypeptr name) const =0;
-    virtual Processptr getOmni(Datatypeptr name) const = 0;
+    virtual Processptr getEurus() const = 0;
 
-    virtual void extend(Processptr other) = 0;
+    virtual bool hasEurus(const Datatypeptr ) const=0;
+    virtual bool hasOmni(const Datatypeptr name) const =0;
+    virtual Processptr getOmni(const Datatypeptr name) const = 0;
+
+    virtual Processptr getBase() const = 0;
+
+
+    virtual void extend(const Processptr other) = 0;
     virtual int size() const = 0;
-    virtual void receiveData(Processptr context, Packet packet)=0;
+    virtual void receiveData(const Processptr context, Packet packet)=0;
+
+    bool isNull() const {
+        return this->equals(this->getBase());
+    }
+
+
+
+    Processptr shared_from_this(){
+        return enable_shared_from_this_virtual<Process_Base>::shared_from_this();
+    }
 };
+
+extern std::ostream& operator<<(std::ostream& os, const Processptr notme);
 
 
 template <class T>

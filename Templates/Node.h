@@ -31,7 +31,7 @@ struct Color{
     }
 };
 
-struct Node : public sf::RectangleShape, public GenericEntity<Node> {
+struct Node : public sf::RectangleShape {
     int N;
 
     Node()
@@ -61,8 +61,8 @@ struct Node : public sf::RectangleShape, public GenericEntity<Node> {
 
     static void doShit(Entityptr me)
     {
-        auto alce = std::static_pointer_cast<Node>(me);
-
+       //
+//        auto alce = std::static_pointer_cast<Node>(me);
 
 //        unsigned char red=myval.r,green=myval.g,blue=myval.b ;
        // alce->setFillColor( sf::Color (red,green,blue) );

@@ -35,9 +35,9 @@ public:
         return result;
     }
 
-    std::shared_ptr<T const> shared_from_this() const
+    std::shared_ptr<const T > shared_from_this() const
     {
-        std::shared_ptr<T const> result(base_type::shared_from_this(), static_cast<T const*>(this));
+        std::shared_ptr<const T > result(base_type::shared_from_this(), static_cast<const T* >(this));
         return result;
     }
 };

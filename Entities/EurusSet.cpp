@@ -1,5 +1,5 @@
 
-#include "EntitySet.h"
+#include <Entities/EurusSet.h>
 #include "Packet.h"
 namespace pg
 {
@@ -14,13 +14,17 @@ bool Entitycmp::operator()(const Processptr& t1, const Processptr& t2) const {
 }
 */
 
+EurusSet::EurusSet(){
+   _key= std::make_shared<KeySet>();
+}
+
 int EurusSet::size()const
 {
     return _internal.size();
 }
 Datatypeptr EurusSet::getHashKey()const
 {
-    throw "todo";
+   return _key;
 };
 
 void EurusSet::omniUpdate(const Processptr context)
@@ -35,12 +39,27 @@ void EurusSet::eurusUpdate(const Processptr context)
         x.second.eurusUpdate(context);
     }
 }
+Processptr EurusSet::getEurus() const
+{
+    throw "todo";
+   // return getDataPair();
+}
 void EurusSet::warnEurusChange(Processptr context)
 {
     for(auto x: _internal) {
         x.second.warnEurusChange(context);
     }
 }
+
+bool EurusSet::contains(Datatypeptr d)const
+{
+    for(auto x: _internal) {
+       if(x.second.contains(d))
+           return true;
+    }
+    return false;
+}
+
 void EurusSet::warnOmniChange(Processptr context)
 {
     for(auto x: _internal) {
@@ -48,7 +67,7 @@ void EurusSet::warnOmniChange(Processptr context)
     }
 }
 
-Processptr EurusSet::getNull()const
+Processptr EurusSet::getBase()const
 {
     return std::make_shared<EurusSet>();
 }
@@ -56,6 +75,9 @@ Processptr EurusSet::getNull()const
 void EurusSet::extend(Processptr ptr)
 {
     _internal[ptr->getDataPair()].extend(ptr);
+    _key->join(ptr->getDataPair());
+
+
 }
 
 bool EurusSet::hasOmni(Datatypeptr name) const
@@ -89,6 +111,8 @@ Processptr EurusSet::getOmni(Datatypeptr name) const {
 
 bool EurusSet::hasEurus(Datatypeptr p) const
 {
+    return contains(p);
+
     for(auto x: _internal) {
         if( x.second.hasEurus(p))
             return true;
@@ -102,5 +126,36 @@ void EurusSet::receiveData(Processptr context, Packet packet)
         x.second.receiveData(context,packet);
     }
 }
+
+
+
+
+
+std::string EurusSet::toString() const{
+    return _key->toString();
+}
+Datatypeptr EurusSet::junction(Datatypeptr other) const {
+    throw "todo";
+}
+
+Datatypeptr EurusSet::getFrom() const{
+    throw "todo";
+}
+Datatypeptr EurusSet::getTo() const{
+
+    throw "todo";
+}
+Datatypeptr EurusSet::getInverseDataPair() const{
+    throw "todo";
+}
+Datatypeptr EurusSet::getDataPair() const{
+    return std::make_shared<DataPair>(getFrom(),getTo());
+}
+
+
+
+
+
+
 
 }

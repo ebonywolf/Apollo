@@ -6,8 +6,8 @@ namespace pg{
 
 template <class T>
 auto _getType(std::shared_ptr<T> t){
-   // T alce;
-    return t->getType();
+    T alce;
+    return alce.getType();
 }
 template <class T>
 auto _getType(T t){

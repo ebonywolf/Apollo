@@ -1,18 +1,28 @@
 #include "Entity.h"
 #include "SpecialEntities.h"
 
-namespace pg {
+namespace pg
+{
 
 
-void Entity::addEurus(const Processptr obj){
+void Entity::addEurus(const Processptr obj)
+{
+  //  std::cout<<"Adding:"<<obj->toString()<<std::endl;
     //if(_eurus.count(obj))throw "repeat
-    _eurus->extend(obj);
-}
+    auto alce1= obj->toString();
+   // auto alce2=this->toString();
+     _eurus->extend(obj);
+ }
+std::ostream& operator<<(std::ostream& os, const Processptr data){
+        os << data->toString();
+        return os;
+    }
 
 
-Entityptr Entity::getGlobal(){
+Entityptr Entity::getGlobal()
+{
     static Entityptr global;
-    if(!global){
+    if(!global) {
         global = std::make_shared<UniqueEntity>("_Global");
         // Entityptr(new Entity());
         // global->["GLOBAL"] = global;//shared ptr pointing to itself,
@@ -20,7 +30,8 @@ Entityptr Entity::getGlobal(){
     return global;
 }
 
-Dataptr Entity::handle( Entityptr ent, Dataptr d) const {
+Dataptr Entity::handle( Entityptr ent, Dataptr d) const
+{
     /*
     if(processes.count(p.getChannel())){
         auto func = getProcess().get(p.getChannel());
@@ -40,30 +51,58 @@ Dataptr Entity::handle( Entityptr ent, Dataptr d) const {
     */
 }
 
-Future Entity::send(Dataptr sentData,const Datatypeptr fromType, Processptr context){
+Future Entity::send(Dataptr sentData,const Datatypeptr fromType, Processptr context)
+{
     const auto toType = sentData->getType();
     Datatypeptr pair = std::make_shared<DataPair>(fromType, toType);
+
     auto reversePair = pair->getInverseDataPair();
 
     bool sent = false;
     Future future(fromType);
-
-    throw "Todo";
-    /*
-    for(auto& to : _omni){
-
-        if(to->hasEurus(reversePair)){
-            sent = true;
-        }
-        Packet packet(to, sentData, future, context);
-        _sentBuffer.push(context, packet);
-        context->warnOmniChange(this->shared_from_this());
+    if( !_omni->hasEurus( reversePair) ){
+        throw std::runtime_error(std::string("no handler for: ") + reversePair->toString());
     }
-    */
-    if(!sent){
-        throw std::runtime_error(std::string("no handler for: ") + reversePair->getHashKey()->toString());
-    }
+    Packet packet( sentData, future, context);
+
+    _sentBuffer.push(context,packet);
+    context->warnOmniChange(this->shared_from_this());
+
     return future;
 }
+
+
+void Entity::warnOmniChange(const Processptr context)
+{
+    _senders->extend(context);
+}
+
+
+Datatypeptr Entity::junction( Datatypeptr other)  const
+{
+
+    throw "Todo";
+}
+Datatypeptr  Entity::getFrom()  const
+{
+
+    throw "Todo";
+}
+Datatypeptr  Entity::getTo() const
+{
+
+    throw "Todo";
+}
+Datatypeptr  Entity::getInverseDataPair() const
+{
+
+    throw "Todo";
+}
+Datatypeptr  Entity::getDataPair() const
+{
+    return _eurus;
+}
+
+
 
 }

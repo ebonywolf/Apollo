@@ -5,13 +5,11 @@
 namespace pg{
 
 struct Packet{
-    Processptr destination;
     Dataptr data;
     Future futureAnswer;
     Processptr context;
 
-    Packet(Processptr destination, Dataptr data, Future futureAnswer,Processptr context ):
-        destination(destination),
+    Packet( Dataptr data, Future futureAnswer,Processptr context ):
         data(data),futureAnswer(futureAnswer),context(context)
     {
     }

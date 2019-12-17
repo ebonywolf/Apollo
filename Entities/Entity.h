@@ -7,7 +7,9 @@
 #include "Data.h"
 #include "Process.h"
 #include "Tools.h"
-#include "EntitySet.h"
+#include "DatatypeBase.h"
+#include "OmniSet.h"
+#include "EurusSet.h"
 
 #include "Packet.h"
 namespace pg
@@ -36,7 +38,7 @@ struct Entity : public Entity_Base  {//Defines object that runs many functions a
     {
         Dataptr sentData = _getObj(d);
        //  d;//
-        Processptr context= this->shared_from_this();
+        Processptr context= shared_from_this();
         T received;
         const auto fromType = _getType(received) ;//received.getType();
         return send(sentData, fromType,context );
@@ -61,14 +63,19 @@ struct Entity : public Entity_Base  {//Defines object that runs many functions a
     }
 
     Processptr getOmni(Datatypeptr name) const{
-                return _omni->getOmni(name);
+        return _omni->getOmni(name);
     }
-    bool hasEurus( Datatypeptr par ) const override
+    bool hasEurus(  const Datatypeptr par ) const override
     {
         return  _eurus->hasEurus(par);
     }
 
-    bool hasOmni(Datatypeptr name) const override
+    bool contains(Datatypeptr d)const override
+    {
+        return _eurus->contains(d);
+    }
+
+    bool hasOmni(const Datatypeptr name) const override
     {
         return _omni->hasOmni(name);
     }
@@ -82,15 +89,13 @@ struct Entity : public Entity_Base  {//Defines object that runs many functions a
     void omniUpdate(const Processptr context)
     {
         auto packets = _sentBuffer.pull(context);
-        for (auto& pack: packets) {
-            auto thisPtr = this->shared_from_this();
-            Entityptr enti = std::static_pointer_cast<Entity_Base>(thisPtr);
-            Packet request(   enti, pack.data, pack.futureAnswer, pack.context);
 
-            auto alce = pack.destination;
-            (*alce).receiveData(context, request);
+        for (auto& pack: packets) {
+            _omni->receiveData(context,pack);
+            //TODO optimize this
         }
     }
+
     void eurusUpdate(const Processptr context)
     {
         auto packets = _receivedBuffer.pull(context);
@@ -98,6 +103,8 @@ struct Entity : public Entity_Base  {//Defines object that runs many functions a
         for (auto& pack: packets) {
           //  auto handler =_eurus[pack.getChannel()];
             //TODO check first param
+            pack.futureAnswer->set_pending(pack);
+          //  _eurus->handle(ent, d)
             throw "Really todo";
           //  handler->handle(this->shared_from_this(),pack);
         }
@@ -105,30 +112,26 @@ struct Entity : public Entity_Base  {//Defines object that runs many functions a
 
 
     Dataptr handle(Entityptr ent, Dataptr d) const ;
-
     Future send(Dataptr sentData, const Datatypeptr fromType, Processptr context ) override;
 
 
-    Processptr getOmniList() const{
-        return _omni;
+    Processptr getEurus() const override{
+        return _eurus;
     }
 
+    void extend(const Processptr other) override{
 
-    void extend(Processptr other) override{
+
         addEurus(other);
 
         addOmni(other->getOmni());
-
     }
 
-    void warnOmniChange(Processptr context) override
-    {
-        _senders->extend(context);
-    }
+    void warnOmniChange(const Processptr context) override;
     int size() const override{
         return _receivers->size() + _senders->size();
     }
-    void warnEurusChange(Processptr context) override
+    void warnEurusChange(const Processptr context) override
     {
         _receivers->extend( context );
     }
@@ -137,24 +140,21 @@ struct Entity : public Entity_Base  {//Defines object that runs many functions a
         return _omni;
     }
     void update(){
-
-
         while(_senders->size() || _receivers->size()){
 
             if(_senders->size()){
                 auto clone = _senders;
                 auto context = this->shared_from_this();
-                _senders = _senders->getNull();
+                _senders = _senders->getBase();
                 clone->omniUpdate(context);
 
             }
             if(_receivers->size()){
                 auto clone = _receivers;
                 auto context = this->shared_from_this();
-                _receivers = _receivers->getNull();
+                _receivers = _receivers->getBase();
                 clone->eurusUpdate(context);
             }
-
         }
 
     }
@@ -168,7 +168,7 @@ struct Entity : public Entity_Base  {//Defines object that runs many functions a
     virtual Datatypeptr getDataPair()const;
 
 protected:
-    void receiveData(Processptr context, Packet packet) override
+    void receiveData(const Processptr context, Packet packet) override
     {
         //TODO MEMORY FUNCTION
         _receivedBuffer.push(context, packet);
@@ -185,13 +185,12 @@ protected:
         _receivers = std::make_shared<OmniSet>();
     };
 
-    /* Todo, make this work
     template <class ...T>
-    Entity(T...t)
+    Entity(T...t):Entity()
     {
         addProcess(t...);
     };
-    */
+
 
     struct PlaceHolder {
         PlaceHolder(){
@@ -201,6 +200,8 @@ protected:
     static PlaceHolder createGlobalEntity(){
         Entityptr novo = Entityptr(new T());
         auto global = Entity::getGlobal();
+        std::cout<<"GCreating:"<<novo->toString()<< " Eurusize:"<< novo->getEurus()->size()<<" OmnSize:"<<novo->getOmni()->size()  <<std::endl;
+
         global->addOmni(novo);
         global->addEurus( novo);
         return PlaceHolder();
