@@ -1,7 +1,7 @@
 //#include <bits/stdc++.h>
+//#include <SFML/Graphics.hpp>
 
 #include <iostream>
-#include <SFML/Graphics.hpp>
 #include "Coord.h"
 #include "Entities/Process.h"
 #include "Entities/SpecialEntities.h"
@@ -14,6 +14,121 @@
 #include <unistd.h>
 using namespace std;
 using namespace pg;
+
+
+std::string className(const std::string& prettyFunction)
+{
+    size_t colons = prettyFunction.find("::");
+    if (colons == std::string::npos)
+        return "::";
+    size_t begin = prettyFunction.substr(0,colons).rfind(" ") + 1;
+    size_t end = colons - begin;
+    return prettyFunction.substr(begin,end);
+}
+
+#define __CLASS_NAME__ className(__PRETTY_FUNCTION__)
+
+
+struct Ack: public GenericData<Ack>{
+    int a;
+    Ack(){}
+    Ack(int a):a(a){}
+};
+
+struct BoxInfo: public GenericData<BoxInfo>{
+    pg::Coord pos,dim;
+    BoxInfo(){
+    }
+    BoxInfo(double x, double y):pos(x,y){
+
+    }
+
+    friend ostream& operator<<(ostream& os, const BoxInfo& b){
+        os<<b.pos;
+        return os;
+    }
+
+};
+
+
+
+class Box: public BoxInfo,  public GenericEntity<Box>{
+public:
+
+    Box():GenericEntity(__CLASS_NAME__,boxMethod  ){
+
+    }
+
+    Box(BoxInfo& b):BoxInfo(b){
+    }
+    void print(){
+        std::cout<< (BoxInfo)*this << std::endl;
+    }
+
+    static Ack boxMethod(Myptr me, std::shared_ptr<BoxInfo> box){
+        if(!me){
+            std::cout<< "Fooo" << std::endl;
+        }
+        std::cout<< "Me:"<<me->getHashKey() <<std::endl;
+        std::cout<<"Got box:"<< *box<<std::endl;
+
+        std::cout<< "Key:"<<box->getType()->getHashKey() << std::endl;
+
+
+        return Ack(666);
+    }
+
+
+};
+using Boxptr = std::shared_ptr<Box>;
+
+class BoxDrawer: public GenericEntity<BoxDrawer>{
+public:
+
+    BoxDrawer():GenericEntity(__CLASS_NAME__,creator){
+    }
+
+    static std::shared_ptr<Box> creator(Myptr me, BoxInfo info){
+        std::cout<<__PRETTY_FUNCTION__<<std::endl;
+        std::cout<<"Creating box:"<<info<<std::endl;
+
+        return std::make_shared<Box>(info);
+    }
+
+};
+
+
+
+int main(int argc,char** argv)
+{
+
+   // BoxDrawer::_instance;
+    try{
+        Particle context = ContextCreator::createFromJson("test.json");
+        Dataptr boxinfo = make_shared<BoxInfo>(2,3);
+        Particle alce= Particle(new UniqueEntity("Alce"));
+        alce->addOmni(context);
+
+        Future boxmsg = alce->send<std::shared_ptr<Box>>(boxinfo);
+        alce->update();
+
+        auto createdBox = boxmsg.getObject<std::shared_ptr<Box>>();
+        createdBox->print();
+
+        Future ackmsg = alce->send<Ack>(createdBox);
+        alce->update();
+        auto ack = ackmsg.getObject<Ack>();
+        std::cout<< "Ack:"<<ack.a << std::endl;
+
+    }
+    catch(Json::RuntimeError& e){
+        std::cout<<e.what()<<std::endl;
+    }
+
+   // Ack ack =context->send<Ack>(box);
+    return 0;
+}
+
 /*
 sf::Color defaultColor = sf::Color(255,0,0,255);
 Coord defaultSize = Coord(5,5);
@@ -66,96 +181,3 @@ void drawCurve(Axles axles, double maxPrecision=100)
 
 */
 
-inline std::string className(const std::string& prettyFunction)
-{
-    size_t colons = prettyFunction.find("::");
-    if (colons == std::string::npos)
-        return "::";
-    size_t begin = prettyFunction.substr(0,colons).rfind(" ") + 1;
-    size_t end = colons - begin;
-    return prettyFunction.substr(begin,end);
-}
-
-#define __CLASS_NAME__ className(__PRETTY_FUNCTION__)
-
-
-struct Ack: public GenericData<Ack>{
-    int a;
-    Ack(){}
-    Ack(int a):a(a){}
-};
-
-struct BoxInfo: public GenericData<BoxInfo>{
-    pg::Coord pos,dim;
-    friend ostream& operator<<(ostream& os, const BoxInfo& b){
-        os<<b.pos;
-        return os;
-    }
-
-};
-
-
-
-class Box: public BoxInfo,  public GenericEntity<Box>{
-public:
-
-    Box():GenericEntity(__CLASS_NAME__,boxCreator  ){
-
-    }
-
-    Box(BoxInfo& b):BoxInfo(b){
-    }
-
-
-    static Ack boxCreator(Myptr me, BoxInfo box){
-        std::cout<< "Me:"<<me->getHashKey() <<std::endl;
-        //shared_ptr<Box> b = make_shared<Box>(box);
-        //return b;
-        return Ack(666);
-    }
-
-
-};
-using Boxptr = std::shared_ptr<Box>;
-
-class BoxDrawer: public GenericEntity<BoxDrawer>{
-public:
-
-    BoxDrawer():GenericEntity(__CLASS_NAME__,creator){
-    }
-
-    static std::shared_ptr<Box> creator(Myptr me, BoxInfo info){
-        std::cout<<__PRETTY_FUNCTION__<<std::endl;
-        std::cout<<"Got box:"<<info<<std::endl;
-
-        return std::make_shared<Box>(info);
-    }
-
-};
-
-
-
-int main(int argc,char** argv)
-{
-
-   // BoxDrawer::_instance;
-    try{
-        Particle context = ContextCreator::createFromJson("test.json");
-        Dataptr box = make_shared<BoxInfo>();
-        Particle alce= Particle(new UniqueEntity("Alce"));
-        alce->addOmni(context);
-
-        Future f = alce->send<std::shared_ptr<Box>>(box);
-        alce->update();
-
-        auto c = f.getObject<std::shared_ptr<Box>>();
-        std::cout<< "Result:"<<c << std::endl;
-    }
-    catch(Json::RuntimeError& e){
-        std::cout<<e.what()<<std::endl;
-    }
-
-   // Ack ack =context->send<Ack>(box);
-
-    return 0;
-}

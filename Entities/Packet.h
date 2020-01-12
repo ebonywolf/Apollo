@@ -13,8 +13,10 @@ struct Packet{
         data(data),futureAnswer(futureAnswer),context(context)
     {
     }
-    DataPair getChannel()const {
-        return DataPair(futureAnswer->getType(), data->getType());
+    Datatypeptr getChannel()const {
+        return Datatypeptr(
+                new DataPair(futureAnswer->getType(), data->getType() )
+        );
     }
 };
 

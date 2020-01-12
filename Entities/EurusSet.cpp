@@ -95,8 +95,17 @@ Processptr EurusSet::getOmni() const
     return omni;
 }
 
-Dataptr EurusSet::handle(Entityptr ent, Dataptr d) const{
-    throw "todo";
+
+void EurusSet::handle(Entityptr ent, Packet d)
+{
+    auto channel = d.getChannel()->getInverseDataPair();
+
+    for(auto x: _internal) {
+       bool contains = x.second.contains(channel);
+       if(contains ){
+          x.second.handle(ent,d);
+       }
+    }
 }
 
 Future EurusSet::send(Dataptr sentData, const Datatypeptr fromType, Processptr context ){
@@ -113,11 +122,6 @@ bool EurusSet::hasEurus(Datatypeptr p) const
 {
     return contains(p);
 
-    for(auto x: _internal) {
-        if( x.second.hasEurus(p))
-            return true;
-    }
-    return false;
 }
 void EurusSet::receiveData(Processptr context, Packet packet)
 {

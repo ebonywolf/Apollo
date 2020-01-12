@@ -14,7 +14,7 @@ class EurusSet :  public Process_Base
 public:
     EurusSet();
     void extend(Processptr);
-    virtual Dataptr handle(Entityptr ent, Dataptr d) const ;
+    virtual void handle(Entityptr ent, Packet d);
     virtual Future send(Dataptr sentData, const Datatypeptr fromType, Processptr context );
     virtual void omniUpdate(const Processptr context) ;
     virtual void eurusUpdate(const Processptr context);

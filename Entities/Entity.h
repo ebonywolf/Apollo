@@ -12,6 +12,7 @@
 #include "EurusSet.h"
 
 #include "Packet.h"
+#include "GenericProcess.h"
 namespace pg
 {
 
@@ -51,7 +52,6 @@ struct Entity : public Entity_Base  {//Defines object that runs many functions a
     {
         auto alce = GenericProcess<INPUT,OUTPUT>::createProcess(func);
         Processptr p = Processptr (  alce ) ;
-
         addEurus(p);
     }
 
@@ -101,17 +101,16 @@ struct Entity : public Entity_Base  {//Defines object that runs many functions a
         auto packets = _receivedBuffer.pull(context);
 
         for (auto& pack: packets) {
-          //  auto handler =_eurus[pack.getChannel()];
-            //TODO check first param
-            pack.futureAnswer->set_pending(pack);
-          //  _eurus->handle(ent, d)
-            throw "Really todo";
-          //  handler->handle(this->shared_from_this(),pack);
+  
+            Entityptr me = std::static_pointer_cast<Entity_Base>(this->shared_from_this());
+            handle( me , pack);
+            pack.futureAnswer.setReady();
+
         }
     }
 
 
-    Dataptr handle(Entityptr ent, Dataptr d) const ;
+    void handle(Entityptr ent, Packet d) ;
     Future send(Dataptr sentData, const Datatypeptr fromType, Processptr context ) override;
 
 
@@ -200,8 +199,7 @@ protected:
     static PlaceHolder createGlobalEntity(){
         Entityptr novo = Entityptr(new T());
         auto global = Entity::getGlobal();
-        std::cout<<"GCreating:"<<novo->toString()<< " Eurusize:"<< novo->getEurus()->size()<<" OmnSize:"<<novo->getOmni()->size()  <<std::endl;
-
+        std::cout<< "Adding to Global:"<<novo->toString() << std::endl;
         global->addOmni(novo);
         global->addEurus( novo);
         return PlaceHolder();

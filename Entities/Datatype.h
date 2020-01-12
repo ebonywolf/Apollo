@@ -66,7 +66,7 @@ struct DataPair: public DatatypeBase
         return _to;
     }
     virtual bool contains(Datatypeptr d)const override{
-        return _to->equals(d) || _from->equals(d);
+        return _to->contains(d->getTo()) && _from->contains(d->getFrom());
     }
 
 

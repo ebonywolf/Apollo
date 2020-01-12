@@ -54,7 +54,7 @@ using Dataptr = std::shared_ptr<Data>;
 
 
 
-struct DataSet : public Data{
+struct DataSet {
 
     DataSet(Datatypeptr type):type(type){
     }

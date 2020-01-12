@@ -30,25 +30,10 @@ Entityptr Entity::getGlobal()
     return global;
 }
 
-Dataptr Entity::handle( Entityptr ent, Dataptr d) const
+void Entity::handle(Entityptr ent, Packet d)
 {
-    /*
-    if(processes.count(p.getChannel())){
-        auto func = getProcess().get(p.getChannel());
-        Dataptr answer = func->handle(this->shared_from_this(),p.data);
-        p.futureAnswer.set(answer);
-
-    }
-    else{
-        if(_eurus.count(p.getChannel())){
-            auto alce = _eurus[p.getChannel()];
-            alce->handle(p);
-        }
-        else{
-            throw "foo";
-        }
-    }
-    */
+     Entityptr me = std::static_pointer_cast<Entity_Base>(this->shared_from_this());
+    _eurus->handle(me , d);
 }
 
 Future Entity::send(Dataptr sentData,const Datatypeptr fromType, Processptr context)

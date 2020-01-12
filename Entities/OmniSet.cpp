@@ -12,9 +12,8 @@ OmniSet::OmniSet(){
    _key= std::make_shared<KeySet>();
 }
 
-Dataptr OmniSet::handle(Entityptr ent, Dataptr d) const
+void OmniSet::handle(Entityptr ent, Packet d)
 {
-    throw "todo";
     for(auto x: _internal) {
         x.second->handle( ent,  d);
     }
@@ -79,7 +78,8 @@ Processptr OmniSet::getBase()const
 void OmniSet::extend(Processptr ptr)
 {
     if( ptr->isNull() ) {
-        return;
+   //     return;todo
+       // std::cout<< "Adding Null:"<<ptr->toString() << std::endl;
     }
     auto h= ptr->getHashKey();
     _internal.insert({ h, ptr });
@@ -120,7 +120,10 @@ bool OmniSet::hasEurus(Datatypeptr p) const
 
 bool OmniSet::contains(Datatypeptr d)const
 {
-    return d->contains(d);
+    for(auto x: _internal) {
+        if( x.second->contains(d) )return true;
+    }
+    return false;
 }
 
 void OmniSet::receiveData(Processptr context, Packet packet)

@@ -10,6 +10,8 @@
 #include "Data.h"
 #include "EntityBase.h"
 #include "Datatype.h"
+#include "Packet.h"
+
 namespace pg
 {
 
@@ -30,7 +32,7 @@ public:
 
     }
 
-    virtual Dataptr handle(Entityptr ent, Dataptr d) const=0;
+    virtual void handle(Entityptr ent, Packet d) =0;
 
     virtual Future send(Dataptr sentData, const Datatypeptr fromType,
             Processptr context)
@@ -88,7 +90,6 @@ public:
     }
     virtual int size() const
     {
-        if(isNull())return 0;
         return 1;
     }
     virtual void receiveData(const Processptr context, Packet packet);
@@ -131,48 +132,6 @@ public:
 protected:
     Datatypeptr _key;
 
-};
-
-template<class INPUT, class OUTPUT>
-struct GenericProcess: public Process
-{
-    using Functiontype= std::function<OUTPUT(Entityptr,INPUT)>;
-
-    template<class T>
-    static GenericProcess* createProcess(
-            OUTPUT (myfunc)(std::shared_ptr<T>, INPUT))
-    {
-        //Creates new Process object with a function pointer as executer
-        auto lambdaFunc = [myfunc](Entityptr entity, INPUT input)
-        {
-            std::shared_ptr<T> alce = std::dynamic_pointer_cast<T>(entity);
-            return myfunc(alce, input);
-        };
-        auto novo = new GenericProcess<INPUT, OUTPUT>();
-        novo->_func = lambdaFunc;
-        return novo;
-    }
-    virtual Processptr getBase() const
-    {
-        return std::make_shared<GenericProcess>();
-    }
-
-    //   virtual Dataptr handle(Entityptr ent, Dataptr d) const=0;
-    virtual Dataptr handle(Entityptr ent, Dataptr d) const override
-    {
-        INPUT *input = static_cast<INPUT*>(d.get());
-        // input = cast(d);
-        OUTPUT output = _func(ent, *input);
-        return _getObj(output);
-    }
-    GenericProcess()
-    {
-         _key = std::make_shared<GenericDataPair<INPUT,OUTPUT>>();
-    }
-
-private:
-
-    Functiontype _func;
 };
 
 }

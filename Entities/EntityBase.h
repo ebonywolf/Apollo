@@ -27,7 +27,7 @@ class DataPair;
 
 struct Process_Base : public  DatatypeBase, public enable_shared_from_this_virtual<Process_Base>
 {
-    virtual Dataptr handle(Entityptr ent, Dataptr d) const =0;
+    virtual void handle(Entityptr ent, Packet d) = 0;
     virtual Future send(Dataptr sentData, const Datatypeptr fromType, Processptr context )=0;
 
     virtual void omniUpdate(const Processptr context) = 0;
@@ -49,7 +49,7 @@ struct Process_Base : public  DatatypeBase, public enable_shared_from_this_virtu
     virtual void receiveData(const Processptr context, Packet packet)=0;
 
     bool isNull() const {
-        return this->equals(this->getBase());
+        return this->size()==0;
     }
 
 
