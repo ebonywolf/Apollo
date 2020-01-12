@@ -24,6 +24,7 @@ using Spriteptr = std::shared_ptr<sf::Shape>;
 
 struct Renderer
 {
+    Renderer();
     Renderer(pg::Position size);
     sf::RenderWindow* window;
     void begin();
