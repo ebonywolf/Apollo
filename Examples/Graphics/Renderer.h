@@ -14,6 +14,7 @@
 #include <SFML/Window/Event.hpp>
 
 #include "Position.h"
+#include <Apollo.h>
 
 #include <memory>
 #include <list>
@@ -22,10 +23,12 @@ namespace pg
 {
 using Spriteptr = std::shared_ptr<sf::Shape>;
 
-struct Renderer
+
+class Renderer : public UniqueEntity, public Singleton<Renderer>
 {
     Renderer();
     Renderer(pg::Position size);
+private:
     sf::RenderWindow* window;
     void begin();
     void beginAssync();

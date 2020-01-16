@@ -6,10 +6,9 @@ set (CMAKE_CXX_STANDARD 17)
 set(CMAKE_BUILD_TYPE Release)
 set(BUILD_LIBS ${BUILD_LIBS} "-lpthread -ljsoncpp")
 
-file(GLOB lib_srcs *.* Entities/*)
+file(GLOB lib_srcs *.* Include/*/* )
 
-include_directories( ${INCLUDE_DIR}  )
-include_directories( . Entities)
+include_directories( Include/ )
 
 add_executable(Apollo main.cpp ${lib_srcs} )
 

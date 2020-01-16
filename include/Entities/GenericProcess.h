@@ -37,7 +37,7 @@ struct GenericProcess: public Process
     template<class T>
     void _callFunc(T& placeholder,Entityptr& ent, Packet& packet)
     {
-        INPUT *input = static_cast<INPUT*>(packet.data.get());
+        INPUT *input = dynamic_cast<INPUT*>(packet.data.get());
         OUTPUT output = _func(ent, *input);
         auto result = _getObj(output);
         packet.futureAnswer.set(result);

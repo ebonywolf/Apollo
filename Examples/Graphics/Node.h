@@ -4,7 +4,7 @@
 
 #include <SFML/Graphics.hpp>
 #include <unordered_map>
-#include "../Entities/SpecialEntities.h"
+#include <Apollo.h>
 #include "Position.h"
 namespace pg
 {
@@ -39,7 +39,7 @@ struct Node : public sf::RectangleShape {
         //  value = ramd
     }
 
-    Node( int i, int j, double size, int n ) :
+    Node( double i, double j, double size) :
         sf::RectangleShape( sf::Vector2f( size, size ) )
     {
         pos = {   i,j };

@@ -6,6 +6,7 @@
 
 #include "DatatypeBase.h"
 #include "KeySet.h"
+#include "Tools.h"
 
 namespace pg {
 

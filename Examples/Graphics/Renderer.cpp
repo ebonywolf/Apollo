@@ -10,16 +10,16 @@
 namespace pg
 {
 
-Renderer::Renderer()
-{
-    window = new   sf::RenderWindow(sf::VideoMode(500,500), "My window");
+Renderer::Renderer(): Renderer(Position(500,500)){
 }
 
 
 
-Renderer::Renderer(pg::Position size)
+Renderer::Renderer(pg::Position size): UniqueEntity("Pg_Renderer")
 {
-    window = new   sf::RenderWindow(sf::VideoMode(size.x,size.y), "My window");
+  //  extend( CommandOriented< Spriteptr >::get() );
+
+    window = new   sf::RenderWindow(sf::VideoMode(size.x,size.y), "My window fofinha");
 }
 
 
