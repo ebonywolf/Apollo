@@ -6,13 +6,17 @@
 #include <json/json.h>
 #include "Data.h"
 #include "Process.h"
-#include "Tools.h"
+
 #include "DatatypeBase.h"
 #include "OmniSet.h"
 #include "EurusSet.h"
 
 #include "Packet.h"
 #include "GenericProcess.h"
+#include "MetaTools/Tools.h"
+
+#include "MetaTools/GetType.h"
+
 namespace pg
 {
 
@@ -37,25 +41,25 @@ struct Entity : public Entity_Base  {//Defines object that runs many functions a
     template<class T,class D>
     Future send( D d  )
     {
-        Dataptr sentData = _getObj(d);
+        Dataptr sentData = Tools::getData(d);
        //  d;//
         Processptr context= shared_from_this();
         T received;
-        const auto fromType = _getType(received) ;//received.getType();
+        const auto fromType = Tools::getType(received) ;//received.getType();
         return send(sentData, fromType,context );
     }
 
 
 
-    template <class INPUT,class D, class OUTPUT>
+    template <class  OUTPUT,class D, class INPUT >
     void addProcess( OUTPUT(func)(D, INPUT) )
     {
-        auto alce = GenericProcess<INPUT,OUTPUT>::createProcess(func);
+        auto alce = GenericProcess< OUTPUT ,INPUT >::createProcess(func);
         Processptr p = Processptr (  alce ) ;
         addEurus(p);
     }
 
-    template <class INPUT, class D, class OUTPUT,class ...T>
+    template <class OUTPUT , class D, class INPUT,class ...T>
     void addProcess(OUTPUT(func)(D, INPUT), T ...t)
     {
         addProcess(func);
@@ -101,7 +105,7 @@ struct Entity : public Entity_Base  {//Defines object that runs many functions a
         auto packets = _receivedBuffer.pull(context);
 
         for (auto& pack: packets) {
-  
+
             Entityptr me = std::static_pointer_cast<Entity_Base>(this->shared_from_this());
             handle( me , pack);
             pack.futureAnswer.setReady();
@@ -211,7 +215,6 @@ protected:
     }
 };
 
-using Particle = std::shared_ptr<Entity>;
 
 
 }

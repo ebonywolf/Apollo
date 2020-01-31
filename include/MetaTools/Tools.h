@@ -1,34 +1,17 @@
 #pragma once
 #include <memory>
-//#include "Data.h"
+
 namespace pg{
     class Data;
     using Dataptr = std::shared_ptr<Data>;
 
+    template <class T>
+    struct GenericData;
 
+    template <class T>
+    struct Generic_GenericData;
 }
 
-template <class T>
-auto _getType(std::shared_ptr<T> t){
-    T alce;
-    return alce.getType();
-}
-template <class T>
-auto _getType(T& t){
-    return t.getType();
-    //Make sure T extends generic_data
-}
-
-
-template <class T>
-pg::Dataptr _getObj(std::shared_ptr<T> t){
-    return std::static_pointer_cast<pg::Data>(t);
-}
-template <class T>
-pg::Dataptr  _getObj(T& t){
-    return pg::Dataptr(new T(t));
-
-}
 
 
 template <class T, class D>

@@ -2,11 +2,12 @@
 
 #include "Process.h"
 #include "Packet.h"
-
+#include "GenericDatatype.h"
+#include "MetaTools/GetData.h"
 namespace pg{
 
 
-template<class INPUT, class OUTPUT>
+template<class OUTPUT, class INPUT >
 struct GenericProcess: public Process
 {
     using Functiontype= std::function<OUTPUT(Entityptr,INPUT)>;
@@ -22,7 +23,7 @@ struct GenericProcess: public Process
             if(!alce)throw "Foo";
             return myfunc(alce, input);
         };
-        auto novo = new GenericProcess<INPUT, OUTPUT>();
+        auto novo = new GenericProcess<OUTPUT,INPUT>();
         novo->_func = lambdaFunc;
         return novo;
     }
@@ -39,7 +40,7 @@ struct GenericProcess: public Process
     {
         INPUT *input = dynamic_cast<INPUT*>(packet.data.get());
         OUTPUT output = _func(ent, *input);
-        auto result = _getObj(output);
+        auto result = Tools::getData(output);
         packet.futureAnswer.set(result);
     }
 
@@ -48,7 +49,7 @@ struct GenericProcess: public Process
     {
         INPUT input = std::static_pointer_cast<T>(packet.data);
         OUTPUT output = _func(ent, input);
-        auto result = _getObj(output);
+        auto result = Tools::getData(output);
         packet.futureAnswer.set(result);
     }
 
@@ -59,9 +60,9 @@ struct GenericProcess: public Process
         //TODO remove this useless constructor
         _callFunc( input , ent, packet);
     }
-    GenericProcess()
+    GenericProcess():
+        Process( std::make_shared<GenericDataPair<OUTPUT,INPUT>>() )
     {
-         _key = std::make_shared<GenericDataPair<INPUT,OUTPUT>>();
     }
 
 private:

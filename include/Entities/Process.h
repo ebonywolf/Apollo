@@ -21,10 +21,12 @@ class Process;
 class Process: public Process_Base
 { //Defines function
 public:
-    Process() :
-            _key(std::make_shared<DataPair>())
+    /*
+    Process() :_key(std::make_shared<DataPair>())
     {
-
+    }
+    */
+    Process(Datatypeptr key) :_key(key) {
     }
     Process(Datatypeptr from, Datatypeptr to) :
             _key(std::make_shared<DataPair>(from, to))

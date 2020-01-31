@@ -6,7 +6,6 @@
 
 #include "DatatypeBase.h"
 #include "KeySet.h"
-#include "Tools.h"
 
 namespace pg {
 
@@ -76,41 +75,22 @@ struct DataPair: public DatatypeBase
         Datatypeptr alce = getDataPair();
         auto _from = getFrom()->junction(other->getFrom());
         auto _to = getTo()->junction(other->getTo());
-        return std::make_shared<DataPair>(_from,_to);
+        return std::make_shared<DataPair>(_to, _from );
     }
 
     virtual Datatypeptr getInverseDataPair()const  override{
-        return std::make_shared<DataPair>(_to, _from);
+        return std::make_shared<DataPair>(_from ,_to );
     }
     virtual Datatypeptr getDataPair() const override{
-        return std::make_shared<DataPair>(_from, _to);
+        return std::make_shared<DataPair>(_to ,_from );
     }
     virtual Datatypeptr getHashKey() const override{
-        return _from->getHashKey() + _to->getHashKey();
+        return _to->getHashKey() + _from->getHashKey();
     }
 
 private:
     std::shared_ptr<const Datatype> _from,_to;
 };
-
-template <class FROM, class TO>
-class GenericDataPair: public DataPair
-{
-public:
-    GenericDataPair() :
-            DataPair(getDataPair())
-    {
-    }
-    DataPair getDataPair(){
-        FROM from;
-        TO to;
-        Datatypeptr fromType(_getType(from));
-        Datatypeptr toType(_getType(to));
-        return DataPair(fromType, toType);
-    }
-
-};
-
 
 struct DatapairSet:public  EditableDatatype  {
 

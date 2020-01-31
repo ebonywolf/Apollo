@@ -1,13 +1,11 @@
 
 #pragma once
-#include "Datatype.h"
-#include "Tools.h"
 #include <unordered_map>
 #include <memory>
+#include "Datatype.h"
 
 namespace pg
 {
-
 
 struct Data //:protected std::unique_ptr<Base_Data>
  {
@@ -25,33 +23,7 @@ struct Data //:protected std::unique_ptr<Base_Data>
     const long int _id;
     static long int id_cont;
 };
-
-template <class T>
-struct GenericData: public Data {
-    GenericData():GenericData(typeid(T).name())
-    {
-    }
-
-    GenericData(std::string type_id):name_id(type_id)
-    {
-    }
-
-    virtual Datatypeptr getType() const
-    {
-        return std::make_shared<Datatype>(name_id);
-
-    }
-
-    friend std::ostream& operator<<(std::ostream& os, const GenericData<T>& data )
-    {
-   //     os<<"Data:"<<data.getType()<<":"<<data.get();
-
-        return os;
-    }
-    std::string name_id;
-};
 using Dataptr = std::shared_ptr<Data>;
-
 
 
 struct DataSet {
