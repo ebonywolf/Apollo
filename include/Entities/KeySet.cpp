@@ -30,7 +30,6 @@ Datatypeptr HashKey::getDataPair() const{
 }
 
 
-
 std::string  KeySet::toString() const{
     string s="";
     bool first=true;
@@ -46,16 +45,13 @@ std::string  KeySet::toString() const{
 }
 
 
-
 void KeySet::join( Datatypeptr other){
     std::shared_ptr<const KeySet> alce = std::dynamic_pointer_cast<const KeySet>(other);
-
     if(alce){
         _internal.insert(alce->_internal.begin(),alce->_internal.end());
     }else{
         _internal[  other->getHashKey()->toString()]=other;
     }
-
 }
 bool KeySet::contains(Datatypeptr d)const
 {

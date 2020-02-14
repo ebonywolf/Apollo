@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Data.h"
-
+#include "MetaTools/GetObject.h"
 namespace pg{
 
 
@@ -49,8 +49,10 @@ struct Future : public std::shared_ptr<FutureBase>{
     template <class T>
     T getObject(){
         if(!ready())throw "foo";
-        T placeholder;
-        return _get<T>(placeholder);
+
+        T attr;
+        Tools::getObject(attr,getData()[0] );
+        return attr;
     }
 
     void setReady(){
@@ -68,25 +70,7 @@ struct Future : public std::shared_ptr<FutureBase>{
     }
 private:
 
-    template <class T,class D>
-    T _get(D placeholder)
-    {
-     auto alce = getData();
-     Dataptr alceptr = alce[0];
-     T* result = dynamic_cast<T*>(alceptr.get());
-     return *result;
-    }
 
-    template <class T,class D>
-    T _get(std::shared_ptr<D> placeholder)
-    {
-       auto alce = getData();
-       Dataptr alceptr = alce[0];
-       T result;
-       _castPtr(result, alceptr);
-       // T t = _deref<alceptr.get()>(alceptr.get())
-       return result;
-    }
 };
 
 }

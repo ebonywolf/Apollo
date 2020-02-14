@@ -9,8 +9,7 @@ void Entity::addEurus(const Processptr obj)
 {
   //  std::cout<<"Adding:"<<obj->toString()<<std::endl;
     //if(_eurus.count(obj))throw "repeat
-    auto alce1= obj->toString();
-   // auto alce2=this->toString();
+   
      _eurus->extend(obj);
  }
 std::ostream& operator<<(std::ostream& os, const Processptr data){

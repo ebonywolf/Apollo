@@ -1,5 +1,5 @@
 #include "KeyChain.h"
-
+#include <iostream>
 using namespace std;
 
 namespace pg{
@@ -39,10 +39,12 @@ bool KeyChain::contains(Datatypeptr d) const
   throw "todo";
 }
 Datatypeptr KeyChain::junction(Datatypeptr other) const {
-    throw "todo";
+    auto copy = std::make_shared<KeyChain>(*this);
+    copy->join(other);
+    return copy;
 }
 Datatypeptr KeyChain::getHashKey() const{
-    throw "todo";
+    return shared_from_this();
 }
 Datatypeptr KeyChain::getFrom() const{
     throw "todo";

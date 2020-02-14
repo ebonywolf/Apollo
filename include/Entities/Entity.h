@@ -13,6 +13,7 @@
 
 #include "Packet.h"
 #include "GenericProcess.h"
+#include "VariadicProcess.h"
 #include "MetaTools/Tools.h"
 
 #include "MetaTools/GetType.h"
@@ -48,8 +49,25 @@ struct Entity : public Entity_Base  {//Defines object that runs many functions a
         const auto fromType = Tools::getType(received) ;//received.getType();
         return send(sentData, fromType,context );
     }
+     template<class T,class ...D>
+     Future send( D... d  )
+     {
+        // Dataptr sentData = Tools::getData(d);
+         auto sentData = std::make_shared<DataTuple<D...>>(d...);
+        //  d;//
+         Processptr context= shared_from_this();
+         T received;
+         const auto fromType = Tools::getType(received) ;//received.getType();
+         return send(sentData, fromType,context );
+     }
 
-
+    template <class  OUTPUT,class D, class ...INPUT >
+    void addProcess( OUTPUT(func)(D, INPUT...) )
+    {
+        auto alce = VariadicProcess< OUTPUT ,INPUT... >::createProcess(func);
+        Processptr p = Processptr (  alce ) ;
+        addEurus(p);
+    }
 
     template <class  OUTPUT,class D, class INPUT >
     void addProcess( OUTPUT(func)(D, INPUT) )

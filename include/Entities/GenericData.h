@@ -28,6 +28,21 @@ struct GenericData: public Data {
     std::string name_id;
 };
 
+template <class T>
+struct Primitive_Data : public pg::GenericData<T>{
+
+    Primitive_Data(T val):val(val)
+    {
+    }
+    Primitive_Data():Primitive_Data(0){}
+    T getValue()
+    {
+        return val;
+    }
+private:
+    T val;
+};
+
 
 template <class T>
 struct Generic_GenericData : public T , public pg::GenericData<T>{

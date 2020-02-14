@@ -25,22 +25,17 @@ struct MinhaParticulaFofinha :UniqueEntity   {
 };
 
 
-struct Param : public pg::GenericData<Param>{
+struct Dado{
 
 };
 
-struct Pai{
-
-};
-struct Tesinho : public Pai {
-};
-struct Geginho {
-};
-
-struct Ack: public  pg::GenericEntity<Ack>{
+struct Ack: public  pg::GenericEntity<Ack>, public MultiInstance<Ack>{
     Ack():GenericEntity(__CLASS_NAME__ ,doShit) {}
-    static Tesinho doShit(Entityptr ptr, Geginho a){}
+    static double doShit(Entityptr ptr, double a, double b){
+        return a*b;
+    }
 };
+
 
 
 
@@ -57,11 +52,14 @@ int main(int argc,char** argv)
         Particle alce= Particle(new UniqueEntity("Alce"));
 
         alce->addOmni(context);
-        MyTesteFofinho boxinfo(1);
-        Future boxmsg = alce->send<MyTesteFofinho>(boxinfo);
+        alce->addOmni(Ack::get());
+
+        double d=9;
+        Future boxmsg = alce->send<double>(d,d);
         alce->update();
-        auto createdBox = boxmsg.getObject<MyTesteFofinho>();
-        std::cout<< "answer:"<<createdBox.alce <<std::endl;
+//        auto answer = boxmsg.getObject<float>();
+
+//        std::cout<< "answer:"<<answer <<std::endl;
 
     }
     catch(Json::RuntimeError& e){

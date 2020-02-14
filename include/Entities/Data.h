@@ -12,6 +12,10 @@ struct Data //:protected std::unique_ptr<Base_Data>
     Data():_id(id_cont++){
 
     }
+    Data(const Data& data):_id(data._id){
+    }
+
+
 
     virtual Datatypeptr getType() const=0;
 
@@ -20,7 +24,8 @@ struct Data //:protected std::unique_ptr<Base_Data>
      //   os<<"Data:"<<data.getType();
         return os;
     }
-    const long int _id;
+private:
+    long int _id;
     static long int id_cont;
 };
 using Dataptr = std::shared_ptr<Data>;

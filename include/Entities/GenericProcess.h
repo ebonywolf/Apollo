@@ -35,8 +35,20 @@ struct GenericProcess: public Process
     //   virtual Dataptr handle(Entityptr ent, Dataptr d) const=0;
    // virtual Dataptr handle(Entityptr ent, Dataptr d) const override
 
+
+     template<class T>
+    void _callFunc(T& placeholder,Entityptr& ent, Packet& packet, std::true_type )
+    {
+        using PrimitivePtr = std::shared_ptr< pg::Primitive_Data<INPUT>>;
+        PrimitivePtr input = std::dynamic_pointer_cast<pg::Primitive_Data<INPUT>>(packet.data);
+
+        OUTPUT output = _func(ent, input->getValue());
+        auto result = Tools::getData(output);
+        packet.futureAnswer.set(result);
+    }
+
     template<class T>
-    void _callFunc(T& placeholder,Entityptr& ent, Packet& packet)
+    void _callFunc(T& placeholder,Entityptr& ent, Packet& packet, std::false_type)
     {
         INPUT *input = dynamic_cast<INPUT*>(packet.data.get());
         OUTPUT output = _func(ent, *input);
@@ -44,21 +56,11 @@ struct GenericProcess: public Process
         packet.futureAnswer.set(result);
     }
 
-    template<class T>
-    void _callFunc(std::shared_ptr<T>& t,Entityptr& ent, Packet& packet)
-    {
-        INPUT input = std::static_pointer_cast<T>(packet.data);
-        OUTPUT output = _func(ent, input);
-        auto result = Tools::getData(output);
-        packet.futureAnswer.set(result);
-    }
-
 
     virtual void handle(Entityptr ent, Packet packet)
     {
-        INPUT input;
-        //TODO remove this useless constructor
-        _callFunc( input , ent, packet);
+        INPUT placeholder;
+        _callFunc( placeholder , ent, packet, std::is_fundamental<INPUT>());
     }
     GenericProcess():
         Process( std::make_shared<GenericDataPair<OUTPUT,INPUT>>() )

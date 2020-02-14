@@ -1,6 +1,8 @@
-
+#pragma once
 
 #include "KeyChain.h"
+
+#include "MetaTools/GetType.h"
 
 namespace pg{
 
@@ -11,14 +13,14 @@ template<class CURRENT_TYPE>
 void createKey_base(KeyChainptr createdKey)
 {
     CURRENT_TYPE c;
-    createdKey->join(_getType(c));
+    createdKey->join(Tools::getType(c));
 }
 
 template<class CURRENT_TYPE, class NEXT_TYPE, class ...TYPES>
 void createKey_base(KeyChainptr createdKey)
 {
     CURRENT_TYPE c;
-    createdKey->join(_getType(c));
+    createdKey->join(Tools::getType(c));
     createKey_base<NEXT_TYPE, TYPES...>(createdKey);
 }
 
@@ -26,7 +28,7 @@ template<class OUTPUT, class ...INPUT>
 Datatypeptr createKey()
 {
     OUTPUT output;
-    Datatypeptr outputKey = _getType(output);
+    Datatypeptr outputKey = Tools::getType(output);
     KeyChainptr inputKeyset = std::make_shared<KeyChain>();
     createKey_base<INPUT...>(inputKeyset);
 
@@ -42,8 +44,12 @@ struct DataTuple : public std::tuple<T...>, public Data{
     DataTuple():
         _key(_createKey())
     {
-
     }
+    DataTuple(T...t): std::tuple<T...>(t...),
+           _key(_createKey())
+    {
+    }
+
     virtual Datatypeptr getType() const{
         return _key;
     }
