@@ -55,11 +55,11 @@ int main(int argc,char** argv)
         alce->addOmni(Ack::get());
 
         double d=9;
-        Future boxmsg = alce->send<double>(d,d);
+        Future boxmsg = alce->send<double>(d,8.0);
         alce->update();
-//        auto answer = boxmsg.getObject<float>();
+        auto answer = boxmsg.getObject<double>();
 
-//        std::cout<< "answer:"<<answer <<std::endl;
+        std::cout<< "answer:"<<answer <<std::endl;
 
     }
     catch(Json::RuntimeError& e){
