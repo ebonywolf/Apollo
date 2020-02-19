@@ -2,7 +2,6 @@
 
 #include <tuple>
 #include <memory>
-class pg::Entity_Base;
 
 
 namespace Tools

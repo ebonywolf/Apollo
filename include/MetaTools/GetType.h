@@ -2,6 +2,10 @@
 
 #include "Entities/GenericData.h"
 
+namespace pg{
+ class Future;
+}
+
 namespace Tools{
 
 
@@ -52,6 +56,9 @@ pg::Datatypeptr getType(std::shared_ptr<T> t){
     T alce;
     return _getType_primitive(alce, std::is_fundamental<T>());
 }
+
+extern pg::Datatypeptr getType(pg::Future& );
+
 
 
 

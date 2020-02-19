@@ -43,21 +43,19 @@ struct Entity : public Entity_Base  {//Defines object that runs many functions a
     Future send( D d  )
     {
         Dataptr sentData = Tools::getData(d);
-       //  d;//
+
         Processptr context= shared_from_this();
         T received;
-        const auto fromType = Tools::getType(received) ;//received.getType();
+        const auto fromType = Tools::getType(received) ;
         return send(sentData, fromType,context );
     }
      template<class T,class ...D>
      Future send( D... d  )
      {
-        // Dataptr sentData = Tools::getData(d);
          auto sentData = std::make_shared<DataTuple<D...>>(d...);
-        //  d;//
          Processptr context= shared_from_this();
          T received;
-         const auto fromType = Tools::getType(received) ;//received.getType();
+         const auto fromType = Tools::getType(received) ;
          return send(sentData, fromType,context );
      }
 
@@ -69,6 +67,7 @@ struct Entity : public Entity_Base  {//Defines object that runs many functions a
         addEurus(p);
     }
 
+
     template <class  OUTPUT,class D, class INPUT >
     void addProcess( OUTPUT(func)(D, INPUT) )
     {
@@ -76,6 +75,13 @@ struct Entity : public Entity_Base  {//Defines object that runs many functions a
         Processptr p = Processptr (  alce ) ;
         addEurus(p);
     }
+
+    template <class  OUTPUT,class D, class ...INPUT,class ...T>
+	void addProcess(OUTPUT(func)(D, INPUT...), T ...t)
+	{
+    	addProcess(func);
+    	addProcess(t...);
+	}
 
     template <class OUTPUT , class D, class INPUT,class ...T>
     void addProcess(OUTPUT(func)(D, INPUT), T ...t)

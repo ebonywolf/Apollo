@@ -2,7 +2,7 @@
 #define ENTITIES_BASIC_H_
 
 #include <memory>
-
+#include <unordered_map>
 namespace pg{
 
 template<typename T>
@@ -40,6 +40,50 @@ public:
         std::shared_ptr<const T > result(base_type::shared_from_this(), static_cast<const T* >(this));
         return result;
     }
+};
+
+
+template <class MY_TYPE>
+struct Singleton
+{
+    static std::shared_ptr<MY_TYPE> get( MY_TYPE* val=0  ){
+
+        static std::shared_ptr<MY_TYPE> me;
+        if(val){
+            me.reset(val);
+        }
+        if(!me){
+            me=std::make_shared<MY_TYPE>();
+        }
+        return me;
+    }
+
+protected:
+    Singleton(){}
+
+};
+
+
+template <class MY_TYPE>
+struct MultiInstance  {
+     static std::shared_ptr<MY_TYPE> get(){
+        //TODO guarantee cleanup
+        return std::make_shared<MY_TYPE>();
+    }
+};
+
+
+template < class KEY ,class MY_TYPE>
+struct MapInstance  {
+
+     std::shared_ptr<MY_TYPE> at(KEY key){
+        if(!instance_map[key]){
+            instance_map[key] = std::make_shared<MY_TYPE>();
+        }
+        return  instance_map[key];
+     }
+private:
+    std::unordered_map<KEY, std::shared_ptr<MY_TYPE>> instance_map;
 };
 
 

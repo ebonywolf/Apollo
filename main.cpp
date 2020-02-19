@@ -1,5 +1,5 @@
 //#include <bits/stdc++.h>
-#include <SFML/Graphics.hpp>
+//#include <SFML/Graphics.hpp>
 
 #include <iostream>
 #include "Coord.h"
@@ -17,22 +17,22 @@
 using namespace std;
 using namespace pg;
 
-struct MinhaParticulaFofinha :UniqueEntity   {
-
-    MinhaParticulaFofinha():UniqueEntity("MinhaParticulaFofinha"){
-    }
-
-};
-
 
 struct Dado{
 
 };
 
-struct Ack: public  pg::GenericEntity<Ack>, public MultiInstance<Ack>{
-    Ack():GenericEntity(__CLASS_NAME__ ,doShit) {}
+struct MinhaEntidadeFofinha: public  pg::GenericEntity<MinhaEntidadeFofinha>, public MultiInstance<MinhaEntidadeFofinha>{
+
+    MinhaEntidadeFofinha():GenericEntity(__CLASS_NAME__ ,doShit,writeShit) {}
+
     static double doShit(Entityptr ptr, double a, double b){
         return a*b;
+    }
+     static double writeShit(Entityptr ptr, std::string a){
+
+        std::cout<<a<<std::endl;
+        return 5;
     }
 };
 
@@ -43,24 +43,24 @@ struct Ack: public  pg::GenericEntity<Ack>, public MultiInstance<Ack>{
 int main(int argc,char** argv)
 {
 
-    MinhaParticulaFofinha f;
-
- //   VariadicProcess<Ack,Param,MyTesteFofinho> v;
-   // BoxDrawer::_instance;
-    try{
-        Particle context = ContextCreator::createFromJson("test.json");
+   try{
+        //Particle context = ContextCreator::createFromJson("test.json");
         Particle alce= Particle(new UniqueEntity("Alce"));
 
-        alce->addOmni(context);
-        alce->addOmni(Ack::get());
+       // alce->addOmni(context);
+        alce->addOmni(MinhaEntidadeFofinha::get());
 
-        double d=9;
-        Future boxmsg = alce->send<double>(d,8.0);
+        Future fut = alce->send<double>( std::string("Hello world"));
         alce->update();
-        auto answer = boxmsg.getObject<double>();
 
-        std::cout<< "answer:"<<answer <<std::endl;
+        auto answer = fut.getObject<double>();
+      
+        Future fut2 = alce->send<double>(fut ,8.0);
+        alce->update();
 
+        std::cout<< "answer:"<<fut2.getObject<double>() <<std::endl;
+
+      
     }
     catch(Json::RuntimeError& e){
         std::cout<<e.what()<<std::endl;
