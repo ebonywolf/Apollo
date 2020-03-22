@@ -223,11 +223,11 @@ protected:
         PlaceHolder(){
         }
     };
+
     template<class T>
     static PlaceHolder createGlobalEntity(){
-        Entityptr novo = Entityptr(new T());
+        Entityptr novo = T::get();
         auto global = Entity::getGlobal();
-        std::cout<< "Adding to Global:"<<novo->toString() << std::endl;
         global->addOmni(novo);
         global->addEurus( novo);
         return PlaceHolder();

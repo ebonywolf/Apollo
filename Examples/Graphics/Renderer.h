@@ -24,12 +24,14 @@ namespace pg
 using Spriteptr = std::shared_ptr<sf::Shape>;
 
 
-class Renderer : public UniqueEntity, public Singleton<Renderer>
+class Renderer :  public Singleton<Renderer>
 {
+public:
     Renderer();
     Renderer(pg::Position size);
+    virtual ~Renderer(){}
 private:
-    sf::RenderWindow* window;
+  //  sf::RenderWindow* window;
     void begin();
     void beginAssync();
     void add( Spriteptr);
