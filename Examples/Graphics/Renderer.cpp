@@ -15,7 +15,7 @@ Renderer::Renderer(): Renderer(Position(500,500)){
 
 
 
-Renderer::Renderer(pg::Position size): UniqueEntity("Pg_Renderer")
+Renderer::Renderer(pg::Position size)
 {
   //  extend( CommandOriented< Spriteptr >::get() );
 

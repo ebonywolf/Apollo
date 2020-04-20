@@ -1,5 +1,5 @@
 #pragma once
-#include "Apollo.h"
+#include "Entity.h"
 
 namespace pg{
 
@@ -54,7 +54,6 @@ private:
 } ;
 template <class T>
 Entity::PlaceHolder GenericEntity<T>::_instance = Entity::createGlobalEntity<T>();
-//std::make_shared<GenericEntity<T>>(PlaceHolder());
 
 
 
@@ -128,7 +127,7 @@ public:
 
 
 struct ContextCreator {
-    static Particle createFromJson(std::string file)
+    static std::shared_ptr<pg::Entity> createFromJson(std::string file)
     {
         std::ifstream in(file);
         if(!in.is_open()) {
@@ -137,7 +136,7 @@ struct ContextCreator {
         Json::Value val;
 
         in>>val;
-        Particle novo = Particle(new JsonEntity(file,val));
+        std::shared_ptr<pg::Entity> novo = std::shared_ptr<pg::Entity>(new JsonEntity(file,val));
 
         return novo;
     }
