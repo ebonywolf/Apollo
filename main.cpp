@@ -6,8 +6,6 @@
 
 #include <Apollo.h>
 
-#include "Examples/Boxes/Box.h"
-
 #include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -22,9 +20,9 @@ struct Dado{
 
 };
 
-struct MinhaEntidadeFofinha: public  pg::GenericEntity<MinhaEntidadeFofinha>, public MultiInstance<MinhaEntidadeFofinha>{
+struct MinhaEntidadeFofinha: public MultiInstance<MinhaEntidadeFofinha>{
 
-    MinhaEntidadeFofinha():GenericEntity(__CLASS_NAME__ ,doShit,writeShit) {}
+    MinhaEntidadeFofinha():MultiInstance(__CLASS_NAME__ ,doShit,writeShit) {}
 
     static double doShit(Entityptr ptr, double a, double b){
         return a*b;
@@ -55,7 +53,7 @@ int main(int argc,char** argv)
 
         auto answer = fut.getObject<double>();
       
-        Future fut2 = alce->send<double>(fut ,8.0);
+        Future fut2 = alce->send<double>(8.0, answer);
         alce->update();
 
         std::cout<< "answer:"<<fut2.getObject<double>() <<std::endl;
