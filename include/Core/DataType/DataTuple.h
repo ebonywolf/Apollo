@@ -1,7 +1,6 @@
 #pragma once
 
 #include "KeyChain.h"
-
 #include "MetaTools/GetType.h"
 
 namespace pg{

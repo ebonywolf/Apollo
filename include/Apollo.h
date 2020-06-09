@@ -4,19 +4,19 @@
 #pragma once
 
 
-#include "Entities/Entity.h"
-#include "Entities/Process.h"
-#include "Entities/Data.h"
+#include <Entity/Entity.h>
+#include <Process/Process.h>
+#include <Entities/Data.h>
 
 using Particle  = std::shared_ptr<pg::Entity>;
 
 #include "Templates/Templates.h"
-#include "Entities/SpecialEntities.h"
-#include "Entities/VariadicProcess.h"
+#include <Entity/SpecialEntities.h>
+#include <Entity/VariadicProcess.h>
 #include "Entities/Data.h"
-#include "Entities/GenericData.h"
+#include <Entity/GenericData.h>
 
-#include "Entities/Basic.h"
+#include <Entity/Basic.h>
 
 template <class T, class ...Args>
 std::shared_ptr<T> newParticle(Args...args){

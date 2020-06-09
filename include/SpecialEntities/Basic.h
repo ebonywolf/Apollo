@@ -1,7 +1,7 @@
 #pragma once
 
+#include <Entity/SpecialEntities.h>
 #include <memory>
-#include "SpecialEntities.h"
 
 namespace pg
 {

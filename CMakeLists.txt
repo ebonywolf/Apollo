@@ -8,7 +8,7 @@ set(BUILD_LIBS ${BUILD_LIBS} "-lpthread -ljsoncpp")
 
 file(GLOB lib_srcs *.* include/*/*.* include/*.* )
 
-include_directories( include/ )
+include_directories( include/ include/Core )
 
 add_executable(Apollo main.cpp ${lib_srcs} )
 

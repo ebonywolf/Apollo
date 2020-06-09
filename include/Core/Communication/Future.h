@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Data.h"
+#include "DataType/Data.h"
 #include "MetaTools/GetObject.h"
 namespace pg{
 
@@ -55,7 +55,6 @@ struct Future : public std::shared_ptr<FutureBase>, public DatatypeBase{
         alce->_ready = true;
     }
 
-
     bool ready()
     {
        auto alce = get();
@@ -65,8 +64,6 @@ struct Future : public std::shared_ptr<FutureBase>, public DatatypeBase{
     {
         return get()->getType();
     }
-
-
 
     virtual std::string toString() const
     {

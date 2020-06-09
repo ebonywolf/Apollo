@@ -16,9 +16,8 @@ using namespace std;
 using namespace pg;
 
 
-struct Dado{
 
-};
+
 
 struct MinhaEntidadeFofinha: public MultiInstance<MinhaEntidadeFofinha>{
 
@@ -27,15 +26,10 @@ struct MinhaEntidadeFofinha: public MultiInstance<MinhaEntidadeFofinha>{
     static double doShit(Entityptr ptr, double a, double b){
         return a*b;
     }
-     static double writeShit(Entityptr ptr, std::string a){
+    static double writeShit(Entityptr ptr, fut2){
 
-        std::cout<<a<<std::endl;
-        return 5;
     }
 };
-
-
-
 
 
 int main(int argc,char** argv)
@@ -51,12 +45,14 @@ int main(int argc,char** argv)
         Future fut = alce->send<double>( std::string("Hello world"));
         alce->update();
 
+        alce->send<B>(A);
         auto answer = fut.getObject<double>();
       
+
         Future fut2 = alce->send<double>(8.0, answer);
         alce->update();
 
-        std::cout<< "answer:"<<fut2.getObject<double>() <<std::endl;
+        std::cout<< "answer:"<< fut2.getObject<double>() <<std::endl;
 
       
     }

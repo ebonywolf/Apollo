@@ -1,5 +1,5 @@
-#include "Entity.h"
-#include "SpecialEntities.h"
+#include <Entity/Entity.h>
+#include <Entity/SpecialEntities.h>
 
 namespace pg
 {

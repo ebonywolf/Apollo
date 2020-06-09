@@ -1,5 +1,5 @@
-{
-	"RendererContext":{
+"Global:"{
+  "RendererContext":{
 			"BoxDrawer":{
 				"Box":{
 					
@@ -8,8 +8,18 @@
 				
 			},
 			"Renderer":{
-
+				"BoxInfo" : "Ack"
 			}
 
-	}
+	},
+	"bridge":{
+		"RendererContext" : "desenhavel"
+	},
+	"Render":{
+		"desenhavel":"resposta";
+	},
+	"A" : "B";
 }
+
+{{a ,b ,c} ,b ,c}
+

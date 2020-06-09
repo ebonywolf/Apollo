@@ -1,6 +1,4 @@
-#include "Packet.h"
-
-#include "Entity.h"
+#include <Apollo.h>
 
 namespace pg{
 

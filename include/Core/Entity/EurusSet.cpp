@@ -1,6 +1,6 @@
 
-#include "EurusSet.h"
-#include "Packet.h"
+#include <Entity/EurusSet.h>
+#include <Entity/Packet.h>
 namespace pg
 {
 

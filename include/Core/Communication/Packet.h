@@ -1,7 +1,8 @@
 #ifndef APOLLO_PACKET_H_
 #define APOLLO_PACKET_H_
-#include "Data.h"
-#include "Process.h"
+#include <Apollo.h>
+
+
 namespace pg{
 
 struct Packet{

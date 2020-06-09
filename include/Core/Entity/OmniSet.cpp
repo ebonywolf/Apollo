@@ -1,5 +1,5 @@
-#include "OmniSet.h"
-#include "Packet.h"
+#include <Entity/OmniSet.h>
+#include <Communication/Packet.h>
 namespace pg
 {
 

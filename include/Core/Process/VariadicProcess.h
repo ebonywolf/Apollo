@@ -2,8 +2,8 @@
 #pragma once
 
 
-#include "GenericProcess.h"
-#include "DataTuple.h"
+#include <Entity/DataTuple.h>
+#include <Entity/GenericProcess.h>
 #include "MetaTools/ApplyTuple.h"
 
 namespace pg{

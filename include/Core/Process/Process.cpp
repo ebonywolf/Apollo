@@ -1,6 +1,5 @@
-#include "Process.h"
-#include "Packet.h"
 
+#include "Process.h"
 namespace pg{
 
 void Process::receiveData(const Processptr context, Packet packet) {

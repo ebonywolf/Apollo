@@ -1,13 +1,13 @@
 
 #pragma once
-
 #include <unordered_map>
 #include <unordered_set>
 
+#include "Communication/Future.h"
+#include "DataType/Data.h"
+#include "Identification/KeySet.h"
 #include "Base.h"
-#include "Data.h"
-#include "KeySet.h"
-#include "Future.h"
+
 namespace pg{
 
 
@@ -67,7 +67,7 @@ Entityptr cast(T ptr){
     return std::dynamic_pointer_cast<Entity_Base>(ptr);
 }
 
-struct Entity_Base : public Process_Base {
+struct EditableProcess : public Process_Base {
     virtual void addOmni(const Processptr obj) = 0;
     virtual void addEurus( const Processptr obj) = 0;
     virtual void update() =0;

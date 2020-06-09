@@ -1,19 +1,18 @@
 #pragma once
 
+#include <Entity/EurusSet.h>
+#include <Entity/GenericProcess.h>
+#include <Entity/OmniSet.h>
+#include <Entity/Packet.h>
+#include <Entity/Process.h>
+#include <Entity/VariadicProcess.h>
 #include <fstream>
 #include <future>
 #include <iostream>
 #include <json/json.h>
 #include "Data.h"
-#include "Process.h"
-
 #include "DatatypeBase.h"
-#include "OmniSet.h"
-#include "EurusSet.h"
-
 #include "Packet.h"
-#include "GenericProcess.h"
-#include "VariadicProcess.h"
 #include "MetaTools/Tools.h"
 
 #include "MetaTools/GetType.h"

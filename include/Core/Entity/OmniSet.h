@@ -2,7 +2,7 @@
 #ifndef OMNI_SET
 #define OMNI_SET
 
-#include "EntityBase.h"
+#include <ProcessBase.h>
 
 namespace pg{
 

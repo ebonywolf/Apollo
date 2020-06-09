@@ -1,8 +1,8 @@
 #pragma once
 
-#include "Process.h"
-#include "Packet.h"
-#include "GenericDatatype.h"
+#include <Entity/GenericDatatype.h>
+#include <Entity/Packet.h>
+#include <Entity/Process.h>
 #include "MetaTools/GetData.h"
 namespace pg{
 

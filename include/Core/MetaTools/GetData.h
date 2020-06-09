@@ -1,5 +1,5 @@
 #pragma once
-#include "Entities/GenericData.h"
+#include <Entity/GenericData.h>
 
 namespace Tools {
 

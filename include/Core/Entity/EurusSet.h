@@ -2,7 +2,7 @@
 #ifndef EURUS_SET
 #define EURUS_SET
 
-#include "OmniSet.h"
+#include <Entity/OmniSet.h>
 
 namespace pg{
 

@@ -1,23 +1,12 @@
 #pragma once
-#include <unordered_map>
-#include <unordered_set>
-#include <memory>
-#include <fstream>
-#include <functional>
-#include <iostream>
 
-#include <json/json.h>
-#include "Data.h"
-#include "EntityBase.h"
-#include "Datatype.h"
-#include "Packet.h"
+
+#include <ProcessBase.h>
 
 namespace pg
 {
 
 class Entity;
-class Process;
-//using Processptr = std::shared_ptr<Process>;
 class Process: public Process_Base
 { //Defines function
 public:
@@ -152,43 +141,5 @@ struct hash<pg::Process>
 
     }
 };
-}
-
-namespace pg
-{
-
-/*
-
- template <class MY_TYPE>
- struct Singleton: public Object<MY_TYPE>
- {
- static std::shared_ptr<MY_TYPE> get( MY_TYPE* val=0  ){
-
- static std::shared_ptr<MY_TYPE> me;
- if(val){
- me.reset(val);
- }
- if(!me){
- me=std::make_shared<MY_TYPE>();
- }
- return me;
- }
-
- protected:
- Singleton(){}
-
- };
-
- template <class MY_TYPE>
- struct MultiInstance : public Object<MY_TYPE> {
- static std::shared_ptr<MY_TYPE> get(){
- //TODO guarantee cleanup
- return std::make_shared<MY_TYPE>();
- }
- };
-
-
- */
-
 }
 
