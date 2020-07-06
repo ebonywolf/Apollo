@@ -21,14 +21,12 @@ using namespace pg;
 
 struct MinhaEntidadeFofinha: public MultiInstance<MinhaEntidadeFofinha>{
 
-    MinhaEntidadeFofinha():MultiInstance(__CLASS_NAME__ ,doShit,writeShit) {}
+    MinhaEntidadeFofinha():MultiInstance(__CLASS_NAME__ ,doShit) {}
 
     static double doShit(Entityptr ptr, double a, double b){
         return a*b;
     }
-    static double writeShit(Entityptr ptr, fut2){
 
-    }
 };
 
 
@@ -45,7 +43,6 @@ int main(int argc,char** argv)
         Future fut = alce->send<double>( std::string("Hello world"));
         alce->update();
 
-        alce->send<B>(A);
         auto answer = fut.getObject<double>();
       
 
