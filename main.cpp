@@ -5,7 +5,7 @@
 #include "Coord.h"
 
 #include <Apollo.h>
-
+#include <SpecialEntities/JsonEntity.h>
 #include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -19,9 +19,12 @@ using namespace pg;
 
 
 
-struct MinhaEntidadeFofinha: public MultiInstance<MinhaEntidadeFofinha>{
 
-    MinhaEntidadeFofinha():MultiInstance(__CLASS_NAME__ ,doShit) {}
+
+
+struct Calculator: public MultiInstance<Calculator>{
+
+	Calculator():MultiInstance(__CLASS_NAME__ ,doShit) {}
 
     static double doShit(Entityptr ptr, double a, double b){
         return a*b;
@@ -30,32 +33,35 @@ struct MinhaEntidadeFofinha: public MultiInstance<MinhaEntidadeFofinha>{
 };
 
 
+
+struct EventListener: public Singleton<EventListener>{
+	EventListener():Singleton(__CLASS_NAME__ ,doShit) {}
+    static double doShit(Entityptr ptr, double a, double b){
+        return a*b;
+    }
+
+};
+
 int main(int argc,char** argv)
 {
 
-   try{
-        //Particle context = ContextCreator::createFromJson("test.json");
-        Particle alce= Particle(new UniqueEntity("Alce"));
+    Particle context = ContextCreator::createFromJson("test.json");
+    auto Main = context->getEntity("Main");
 
-       // alce->addOmni(context);
-        alce->addOmni(MinhaEntidadeFofinha::get());
+    /*
+	Particle alce= Particle(new UniqueEntity("Alce"));
+   // alce->addOmni(context);
+	alce->addOmni(MinhaEntidadeFofinha::get());
 
-        Future fut = alce->send<double>( std::string("Hello world"));
-        alce->update();
+	Future fut = alce->send<double>( std::string("Hello world"));
+	alce->update();
+	auto answer = fut.getObject<double>();
 
-        auto answer = fut.getObject<double>();
-      
+	Future fut2 = alce->send<double>(8.0, answer);
+	alce->update();
 
-        Future fut2 = alce->send<double>(8.0, answer);
-        alce->update();
-
-        std::cout<< "answer:"<< fut2.getObject<double>() <<std::endl;
-
-      
-    }
-    catch(Json::RuntimeError& e){
-        std::cout<<e.what()<<std::endl;
-    }
+	std::cout<< "answer:"<< fut2.getObject<double>() <<std::endl;
+*/
 
    // Ack ack =context->send<Ack>(box);
     return 0;

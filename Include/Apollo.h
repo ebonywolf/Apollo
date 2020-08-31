@@ -8,9 +8,6 @@
 #include "Process/Process.h"
 #include "DataType/Data.h"
 
-using Particle  = std::shared_ptr<pg::Entity>;
-
-
 #include "Process/VariadicProcess.h"
 #include "DataType/Data.h"
 #include "DataType/GenericData.h"
@@ -27,7 +24,7 @@ std::string extern className(const std::string& prettyFunction);
 
 #define __CLASS_NAME__ className(__PRETTY_FUNCTION__)
 
-
+#include "Particle.h"
 
 
 

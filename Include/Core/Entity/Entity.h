@@ -4,7 +4,6 @@
 #include <fstream>
 #include <future>
 #include <iostream>
-#include <json/json.h>
 
 #include "MetaTools/GetData.h"
 #include "MetaTools/GetObject.h"

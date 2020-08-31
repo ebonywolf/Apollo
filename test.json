@@ -1,25 +1,25 @@
-"Global:"{
-  "RendererContext":{
-			"BoxDrawer":{
-				"Box":{
-					
-				},
-				"BoxInfo" : "Ack"
-				
-			},
-			"Renderer":{
-				"BoxInfo" : "Ack"
-			}
+{
+	"Calculator":
+	{
+		"double":"double"
+	},
+	"EventListener":{
+		"OutMessage": "Calculator"
+	},
+	"OutMessage":{
+		"void":"EventListener"
+	},
 
+	"Input2":{
+		"Calculator":"Main"
 	},
-	"bridge":{
-		"RendererContext" : "desenhavel"
+	"Main":{
 	},
-	"Render":{
-		"desenhavel":"resposta";
+	"Void":{
 	},
-	"A" : "B";
+
+
+
+
 }
-
-{{a ,b ,c} ,b ,c}
 

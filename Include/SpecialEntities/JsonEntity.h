@@ -1,7 +1,7 @@
 #pragma once
 
-#include "UniqueEntity.h"
-
+#include <Apollo.h>
+#include <json/json.h>
 namespace pg{
 
 class JsonEntity : public UniqueEntity
