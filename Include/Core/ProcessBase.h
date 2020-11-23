@@ -38,14 +38,10 @@ struct Process_Base : public  DatatypeBase, public enable_shared_from_this_virtu
     virtual void warnOmniChange(const Processptr context) = 0;
     virtual Processptr getOmni() const = 0;
     virtual Processptr getEurus() const = 0;
-
     virtual bool hasEurus(const Datatypeptr ) const=0;
     virtual bool hasOmni(const Datatypeptr name) const =0;
     virtual Processptr getOmni(const Datatypeptr name) const = 0;
-
     virtual Processptr getBase() const = 0;
-
-
     virtual void extend(const Processptr other) = 0;
     virtual int size() const = 0;
     virtual void receiveData(const Processptr context, Packet packet)=0;
@@ -53,8 +49,6 @@ struct Process_Base : public  DatatypeBase, public enable_shared_from_this_virtu
     bool isNull() const {
         return this->size()==0;
     }
-
-
 
     Processptr shared_from_this(){
         return enable_shared_from_this_virtual<Process_Base>::shared_from_this();

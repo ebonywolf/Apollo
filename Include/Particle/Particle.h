@@ -3,32 +3,26 @@
 
 #pragma once
 
-#include "Apollo.h"
+#include "Core/Base.h"
+#include "Entity/Entity.h"
+
+namespace ap{
 
 
 
+class Particle_Base;
+using Particle = std::shared_ptr<Particle_Base>;
 
-
-class Particle : public std::shared_ptr<pg::Process_Base>
-{
+class Particle_Base: public enable_shared_from_this_virtual<Particle_Base>{
 public:
-	std::shared_ptr<pg::Process_Base> data;
-
-	Particle(std::shared_ptr<pg::Process_Base> ptr){
-		this->data = ptr;
-	}
-	Particle getEntity(std::string name){
-	    auto key = std::make_shared<pg::HashKey>(name);
-
-		if( this->get()->hasOmni(key) ) {
-			auto current = this->get()->getOmni(key);
-			return Particle(current);
-		}else{
-			return 0;
-		}
-	}
-
+    virtual pg::Entityptr getEntity() = 0;
+    virtual Particle send(Particle p)=0;
 };
 
+using Particle = std::shared_ptr<Particle_Base>;
+
+
+
+}
 
 #endif //PARTICLE_H

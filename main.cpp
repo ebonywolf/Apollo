@@ -12,13 +12,10 @@
 #include <signal.h>
 #include <stdio.h>
 #include <unistd.h>
+
 using namespace std;
 using namespace pg;
-
-
-
-
-
+using namespace ap;
 
 
 
@@ -45,8 +42,9 @@ struct EventListener: public Singleton<EventListener>{
 int main(int argc,char** argv)
 {
 
-    Particle context = ContextCreator::createFromJson("test.json");
-    auto Main = context->getEntity("Main");
+    Particle context = JsonParticle("test.json");
+    context.run();
+    //auto Main = context->getEntity("Main");
 
     /*
 	Particle alce= Particle(new UniqueEntity("Alce"));

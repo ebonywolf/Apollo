@@ -1,6 +1,5 @@
 #pragma once
-
-#include <Apollo.h>
+#include "Entity/UniqueEntity.h"
 #include <json/json.h>
 namespace pg{
 

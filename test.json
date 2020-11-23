@@ -10,16 +10,12 @@
 		"void":"EventListener"
 	},
 
-	"Input2":{
+	"Input":{
 		"Calculator":"Main"
 	},
 	"Main":{
 	},
 	"Void":{
 	},
-
-
-
-
 }
 

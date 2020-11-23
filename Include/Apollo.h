@@ -24,8 +24,9 @@ std::string extern className(const std::string& prettyFunction);
 
 #define __CLASS_NAME__ className(__PRETTY_FUNCTION__)
 
-#include "Particle.h"
-
+#include "Particle/Particle.h"
+#include "Particle/JsonParticle.h"
+#include "Particle/ChargedParticle.h"
 
 
 #endif
