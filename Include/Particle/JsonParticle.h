@@ -2,22 +2,21 @@
 #define INCLUDE_PARTICLE_JSONPARTICLE_H_
 
 #include "SpecialEntities/JsonEntity.h"
-#include "Particle.h"
+
 #include "ChargedParticle.h"
 #include <fstream>
 #include <string>
 
 namespace ap{
 
-class JsonParticle: public Particle_Base {
-public:
-    JsonParticle(std::string name){
-        readFromFile(name);
-    }
+class ChargedParticle;
 
-    void readFromFile(std::string file);
-    virtual pg::Entityptr getEntity() {}
-    virtual Particle send(Particle p){}
+class JsonParticle : public ap::ChargedParticle
+{
+public:
+    JsonParticle(std::string name);
+private:
+    pg::Entityptr readFromFile(std::string file);
 
 };
 

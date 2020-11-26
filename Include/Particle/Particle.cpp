@@ -3,10 +3,6 @@
 
 namespace ap {
 
-void Particle::run()
-{
-    send(NullParticle());
-}
 
 
 

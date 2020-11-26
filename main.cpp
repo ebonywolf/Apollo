@@ -5,13 +5,13 @@
 #include "Coord.h"
 
 #include <Apollo.h>
-#include <SpecialEntities/JsonEntity.h>
 #include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <signal.h>
 #include <stdio.h>
 #include <unistd.h>
+#include "Include/Particle/JsonParticle.h"
 
 using namespace std;
 using namespace pg;
@@ -42,8 +42,8 @@ struct EventListener: public Singleton<EventListener>{
 int main(int argc,char** argv)
 {
 
-    Particle context = JsonParticle("test.json");
-    context.run();
+    Particle context = ap::makeParticle(new ap::JsonParticle("test.json"));
+   // context.run();
     //auto Main = context->getEntity("Main");
 
     /*

@@ -19,7 +19,16 @@ public:
     virtual Particle send(Particle p)=0;
 };
 
+
+
 using Particle = std::shared_ptr<Particle_Base>;
+
+template <class T>
+Particle makeParticle(T* t){
+    Particle newParticle = std::make_shared<Particle_Base>(t);
+    return newParticle;
+}
+
 
 
 
