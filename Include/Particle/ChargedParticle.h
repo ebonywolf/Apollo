@@ -13,10 +13,12 @@ public:
     {
         this->data = ptr;
     }
+    pg::Entityptr getEntity()override{
+        return data;
+    }
+
     virtual ~ChargedParticle(){}
 
-    virtual pg::Entityptr getEntity();
-    virtual Particle send(Particle p);
 };
 
 }

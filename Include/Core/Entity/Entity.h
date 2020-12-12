@@ -38,25 +38,7 @@ struct Entity : public Entity_Base  {//Defines object that runs many functions a
     Processptr _omni;
     Processptr _eurus;
 
-    template<class T,class D>
-    Future send( D d  )
-    {
-        Dataptr sentData = Tools::getData(d);
 
-        Processptr context= shared_from_this();
-        T received;
-        const auto fromType = Tools::getType(received) ;
-        return send(sentData, fromType,context );
-    }
-     template<class T,class ...D>
-     Future send( D... d  )
-     {
-         auto sentData = std::make_shared<DataTuple<D...>>(d...);
-         Processptr context= shared_from_this();
-         T received;
-         const auto fromType = Tools::getType(received) ;
-         return send(sentData, fromType,context );
-     }
 
     template <class  OUTPUT,class D, class ...INPUT >
     void addProcess( OUTPUT(func)(D, INPUT...) )
