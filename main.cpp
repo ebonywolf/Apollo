@@ -41,7 +41,8 @@ int main(int argc,char** argv)
 {
 
     Particle context = ap::makeParticle(new ap::JsonParticle("test.json"));
-    context.run();
+    Particle result = context.run();
+    cout<<result;
    // auto Main = context->getEntity("Main");
 
     /*

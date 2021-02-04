@@ -5,6 +5,8 @@
 #include "DataType/GenericDatatype.h"
 #include "MetaTools/GetType.h"
 #include "Particle_Base.h"
+#include <ostream>
+
 namespace ap{
 
 class FutureParticle : public Particle_Base {
@@ -21,6 +23,11 @@ public:
     virtual pg::Datatypeptr getType() const{
         return future->getType();
     }
+
+    virtual pg::Dataptr getValue() const {
+
+        throw "foo";
+    }
 };
 
 class Particle : public std::shared_ptr<Particle_Base>{
@@ -32,29 +39,37 @@ public:
 
     Particle run() const;
 
-    Particle send(pg::Dataptr inputData, pg::Dataptr output, pg::Entityptr context) const {
+    Particle send(pg::Dataptr inputData, pg::Datatypeptr output, pg::Entityptr context) const {
         pg::Processptr me = get()->getContext();
 
-        pg::Future answ  = me->send(inputData, output->getType(), context);
+        pg::Future answ  = me->send(inputData, output, context);
         return Particle( new FutureParticle(context, answ));
     }
     Particle interact(Particle other) const{
+        auto type = other->getType();
+        auto fromType = type->getFrom();
+        auto toType = type->getTo();
+        auto value = other->getValue();
+        Particle alce = send(value, fromType, other->getContext() );
+        return alce;
 
     }
 
+    friend std::ostream& operator<<(std::ostream& os, const Particle& data ){
+        os<<"Particle:"<<data->getContext()->toString()<<" | "<<data->getType()->toString()<<" | "
+                <<data->getValue()->getType()->toString()<<std::endl;
+        return os;
+    }
 
 
     template<class ...OUTPUT, class ...INPUT>
     Particle send(INPUT... input) const {
-        pg::Entityptr me = get()->getContext();
+       pg::Processptr me = get()->getContext();
 
-        pg::Future answ  = me->send<OUTPUT...>(input...);
-        return Particle(new FutureParticle(me,answ));
-//       send(in)
-//
-//       pg::Entityptr me = get()->getContext();
-//       pg::Future answ = send(inputData, output.getType(), me);
-//       outputParticle(answ);
+       auto answ = me->send(input...);
+
+       Particle alce = new FutureParticle(me, answ);
+        return alce;
     }
 
 

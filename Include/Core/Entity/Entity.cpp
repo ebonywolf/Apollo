@@ -40,6 +40,8 @@ Future Entity::send(Dataptr sentData,const Datatypeptr fromType, Processptr cont
 
     auto reversePair = pair->getInverseDataPair();
 
+    std::cout <<"FromType:"<<fromType->toString()<<" ToType:"<<toType->toString() <<std::endl;
+    reversePair->toString();
     bool sent = false;
     Future future(fromType);
     if( !_omni->hasEurus( reversePair) ){

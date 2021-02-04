@@ -11,6 +11,8 @@ public:
 
     virtual pg::Datatypeptr getType() const=0;
     virtual pg::Processptr getContext()const =0;
+    virtual pg::Dataptr getValue() const = 0;
+
  //   virtual Particle interact(Particle other)const=0;
 
 

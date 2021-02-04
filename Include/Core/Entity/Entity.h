@@ -23,7 +23,7 @@ namespace pg
 
 using Entity_Base = EditableProcess;
 
-struct Entity : public Entity_Base  {//Defines object that runs many functions and has many dataTypes
+struct Entity : public Entity_Base, public Data  {//Defines object that runs many functions and has many dataTypes
     using ContextMap = std::unordered_map<std::string,Entityptr>;
     using SendBuffer = std::unordered_map<Entityptr, std::unordered_map<Entityptr,Packet>>;
     using PacketList = std::vector<Packet>;
@@ -37,8 +37,6 @@ struct Entity : public Entity_Base  {//Defines object that runs many functions a
     ///Self
     Processptr _omni;
     Processptr _eurus;
-
-
 
     template <class  OUTPUT,class D, class ...INPUT >
     void addProcess( OUTPUT(func)(D, INPUT...) )
@@ -167,6 +165,10 @@ struct Entity : public Entity_Base  {//Defines object that runs many functions a
 
     static Entityptr getGlobal();
 
+
+    virtual Datatypeptr getType() const{
+        return getEurus();
+    }
     virtual Datatypeptr junction( Datatypeptr other)const ;
     virtual Datatypeptr getFrom() const;
     virtual Datatypeptr getTo() const;

@@ -20,7 +20,9 @@ public:
     }
     virtual pg::Datatypeptr getType() const{
         return ent->getDataPair();
-
+    }
+    virtual pg::Dataptr getValue() const {
+        ent->getEurus();
     }
 };
 
