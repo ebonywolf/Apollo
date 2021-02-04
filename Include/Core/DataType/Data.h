@@ -9,10 +9,10 @@ namespace pg
 
 struct Data //:protected std::unique_ptr<Base_Data>
  {
-    Data():_id(id_cont++){
+    Data(){//_id(id_cont++)
 
     }
-    Data(const Data& data):_id(data._id){
+    Data(const Data& data){//:_id(data._id)
     }
 
 
@@ -25,8 +25,8 @@ struct Data //:protected std::unique_ptr<Base_Data>
         return os;
     }
 private:
-    long int _id;
-    static long int id_cont;
+   // long int _id; //Maybe remove
+  //  static long int id_cont;
 };
 using Dataptr = std::shared_ptr<Data>;
 

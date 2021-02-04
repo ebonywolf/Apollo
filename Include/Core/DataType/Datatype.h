@@ -12,10 +12,7 @@ namespace pg {
 
 struct Datatype: public EditableDatatype
 { //defines dataTypes, not data itself
-    static const Datatypeptr getNull(){
-        static Datatypeptr nul = std::make_shared<Datatype>();
-        return nul;
-    }
+    static const Datatypeptr getNull();
 
     Datatype() :
             Datatype("null")

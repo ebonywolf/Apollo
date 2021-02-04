@@ -1,20 +1,24 @@
+#pragma once
 
-#ifndef INCLUDE_PARTICLE_CHARGEDPARTICLE_H_
-#define INCLUDE_PARTICLE_CHARGEDPARTICLE_H_
 #include "Apollo.h"
 
 namespace ap {
 
 class ChargedParticle: public Particle_Base {
-    pg::Entityptr data;
+    pg::Processptr context;
+    pg::Dataptr charge;
     ChargedParticle() = delete;
 public:
-    ChargedParticle(pg::Entityptr ptr)
+    ChargedParticle(pg::Processptr context, pg::Dataptr input, pg::Datatypeptr output)
     {
-        this->data = ptr;
+        this->context = context;
     }
-    pg::Entityptr getEntity()override{
-        return data;
+    pg::Processptr getContext()const override{
+        return context;
+    }
+
+    pg::Datatypeptr getType() const{
+        return charge->getType();
     }
 
     virtual ~ChargedParticle(){}
@@ -23,4 +27,3 @@ public:
 
 }
 
-#endif /* INCLUDE_PARTICLE_CHARGEDPARTICLE_H_ */

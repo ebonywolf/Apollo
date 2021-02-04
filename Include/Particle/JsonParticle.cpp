@@ -4,7 +4,7 @@ namespace ap{
 
 
 
-JsonParticle::JsonParticle(std::string name):ChargedParticle(readFromFile(name)){
+JsonParticle::JsonParticle(std::string name):UnchargedParticle(readFromFile(name)){
 
 }
 pg::Entityptr JsonParticle::readFromFile(std::string file)

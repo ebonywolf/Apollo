@@ -1,42 +1,68 @@
-#ifndef PARTICLE_H
-#define PARTICLE_H
 
 #pragma once
 
-#include "Core/Base.h"
-#include "Entity/Entity.h"
 #include "DataType/DataTuple.h"
-
 #include "DataType/GenericDatatype.h"
+#include "MetaTools/GetType.h"
+#include "Particle_Base.h"
 namespace ap{
 
-
-
-class Particle_Base;
-using Particle = std::shared_ptr<Particle_Base>;
-
-class Particle_Base: public enable_shared_from_this_virtual<Particle_Base>{
+class FutureParticle : public Particle_Base {
 public:
-    virtual pg::Entityptr getEntity() = 0;
+
+    pg::Processptr context;
+    pg::Future future;
+    FutureParticle(pg::Processptr context,pg::Future future):context(context), future(future){
+
+    }
+    virtual pg::Processptr getContext()const {
+        return context;
+    }
+    virtual pg::Datatypeptr getType() const{
+        return future->getType();
+    }
+};
+
+class Particle : public std::shared_ptr<Particle_Base>{
+public:
+    template <class T>
+    Particle(T* t):std::shared_ptr<Particle_Base>(t)
+    {
+    }
+
+    Particle run() const;
+
+    Particle send(pg::Dataptr inputData, pg::Dataptr output, pg::Entityptr context) const {
+        pg::Processptr me = get()->getContext();
+
+        pg::Future answ  = me->send(inputData, output->getType(), context);
+        return Particle( new FutureParticle(context, answ));
+    }
+    Particle interact(Particle other) const{
+
+    }
+
+
 
     template<class ...OUTPUT, class ...INPUT>
-    Particle send(INPUT... input){
-        pg::DataTuple<INPUT...> inputData(input...);
-        pg::DataTuple<OUTPUT...> output();
+    Particle send(INPUT... input) const {
+        pg::Entityptr me = get()->getContext();
 
-        pg::Entityptr me = getEntity();
-        me->send(inputData, output.getType(), me);
+        pg::Future answ  = me->send<OUTPUT...>(input...);
+        return Particle(new FutureParticle(me,answ));
+//       send(in)
+//
+//       pg::Entityptr me = get()->getContext();
+//       pg::Future answ = send(inputData, output.getType(), me);
+//       outputParticle(answ);
     }
+
 
 };
 
-
-
-using Particle = std::shared_ptr<Particle_Base>;
-
 template <class T>
 Particle makeParticle(T* t){
-    Particle newParticle = new std::shared_ptr<Particle_Base>(t);
+    Particle newParticle = Particle(t);
     return newParticle;
 }
 
@@ -45,4 +71,3 @@ Particle makeParticle(T* t){
 
 }
 
-#endif //PARTICLE_H

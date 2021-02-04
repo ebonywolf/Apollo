@@ -128,8 +128,6 @@ struct Entity : public Entity_Base  {//Defines object that runs many functions a
     }
 
     void extend(const Processptr other) override{
-
-
         addEurus(other);
 
         addOmni(other->getOmni());

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "DataType/GenericData.h"
-
+#include "SpecialDataTypes/PrimitiveData.h"
 namespace pg{
  class Future;
 }

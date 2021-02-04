@@ -3,7 +3,7 @@
 
 #include "SpecialEntities/JsonEntity.h"
 
-#include "ChargedParticle.h"
+#include "UnchargedParticle.h"
 #include <fstream>
 #include <string>
 
@@ -11,7 +11,7 @@ namespace ap{
 
 class ChargedParticle;
 
-class JsonParticle : public ap::ChargedParticle
+class JsonParticle : public ap::UnchargedParticle
 {
 public:
     JsonParticle(std::string name);

@@ -1,13 +1,25 @@
 #include "Datatype.h"
 #include "Identification/KeySet.h"
 #include <ostream>
+#include "SpecialDataTypes/NullDataType.h"
+#include "SpecialDataTypes/AllDataType.h"
+
 namespace pg
 {
+
+decltype( std::bind(NullType::get) ) Null = std::bind(NullType::get);
+decltype( std::bind(AllType::get) ) All = std::bind(AllType::get);
 
 bool operator==(const Datatypeptr me, const Datatypeptr notme)
 {
     return me->equals(notme);
 }
+
+const Datatypeptr Datatype::getNull(){
+      return Null();
+}
+
+
 
 Datatypeptr operator+(const Datatypeptr me, const Datatypeptr notme)
 {

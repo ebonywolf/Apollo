@@ -18,17 +18,15 @@ using namespace pg;
 using namespace ap;
 
 
-
 struct Calculator: public MultiInstance<Calculator>{
 
 	Calculator():MultiInstance(__CLASS_NAME__ ,doShit) {}
 
-    static double doShit(Entityptr ptr, double a, double b){
-        return a*b;
+    static double doShit(Entityptr ptr, double a){
+        return a*2;
     }
 
 };
-
 
 
 struct EventListener: public Singleton<EventListener>{
@@ -43,8 +41,8 @@ int main(int argc,char** argv)
 {
 
     Particle context = ap::makeParticle(new ap::JsonParticle("test.json"));
-   // context.run();
-    //auto Main = context->getEntity("Main");
+    context.run();
+   // auto Main = context->getEntity("Main");
 
     /*
 	Particle alce= Particle(new UniqueEntity("Alce"));

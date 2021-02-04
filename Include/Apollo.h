@@ -14,6 +14,10 @@
 
 #include "SpecialEntities/Basic.h"
 
+
+#include "SpecialDataTypes/NullDataType.h"
+#include "SpecialDataTypes/AllDataType.h"
+
 template <class T, class ...Args>
 std::shared_ptr<T> newParticle(Args...args){
     return std::make_shared<T>(args...);
