@@ -7,7 +7,7 @@
 namespace pg
 {
 
-struct Data //:protected std::unique_ptr<Base_Data>
+struct Data :public enable_shared_from_this_virtual<DatatypeBase>//:protected std::unique_ptr<Base_Data>
  {
     Data(){//_id(id_cont++)
 
@@ -31,9 +31,13 @@ private:
 using Dataptr = std::shared_ptr<Data>;
 
 
-struct DataSet {
+struct DataSet: public  Data {
 
     DataSet(Datatypeptr type):type(type){
+    }
+
+    void join( Dataptr other){
+        _internal.push_back(other);
     }
 
     virtual Datatypeptr getType() const{

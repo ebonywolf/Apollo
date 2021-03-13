@@ -15,7 +15,7 @@ public:
 
     }
 
-    virtual pg::Processptr getContext()const{
+    virtual pg::Entityptr getContext()const{
         return ent;
     }
     virtual pg::Datatypeptr getType() const{

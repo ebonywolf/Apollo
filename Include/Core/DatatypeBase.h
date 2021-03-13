@@ -27,19 +27,22 @@ public:
     virtual Datatypeptr getDataPair()const=0;
     virtual bool contains(Datatypeptr)const=0;
 
+    virtual bool e_equals(const Datatypeptr other) const{
+        //eurus equals
+        bool aCb = contains(other);
+        bool bCa = other->contains(this->shared_from_this());
+        return aCb && bCa;
+    }
+
    // virtual Datatypeptr getNull() const = 0;
 
-    virtual bool equals(const Datatypeptr key) const{
+    virtual bool equals(const Datatypeptr other) const{
+        //omni equals
         auto alce = toString();
-        auto blce = key->toString();
-        return toString() == key->toString();
+        auto blce = other->toString();
+        return toString() == other->toString();
     }
 
-    /*
-    virtual bool operator<(const Datatypeptr key) const{
-        return toString() < key->toString();
-    }
-    */
     friend std::ostream& operator<<(std::ostream& os, const DatatypeBase& data){
         os << data.toString();
         return os;

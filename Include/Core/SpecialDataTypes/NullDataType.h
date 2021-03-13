@@ -18,19 +18,19 @@ public:
         return other;
     }
     virtual Datatypeptr getHashKey() const {
-        return this->shared_from_this();
+        return DatatypeBase::shared_from_this();
     }
     virtual Datatypeptr getFrom() const{
-        return this->shared_from_this();
+        return DatatypeBase::shared_from_this();
     }
     virtual Datatypeptr getTo() const{
-        return this->shared_from_this();
+        return DatatypeBase::shared_from_this();
     }
     virtual Datatypeptr getInverseDataPair()const{
-        return this->shared_from_this();
+        return DatatypeBase::shared_from_this();
     }
     virtual Datatypeptr getDataPair()const{
-        return this->shared_from_this();
+        return DatatypeBase::shared_from_this();
     }
     virtual bool contains(Datatypeptr)const{
         return false;
@@ -42,8 +42,10 @@ public:
         static auto instance = std::make_shared<NullType>();
         return instance;
     }
+    bool equals(const Datatypeptr other) const override{
+        return true;
+    }
 };
-
 
 extern decltype( std::bind(NullType::get) ) Null;
 

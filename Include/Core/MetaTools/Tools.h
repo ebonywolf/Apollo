@@ -11,6 +11,7 @@ namespace pg{
 
     template <class T>
     struct Generic_GenericData;
+
 }
 
 

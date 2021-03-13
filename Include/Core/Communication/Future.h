@@ -18,7 +18,7 @@ struct FutureBase{
     Datatypeptr type;
     bool _ready=0;
 
-    std::vector<Dataptr> _returnData;
+    DataSet _returnData;
 
 };
 
@@ -31,19 +31,19 @@ struct Future : public std::shared_ptr<FutureBase>, public DatatypeBase{
 
     void set(Dataptr d)
     {
-        auto alce = get();
-        alce->_returnData.push_back(d);
+        auto me = get();
+        me->_returnData.join(d);
     }
 
-    std::vector<Dataptr> getData()
+    Dataptr getData() const
     {
         auto alce = get();
-        return   alce->_returnData;
+        return alce->_returnData.shared_from_this();
     }
     template <class T>
     T getObject()
     {
-        if(!ready())throw "foo";
+        if(!ready())throw "Future.h::getObject";
         T attr;
         Tools::getObject(attr,getData()[0] );
         return attr;
@@ -55,7 +55,7 @@ struct Future : public std::shared_ptr<FutureBase>, public DatatypeBase{
         alce->_ready = true;
     }
 
-    bool ready()
+    bool ready() const
     {
        auto alce = get();
        return alce->_ready;

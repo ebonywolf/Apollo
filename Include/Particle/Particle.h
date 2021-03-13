@@ -12,12 +12,12 @@ namespace ap{
 class FutureParticle : public Particle_Base {
 public:
 
-    pg::Processptr context;
+    pg::Entityptr context;
     pg::Future future;
-    FutureParticle(pg::Processptr context,pg::Future future):context(context), future(future){
+    FutureParticle(pg::Entityptr context,pg::Future future):context(context), future(future){
 
     }
-    virtual pg::Processptr getContext()const {
+    virtual pg::Entityptr getContext()const {
         return context;
     }
     virtual pg::Datatypeptr getType() const{
@@ -25,8 +25,12 @@ public:
     }
 
     virtual pg::Dataptr getValue() const {
+        std::cout <<"before check"<< future.ready() <<std::endl;
 
-        throw "foo";
+        context->update();
+        std::cout << "after check"<<future.ready() <<std::endl;
+
+        return future.getData();
     }
 };
 
@@ -50,6 +54,8 @@ public:
         auto fromType = type->getFrom();
         auto toType = type->getTo();
         auto value = other->getValue();
+        auto me = get()->getContext();
+   //     Particle alce2 = other.send(value, fromType,  );
         Particle alce = send(value, fromType, other->getContext() );
         return alce;
 

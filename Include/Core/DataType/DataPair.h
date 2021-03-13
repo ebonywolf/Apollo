@@ -46,9 +46,6 @@ private:
     std::shared_ptr<const Datatype> _from,_to;
 };
 
-struct DatapairSet:public  EditableDatatype  {
-
-} ;
 
 }
 

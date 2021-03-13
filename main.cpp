@@ -17,18 +17,31 @@ using namespace std;
 using namespace pg;
 using namespace ap;
 
-
+/*
 struct Calculator: public MultiInstance<Calculator>{
-
 	Calculator():MultiInstance(__CLASS_NAME__ ,doShit) {}
-
     static double doShit(Entityptr ptr, double a){
         return a*2;
     }
 
 };
+*/
+
+struct Main : public Singleton<Main>{
+    Main():Singleton(__CLASS_NAME__ ,relay,lie,truth) {}
+    static pg::NullType relay(Entityptr ptr, pg::NullType  ){
+        std::cout <<"hello world" <<std::endl;
+    }
+    static pg::AllType lie(Entityptr ptr, pg::NullType  ){
+          std::cout <<"Begin world" <<std::endl;
+    }
+    static pg::AllType truth(Entityptr ptr, pg::AllType  ){
+          std::cout <<"hello god" <<std::endl;
+    }
 
 
+};
+/*
 struct EventListener: public Singleton<EventListener>{
 	EventListener():Singleton(__CLASS_NAME__ ,doShit) {}
     static double doShit(Entityptr ptr, double a, double b){
@@ -37,6 +50,7 @@ struct EventListener: public Singleton<EventListener>{
 
 };
 
+*/
 int main(int argc,char** argv)
 {
 

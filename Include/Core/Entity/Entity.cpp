@@ -84,7 +84,7 @@ Datatypeptr  Entity::getInverseDataPair() const
 }
 Datatypeptr  Entity::getDataPair() const
 {
-    return _eurus;
+    return Datatypeptr(new DataPair(_eurus, _omni));
 }
 
 

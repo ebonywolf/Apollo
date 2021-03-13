@@ -3,10 +3,10 @@ project(Apollo)
 
 set (CMAKE_CXX_STANDARD 17)
 
-set(CMAKE_BUILD_TYPE Release)
+set(CMAKE_BUILD_TYPE Debug)
 set(BUILD_LIBS ${BUILD_LIBS} "-lpthread -ljsoncpp")
 
-file(GLOB lib_srcs *.* Include/Core/*.* Include/Core/*/*.* Include/*.* )
+file(GLOB lib_srcs *.* Include/Core/*/*.* Include/*.* Include/*/*.* )
 
 Include_directories( Include/ Include/Core )
 

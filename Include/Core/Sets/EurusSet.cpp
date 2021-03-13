@@ -53,9 +53,11 @@ void EurusSet::warnEurusChange(Processptr context)
 
 bool EurusSet::contains(Datatypeptr d)const
 {
+    std::cout <<"Contains of:"<<this->toString() <<std::endl;
     for(auto x: _internal) {
-       if(x.second.contains(d))
-           return true;
+        auto key = x.first;
+        key->e_equals(d);
+            return true;
     }
     return false;
 }
@@ -74,10 +76,16 @@ Processptr EurusSet::getBase()const
 
 void EurusSet::extend(Processptr ptr)
 {
-    _internal[ptr->getDataPair()].extend(ptr);
+
+    auto alce = ptr->getDataPair();
+
+    std::cout <<"extend of:"<<this->toString() <<std::endl;
+    std::cout <<"extend:"<<alce <<std::endl;
+    if(alce->toString().size()==0){
+        ptr->getDataPair();
+    }
+    _internal[alce].extend(ptr);
     _key->join(ptr->getDataPair());
-
-
 }
 
 bool EurusSet::hasOmni(Datatypeptr name) const
@@ -98,10 +106,13 @@ Processptr EurusSet::getOmni() const
 
 void EurusSet::handle(Entityptr ent, Packet d)
 {
-    auto channel = d.getChannel()->getInverseDataPair();
+    auto channel = d.getChannel();
 
     for(auto x: _internal) {
-       bool contains = x.second.contains(channel);
+       auto& type = x.first;
+
+       bool contains = channel->contains(type);
+
        if(contains ){
           x.second.handle(ent,d);
        }
@@ -143,14 +154,14 @@ Datatypeptr EurusSet::junction(Datatypeptr other) const {
 }
 
 Datatypeptr EurusSet::getFrom() const{
-    throw "todo";
+    throw  _key->getFrom();
 }
 Datatypeptr EurusSet::getTo() const{
 
-    throw "todo";
+    return _key->getTo();
 }
 Datatypeptr EurusSet::getInverseDataPair() const{
-    throw "todo";
+    throw std::make_shared<DataPair>(getTo(),getFrom());
 }
 Datatypeptr EurusSet::getDataPair() const{
     return std::make_shared<DataPair>(getFrom(),getTo());

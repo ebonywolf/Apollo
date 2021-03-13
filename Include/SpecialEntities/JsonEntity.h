@@ -24,19 +24,18 @@ public:
                 if( global->hasOmni(key) ) {
                     auto current = global->getOmni(key);
 
-                    std::cout<<"Editing:"<<current->toString()<<std::endl;
-                   // auto c_current=  cast(current);
-                   // c_current->extend(toadd);
-
+                    std::cout<<"Editing:"<<current->toString()<<"-"<<current->getEurus()->toString()<<std::endl;
                     current->extend(toadd);
                     global->addEurus(current);
                     addEurus(current);
+                    addOmni(current);
                 }else{
                     std::cout<<"Creating:"<<toadd->toString()<<std::endl;
 
                     global->addOmni(toadd);
                     global->addEurus(toadd);
                     addEurus(toadd);
+                    addOmni(toadd);
                 }
 
             } else {

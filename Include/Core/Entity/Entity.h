@@ -180,7 +180,7 @@ protected:
     {
         //TODO MEMORY FUNCTION
         _receivedBuffer.push(context, packet);
-        context->warnEurusChange(this->shared_from_this());
+        context->warnEurusChange(shared_from_this());
     }
 
 
