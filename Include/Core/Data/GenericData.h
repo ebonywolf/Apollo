@@ -22,7 +22,7 @@ struct GenericData: public Data {
     friend std::ostream& operator<<(std::ostream& os, const GenericData<T>& data )
     {
    //     os<<"Data:"<<data.getType()<<":"<<data.get();
-
+        throw "todo";
         return os;
     }
     std::string name_id;

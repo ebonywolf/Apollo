@@ -11,7 +11,7 @@
 #include "Process/VariadicProcess.h"
 
 #include "ProcessBase.h"
-#include "DataType/DataTuple.h"
+#include "Data/DataTuple.h"
 #include "Communication/Packet.h"
 
 #include "Sets/EurusSet.h"
@@ -23,7 +23,7 @@ namespace pg
 
 using Entity_Base = EditableProcess;
 
-struct Entity : public Entity_Base, public Data  {//Defines object that runs many functions and has many dataTypes
+struct Entity : public Entity_Base {//Defines object that runs many functions and has many dataTypes
     using ContextMap = std::unordered_map<std::string,Entityptr>;
     using SendBuffer = std::unordered_map<Entityptr, std::unordered_map<Entityptr,Packet>>;
     using PacketList = std::vector<Packet>;
@@ -109,7 +109,7 @@ struct Entity : public Entity_Base, public Data  {//Defines object that runs man
 
         for (auto& pack: packets) {
 
-            Entityptr me = std::static_pointer_cast<Entity_Base>(this->shared_from_this());
+            Entityptr me = std::static_pointer_cast<Entity_Base>(shared_from_this());
             handle( me , pack);
             pack.futureAnswer.setReady();
 
@@ -148,16 +148,14 @@ struct Entity : public Entity_Base, public Data  {//Defines object that runs man
 
             if(_senders->size()){
                 auto clone = _senders;
-                auto context = this->shared_from_this();
                 _senders = _senders->getBase();
-                clone->omniUpdate(context);
+                clone->omniUpdate(shared_from_this());
 
             }
             if(_receivers->size()){
                 auto clone = _receivers;
-                auto context = this->shared_from_this();
                 _receivers = _receivers->getBase();
-                clone->eurusUpdate(context);
+                clone->eurusUpdate(shared_from_this());
             }
         }
 
@@ -180,6 +178,7 @@ protected:
     {
         //TODO MEMORY FUNCTION
         _receivedBuffer.push(context, packet);
+
         context->warnEurusChange(shared_from_this());
     }
 

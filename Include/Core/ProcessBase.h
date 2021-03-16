@@ -3,8 +3,8 @@
 #include <unordered_set>
 
 #include "Communication/Future.h"
-#include "DataType/Data.h"
-#include "DataType/DataTuple.h"
+#include "Data/Data.h"
+#include "Data/DataTuple.h"
 #include "Identification/KeySet.h"
 #include "Base.h"
 #include "MetaTools/GetData.h"

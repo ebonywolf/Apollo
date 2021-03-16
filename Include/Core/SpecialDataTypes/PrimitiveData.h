@@ -1,6 +1,6 @@
 #pragma once
 
-#include "DataType/GenericData.h"
+#include "Data/GenericData.h"
 
 
 namespace pg{

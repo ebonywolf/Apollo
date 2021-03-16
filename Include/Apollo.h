@@ -6,11 +6,11 @@
 #include "Entity/Entity.h"
 #include "Entity/UniqueEntity.h"
 #include "Process/Process.h"
-#include "DataType/Data.h"
+#include "Data/Data.h"
 
 #include "Process/VariadicProcess.h"
-#include "DataType/Data.h"
-#include "DataType/GenericData.h"
+#include "Data/Data.h"
+#include "Data/GenericData.h"
 
 #include "SpecialEntities/Basic.h"
 

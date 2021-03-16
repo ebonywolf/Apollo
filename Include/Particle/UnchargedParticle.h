@@ -22,7 +22,8 @@ public:
         return ent->getDataPair();
     }
     virtual pg::Dataptr getValue() const {
-        ent->getEurus();
+        throw "todo";
+       //return ent->getEurus();
     }
 };
 

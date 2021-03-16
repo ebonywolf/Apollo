@@ -1,14 +1,15 @@
 #pragma once
 
-#include "DataType/Data.h"
+#include "Data/Data.h"
 #include "MetaTools/GetObject.h"
 namespace pg{
 
 
 struct FutureBase{
     FutureBase(Datatypeptr type):
-        type(type)
+        type(type),_returnData(new DataSet(type))
     {
+
     }
     ~FutureBase(){}
     virtual Datatypeptr getType() const
@@ -18,7 +19,7 @@ struct FutureBase{
     Datatypeptr type;
     bool _ready=0;
 
-    DataSet _returnData;
+    Dataptr _returnData;
 
 };
 
@@ -32,20 +33,22 @@ struct Future : public std::shared_ptr<FutureBase>, public DatatypeBase{
     void set(Dataptr d)
     {
         auto me = get();
-        me->_returnData.join(d);
+     //   me->_returnData->join(d);
+        throw "todo";
     }
 
     Dataptr getData() const
     {
         auto alce = get();
-        return alce->_returnData.shared_from_this();
+        return alce->_returnData;
     }
     template <class T>
-    T getObject()
+    std::shared_ptr<T> getObject()
     {
         if(!ready())throw "Future.h::getObject";
-        T attr;
-        Tools::getObject(attr,getData()[0] );
+        std::shared_ptr<T> attr;
+
+        Tools::getObject(attr, get()->_returnData );
         return attr;
     }
 

@@ -2,7 +2,7 @@
 #pragma once
 
 
-#include "DataType/DataTuple.h"
+#include "Data/DataTuple.h"
 #include "Process/GenericProcess.h"
 #include "MetaTools/ApplyTuple.h"
 

@@ -2,12 +2,13 @@
 #pragma once
 #include <unordered_map>
 #include <memory>
-#include "Datatype.h"
-#include "DataPair.h"
+#include "DataType/Datatype.h"
+#include "DataType/DataPair.h"
+//#include "ProcessBase.h"
 namespace pg
 {
 
-struct Data :public enable_shared_from_this_virtual<DatatypeBase>//:protected std::unique_ptr<Base_Data>
+struct Data : enable_shared_from_this_virtual<Data>
  {
     Data(){//_id(id_cont++)
 
