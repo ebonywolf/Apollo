@@ -10,27 +10,25 @@ namespace pg
 
 struct Data : enable_shared_from_this_virtual<Data>
  {
-    Data(){//_id(id_cont++)
-
+    Data(){
     }
-    Data(const Data& data){//:_id(data._id)
-    }
-
+    Data(const Data& data){}
 
 
     virtual Datatypeptr getType() const=0;
+    virtual std::string toString() const =0;
 
     friend std::ostream& operator<<(std::ostream& os, const Data& data )
     {
-     //   os<<"Data:"<<data.getType();
+        os<<"Base Data:"<<data.getType();
         return os;
     }
 private:
-   // long int _id; //Maybe remove
-  //  static long int id_cont;
 };
 using Dataptr = std::shared_ptr<Data>;
 
+
+extern std::ostream& operator<<(std::ostream& os, const Dataptr& data );
 
 struct DataSet: public  Data {
 
@@ -39,6 +37,15 @@ struct DataSet: public  Data {
 
     void join( Dataptr other){
         _internal.push_back(other);
+    }
+    virtual std::string toString() const {
+        std::string alce="";
+        for(const auto& x: _internal){
+            alce+= x->toString() += " | ";
+        }
+        if(_internal.empty())
+            alce = "Empty set:"+type->toString();
+        return alce;
     }
 
     virtual Datatypeptr getType() const{

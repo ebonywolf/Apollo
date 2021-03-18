@@ -18,7 +18,10 @@ struct GenericData: public Data {
         return std::make_shared<Datatype>(name_id);
 
     }
-
+    std::string toString() const
+    {
+        return name_id;
+    }
     friend std::ostream& operator<<(std::ostream& os, const GenericData<T>& data )
     {
    //     os<<"Data:"<<data.getType()<<":"<<data.get();

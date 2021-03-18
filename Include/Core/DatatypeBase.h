@@ -29,6 +29,7 @@ public:
 
     virtual bool e_equals(const Datatypeptr other) const{
         //eurus equals
+        //Todo optimize this
         bool aCb = contains(other);
         bool bCa = other->contains(this->shared_from_this());
         return aCb && bCa;

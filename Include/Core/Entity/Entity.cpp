@@ -29,8 +29,7 @@ Entityptr Entity::getGlobal()
 
 void Entity::handle(Entityptr ent, Packet d)
 {
-     Entityptr me = std::static_pointer_cast<Entity_Base>(this->shared_from_this());
-    _eurus->handle(me , d);
+    _eurus->handle(ent , d);
 }
 
 Future Entity::send(Dataptr sentData,const Datatypeptr fromType, Processptr context)
@@ -42,7 +41,7 @@ Future Entity::send(Dataptr sentData,const Datatypeptr fromType, Processptr cont
 
     std::cout <<"FromType:"<<fromType->toString()<<" ToType:"<<toType->toString() <<std::endl;
     reversePair->toString();
-    bool sent = false;
+
     Future future(fromType);
     if( !_omni->hasEurus( reversePair) ){
         throw std::runtime_error(std::string("no handler for: ") + reversePair->toString());

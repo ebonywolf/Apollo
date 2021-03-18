@@ -10,7 +10,7 @@ namespace pg{
 class AllType : public DatatypeBase, public Data {
 public:
     virtual std::string toString() const{
-        return "all";
+        return "_all";
     }
     virtual Datatypeptr junction( Datatypeptr other)const {
         return DatatypeBase::shared_from_this();

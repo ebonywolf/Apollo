@@ -29,14 +29,20 @@ struct Calculator: public MultiInstance<Calculator>{
 
 struct Main : public Singleton<Main>{
     Main():Singleton(__CLASS_NAME__ ,relay,lie,truth) {}
+
+    //Requesting AllType  Sending NullType
+
     static pg::NullType relay(Entityptr ptr, pg::NullType  ){
         std::cout <<"hello world" <<std::endl;
+        return pg::NullType();
     }
     static pg::AllType lie(Entityptr ptr, pg::NullType  ){
           std::cout <<"Begin world" <<std::endl;
+          return pg::AllType();
     }
     static pg::AllType truth(Entityptr ptr, pg::AllType  ){
           std::cout <<"hello god" <<std::endl;
+          return pg::AllType();
     }
 
 

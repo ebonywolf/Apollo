@@ -34,8 +34,10 @@ public:
     }
 
     friend std::ostream& operator<<(std::ostream& os, const Particle& data ){
-        os<<"Particle:"<<data->getContext()->toString()<<" | "<<data->getType()->toString()<<" | "
-                <<data->getValue()->getType()->toString()<<std::endl;
+        os<<"Particle: Context:"<<data->getContext()->toString()
+                <<" | Type:"<<data->getType()->toString();
+        auto alce = data->getValue();
+        os<< "\n Value:"<<alce->toString()<<std::endl;
         return os;
     }
 

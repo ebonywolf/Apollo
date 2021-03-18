@@ -25,6 +25,9 @@ public:
         throw "todo";
        //return ent->getEurus();
     }
+    std::string toString() const{
+        return ent->toString();
+    }
 };
 
 

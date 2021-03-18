@@ -4,7 +4,7 @@
 #include "DataType/GenericDatatype.h"
 #include "MetaTools/GetType.h"
 #include "Particle_Base.h"
-
+#include <sstream>
 namespace ap{
 
 
@@ -31,6 +31,26 @@ public:
 
         return future.getData();
     }
+    virtual std::string toString() const
+    {
+        std::stringstream os;
+        if (future.ready())
+            os << "Future:" << getType()->toString() << " value:"
+                    << future.getData() << std::endl;
+        else
+            os << "Future:" << getType()->toString()
+                    << " Not ready, waiting on " << getContext()
+                    << std::endl;
+        return os.str();
+    }
+    friend std::ostream& operator<<(std::ostream& os, const FutureParticle& data ){
+        if(data.future.ready())
+            os<<"Future:"<<data.getType()->toString()<<" value:"<<data.future.getData()<<std::endl;
+        else
+            os<<"Future:"<<data.getType()->toString()<<" Not ready, waiting on "<<data.getContext()<<std::endl;
+        return os;
+    }
+
 };
 
 

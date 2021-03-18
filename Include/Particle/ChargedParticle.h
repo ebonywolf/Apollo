@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Apollo.h"
-
+#include <sstream>
 namespace ap {
 
 class ChargedParticle: public Particle_Base {
@@ -25,7 +25,12 @@ public:
     virtual pg::Dataptr getValue() const{
         return charge;
     }
-
+    std::string toString() const{
+        std::stringstream ss;
+        ss<<"Context:"<<context->toString()<<
+                "\nCharge:"<<charge->toString()<<"n\Type:"<<type->toString();
+        return ss.str();
+    }
     virtual ~ChargedParticle(){}
 
 };

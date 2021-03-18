@@ -79,7 +79,7 @@ void OmniSet::extend(Processptr ptr)
 {
     if( ptr->isNull() ) {
    //     return;todo
-       // std::cout<< "Adding Null:"<<ptr->toString() << std::endl;
+        std::cout<< "Adding Null:"<<ptr->toString() << std::endl;
     }
     auto h= ptr->getHashKey();
     _internal.insert({ h, ptr });

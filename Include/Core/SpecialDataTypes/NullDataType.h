@@ -12,7 +12,7 @@ class NullType : public DatatypeBase, public Data{
 public:
 
     virtual std::string toString() const{
-        return "null";
+        return "";
     }
     virtual Datatypeptr junction( Datatypeptr other)const {
         return other;
@@ -32,7 +32,9 @@ public:
     virtual Datatypeptr getDataPair()const{
         return DatatypeBase::shared_from_this();
     }
-    virtual bool contains(Datatypeptr)const{
+    virtual bool contains(Datatypeptr other)const{
+        if(other->getHashKey()->equals(get()))
+            return true;
         return false;
     }
     virtual Datatypeptr getType() const{
