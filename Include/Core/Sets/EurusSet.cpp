@@ -106,7 +106,7 @@ Processptr EurusSet::getOmni() const
 
 void EurusSet::handle(Entityptr ent, Packet d)
 {
-    auto channel = d.getChannel();
+    auto channel = d.getChannel()->getDataPair(); //We want the anti particle
 
     for(auto x: _internal) {
        auto& type = x.first;
@@ -143,10 +143,10 @@ void EurusSet::receiveData(Processptr context, Packet packet)
 }
 
 
-
-
-
 std::string EurusSet::toString() const{
+    if(size()==0){
+        return "null";
+    }
     return _key->toString();
 }
 Datatypeptr EurusSet::junction(Datatypeptr other) const {

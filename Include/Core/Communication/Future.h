@@ -19,7 +19,7 @@ struct FutureBase{
     Datatypeptr type;
     bool _ready=0;
 
-    Dataptr _returnData;
+    std::shared_ptr<DataSet> _returnData;
 
 };
 
@@ -33,8 +33,7 @@ struct Future : public std::shared_ptr<FutureBase>, public DatatypeBase{
     void set(Dataptr d)
     {
         auto me = get();
-  //      me->_returnData->join(d);
-        throw "todo";
+        me->_returnData->join(d);
     }
 
     Dataptr getData() const

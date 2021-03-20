@@ -8,6 +8,20 @@ std::ostream& operator<<(std::ostream& os, const Dataptr& data ){
      return os;
  }
 
+/*
+Dataptr Data::junction(  Dataptr other) const {
+     auto ptr = std::static_pointer_cast<DataSet>(other);
+     auto type = getType()->junction(other->getType());
+     auto result = std::make_shared<DataSet>(type);
 
+     result->join( _internal);
+     if(ptr){
+         result->join( ptr->_internal );
+     }else{
+         result->
+     }
+     join(other);
 
+ }
+*/
 }

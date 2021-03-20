@@ -7,7 +7,8 @@
 //#include "ProcessBase.h"
 namespace pg
 {
-
+class Data;
+using Dataptr = std::shared_ptr<Data>;
 struct Data : enable_shared_from_this_virtual<Data>
  {
     Data(){
@@ -17,7 +18,7 @@ struct Data : enable_shared_from_this_virtual<Data>
 
     virtual Datatypeptr getType() const=0;
     virtual std::string toString() const =0;
-
+    //virtual Dataptr junction(  Dataptr other) const;
     friend std::ostream& operator<<(std::ostream& os, const Data& data )
     {
         os<<"Base Data:"<<data.getType();
@@ -36,8 +37,18 @@ struct DataSet: public  Data {
     }
 
     void join( Dataptr other){
-        _internal.push_back(other);
+        //Todo update Type
+        auto ptr = std::dynamic_pointer_cast<DataSet>(other);
+         if(ptr){
+             join(ptr->_internal);
+         }else{
+             _internal.push_back(other);
+         }
     }
+    void join(std::vector<Dataptr> other){
+        _internal.insert(std::end(_internal), std::begin(other), std::end(other));
+    }
+
     virtual std::string toString() const {
         std::string alce="";
         for(const auto& x: _internal){

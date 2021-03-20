@@ -12,7 +12,7 @@ class NullType : public DatatypeBase, public Data{
 public:
 
     virtual std::string toString() const{
-        return "";
+        return "null";
     }
     virtual Datatypeptr junction( Datatypeptr other)const {
         return other;
@@ -33,7 +33,7 @@ public:
         return DatatypeBase::shared_from_this();
     }
     virtual bool contains(Datatypeptr other)const{
-        if(other->getHashKey()->equals(get()))
+       if(other->equals(get()))
             return true;
         return false;
     }
@@ -44,9 +44,7 @@ public:
         static auto instance = std::make_shared<NullType>();
         return instance;
     }
-    bool equals(const Datatypeptr other) const override{
-        return true;
-    }
+
 };
 
 extern decltype( std::bind(NullType::get) ) Null;

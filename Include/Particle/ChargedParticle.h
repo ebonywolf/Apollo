@@ -28,7 +28,7 @@ public:
     std::string toString() const{
         std::stringstream ss;
         ss<<"Context:"<<context->toString()<<
-                "\nCharge:"<<charge->toString()<<"n\Type:"<<type->toString();
+                "\nCharge:"<<charge->toString()<<"\nType:"<<type->toString();
         return ss.str();
     }
     virtual ~ChargedParticle(){}

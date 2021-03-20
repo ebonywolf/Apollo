@@ -139,6 +139,9 @@ throw "todo";
 }
 
 std::string OmniSet::toString() const{
+    if(size()==0){
+        return "null";
+    }
     return _key->toString();
 }
 Datatypeptr OmniSet::junction(Datatypeptr other) const {
