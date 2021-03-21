@@ -66,3 +66,7 @@ struct EditableDatatype : public DatatypeBase {
 };
 
 }
+namespace std{
+   extern std::string to_string(pg::Datatypeptr);
+}
+

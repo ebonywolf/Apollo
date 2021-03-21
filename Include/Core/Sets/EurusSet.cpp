@@ -20,7 +20,11 @@ EurusSet::EurusSet(){
 
 int EurusSet::size()const
 {
-    return _internal.size();
+    int sum=0;
+    for(auto& key: _internal){
+        sum+= key.second.size();
+    }
+    return sum;
 }
 Datatypeptr EurusSet::getHashKey()const
 {
@@ -53,7 +57,6 @@ void EurusSet::warnEurusChange(Processptr context)
 
 bool EurusSet::contains(Datatypeptr d)const
 {
-    std::cout <<"Contains of:"<<this->toString() <<std::endl;
     for(auto x: _internal) {
         auto key = x.first;
         key->e_equals(d);
@@ -79,8 +82,8 @@ void EurusSet::extend(Processptr ptr)
 
     auto alce = ptr->getDataPair();
 
-    std::cout <<"extend of:"<<this->toString() <<std::endl;
-    std::cout <<"extend:"<<alce <<std::endl;
+    Debug("Extend of:",this->toString()," Extending:",alce);
+
     if(alce->toString().size()==0){
         ptr->getDataPair();
     }
@@ -95,7 +98,6 @@ throw "todo";
 
 Processptr EurusSet::getOmni() const
 {
-    throw "seriously";
     Processptr omni = std::make_shared<OmniSet>();
     for(auto x: _internal) {
         omni->extend( x.second.getOmni());

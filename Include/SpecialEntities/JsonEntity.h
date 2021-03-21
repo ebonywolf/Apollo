@@ -23,15 +23,13 @@ public:
 
                 if( global->hasOmni(key) ) {
                     auto current = global->getOmni(key);
-
-                    std::cout<<"Editing:"<<current->toString()<<"-"<<current->getEurus()->toString()<<std::endl;
+                    Debug("Editing:",current->toString(),"-",current->getEurus()->toString() );
                     current->extend(toadd);
                     global->addEurus(current);
                     addEurus(current);
                     addOmni(current);
                 }else{
-                    std::cout<<"Creating:"<<toadd->toString()<<std::endl;
-
+                    Debug("Creating",toadd->toString());
                     global->addOmni(toadd);
                     global->addEurus(toadd);
                     addEurus(toadd);

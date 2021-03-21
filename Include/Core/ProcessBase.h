@@ -9,7 +9,7 @@
 #include "Base.h"
 #include "MetaTools/GetData.h"
 #include "MetaTools/GetType.h"
-
+#include "Tools/Logger.h"
 namespace pg
 {
 

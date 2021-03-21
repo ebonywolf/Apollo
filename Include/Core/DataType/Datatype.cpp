@@ -66,6 +66,12 @@ Datatypeptr Datatype::junction(const Datatypeptr other) const
     return keyset;
 }
 
-
-
 }
+
+namespace std{
+   std::string to_string(pg::Datatypeptr obj){
+       return obj->toString();
+   }
+}
+
+

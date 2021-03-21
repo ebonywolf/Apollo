@@ -1,6 +1,7 @@
 //#include <bits/stdc++.h>
 //#include <SFML/Graphics.hpp>
 
+
 #include <iostream>
 #include "Coord.h"
 
@@ -26,7 +27,6 @@ struct Calculator: public MultiInstance<Calculator>{
 
 };
 */
-
 struct Main : public Singleton<Main>{
     Main():Singleton(__CLASS_NAME__ ,relay,lie,truth) {}
 

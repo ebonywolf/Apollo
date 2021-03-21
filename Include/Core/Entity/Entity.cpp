@@ -39,7 +39,7 @@ Future Entity::send(Dataptr sentData,const Datatypeptr fromType, Processptr cont
 
     auto reversePair = pair->getInverseDataPair();
 
-    std::cout <<"FromType:"<<fromType->toString()<<" ToType:"<<toType->toString() <<std::endl;
+    Debug("FromType:",fromType->toString()," ToType:", toType->toString() );
     reversePair->toString();
 
     Future future(fromType);

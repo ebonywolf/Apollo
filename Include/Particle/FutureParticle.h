@@ -25,10 +25,10 @@ public:
 
     virtual pg::Dataptr getValue() const {
         std::cout <<"before check"<< future.ready() <<std::endl;
+        Debug("before check:", future.ready());
 
         context->update();
-        std::cout << "after check"<<future.ready() <<std::endl;
-
+        Debug("After check:", future.ready());
         return future.getData();
     }
     virtual std::string toString() const

@@ -79,7 +79,7 @@ void OmniSet::extend(Processptr ptr)
 {
     if( ptr->isNull() ) {
    //     return;todo
-        std::cout<< "Adding Null:"<<ptr->toString() << std::endl;
+        Debug("Adding Null:",ptr->toString());
     }
     auto h= ptr->getHashKey();
     _internal.insert({ h, ptr });
@@ -110,7 +110,6 @@ Processptr OmniSet::getOmni() const
 
 bool OmniSet::hasEurus(Datatypeptr p) const
 {
-    std::cout<<"Omni:"<<*this<<_internal.size()<<std::endl;
     for(auto x: _internal) {
         if( x.second->hasEurus(p))
             return true;

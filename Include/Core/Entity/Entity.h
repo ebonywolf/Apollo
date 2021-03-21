@@ -15,7 +15,7 @@
 #include "Communication/Packet.h"
 
 #include "Sets/EurusSet.h"
-
+#include "Tools/Logger.h"
 namespace pg
 {
 
