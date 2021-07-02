@@ -47,21 +47,21 @@ struct Process_Base: public DatatypeBase,
     virtual int size() const = 0;
     virtual void receiveData(const Processptr context, Packet packet)=0;
 
-    template<class T, class D>
-    Future send(D d)
+    template<class OUTPUT, class INPUT>
+    Future send(INPUT d)
     {
         Dataptr sentData = Tools::getData(d);
         Processptr context = shared_from_this();
-        T received;
+        OUTPUT received;
         const auto fromType = Tools::getType(received);
         return send(sentData, fromType, context);
     }
-    template<class T, class ...D>
-    Future send(D ... d)
+    template<class OUTPUT, class ...INPUT>
+    Future send(INPUT ... d)
     {
-        auto sentData = std::make_shared<DataTuple<D...>>(d...);
+        auto sentData = std::make_shared<DataTuple<INPUT...>>(d...);
         Processptr context = shared_from_this();
-        T received;
+        OUTPUT received;
         const auto fromType = Tools::getType(received);
         return send(sentData, fromType, context);
     }

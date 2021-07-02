@@ -10,6 +10,7 @@ namespace pg{
 
 template <class ...T>
 struct DataTuple : public std::tuple<T...>, public Data{
+
     DataTuple():
         _key(_createKey())
     {
@@ -17,6 +18,9 @@ struct DataTuple : public std::tuple<T...>, public Data{
     DataTuple(T...t): std::tuple<T...>(t...),
            _key(_createKey_params(t...))
     {
+    }
+    virtual std::string toString() const{
+       return _key->toString();
     }
 
     virtual Datatypeptr getType() const{

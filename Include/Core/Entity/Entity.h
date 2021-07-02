@@ -132,7 +132,8 @@ struct Entity : public Entity_Base {//Defines object that runs many functions an
     }
 
     void warnOmniChange(const Processptr context) override;
-    int size() const override{
+    int size() const override
+    {
         return _receivers->size() + _senders->size();
     }
     void warnEurusChange(const Processptr context) override
@@ -143,7 +144,8 @@ struct Entity : public Entity_Base {//Defines object that runs many functions an
     {
         return _omni;
     }
-    void update(){
+    void update()
+    {
         while(_senders->size() || _receivers->size()){
 
             if(_senders->size()){

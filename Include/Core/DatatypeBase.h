@@ -24,6 +24,8 @@ public:
     virtual Datatypeptr getFrom() const=0;
     virtual Datatypeptr getTo() const=0;
     virtual Datatypeptr getInverseDataPair()const=0;
+
+    //Direction pair in the eurus omni dimension
     virtual Datatypeptr getDataPair()const=0;
     virtual bool contains(Datatypeptr)const=0;
 

@@ -45,7 +45,7 @@ public:
         return false;
     }
     bool e_equals(const Datatypeptr key) const override{
-
+        return false;
     }
 
 };

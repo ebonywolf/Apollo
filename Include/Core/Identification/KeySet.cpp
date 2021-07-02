@@ -35,7 +35,7 @@ std::string  KeySet::toString() const{
     bool first=true;
     for (auto& x: _internal) {
         if(!first)
-            s+="_";
+            s+=".";
         else
             first = false;
 

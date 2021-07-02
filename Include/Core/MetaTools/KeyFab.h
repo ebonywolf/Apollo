@@ -39,14 +39,21 @@ void createKey_base_params(KeyChainptr createdKey,CURRENT_TYPE& current, TYPES&.
 }
 
 
+template<class ...INPUT>
+KeyChainptr createKey()
+{
+    KeyChainptr inputKeyset = std::make_shared<KeyChain>();
+    createKey_base<INPUT...>(inputKeyset);
+    return inputKeyset;
+}
+
 
 template<class OUTPUT, class ...INPUT>
-Datatypeptr createKey()
+Datatypeptr createKeyPair()
 {
     OUTPUT output;
     Datatypeptr outputKey = Tools::getType(output);
-    KeyChainptr inputKeyset = std::make_shared<KeyChain>();
-    createKey_base<INPUT...>(inputKeyset);
+    KeyChainptr inputKeyset = createKey<INPUT...>();
 
     Datatypeptr par = std::make_shared<DataPair>(outputKey, inputKeyset);
     return par;

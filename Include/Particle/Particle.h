@@ -2,6 +2,7 @@
 #pragma once
 
 #include "FutureParticle.h"
+#include "DataType/VariadicDatatype.h"
 #include <ostream>
 
 namespace ap{
@@ -43,13 +44,11 @@ public:
 
 
     template<class ...OUTPUT, class ...INPUT>
-    Particle send(INPUT... input) const {
-       pg::Processptr me = get()->getContext();
-
-       auto answ = me->send(input...);
-
-       Particle alce = new FutureParticle(me, answ);
-        return alce;
+    Particle send( INPUT... input) const {
+       auto global = pg::Entity::getGlobal();
+       pg::Datatypeptr outputptr = pg::Datatypeptr(new pg::VariadicDatatype<OUTPUT...>());
+       pg::Dataptr inputptr =  pg::Dataptr(new pg::DataTuple(input...));
+       return send(inputptr, outputptr, global);
     }
 
 

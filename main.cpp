@@ -18,7 +18,7 @@ using namespace std;
 using namespace pg;
 using namespace ap;
 
-/*
+
 struct Calculator: public MultiInstance<Calculator>{
 	Calculator():MultiInstance(__CLASS_NAME__ ,doShit) {}
     static double doShit(Entityptr ptr, double a){
@@ -26,7 +26,7 @@ struct Calculator: public MultiInstance<Calculator>{
     }
 
 };
-*/
+
 struct Main : public Singleton<Main>{
     Main():Singleton(__CLASS_NAME__ ,relay,lie,truth) {}
 
@@ -34,6 +34,10 @@ struct Main : public Singleton<Main>{
 
     static pg::NullType relay(Entityptr ptr, pg::NullType  ){
         std::cout <<"hello world" <<std::endl;
+        std::cout <<"OmniSet:"<<ptr->getOmni()->toString() <<std::endl;
+        std::cout <<"EurusSet:"<<ptr->getEurus()->toString() <<std::endl;
+
+     //   auto number = ptr->getOmni("Console");
         return pg::NullType();
     }
     static pg::AllType lie(Entityptr ptr, pg::NullType  ){
@@ -47,40 +51,16 @@ struct Main : public Singleton<Main>{
 
 
 };
-/*
-struct EventListener: public Singleton<EventListener>{
-	EventListener():Singleton(__CLASS_NAME__ ,doShit) {}
-    static double doShit(Entityptr ptr, double a, double b){
-        return a*b;
-    }
 
-};
-
-*/
 int main(int argc,char** argv)
 {
-
     Particle context = ap::makeParticle(new ap::JsonParticle("test.json"));
-    Particle result = context.run();
-    cout<<result;
-   // auto Main = context->getEntity("Main");
+    Particle result = context.send<double>(3.0);
+ //   Particle result = context.run();
+     cout<<result;
+       // auto Main = context->getEntity("Main");
 
-    /*
-	Particle alce= Particle(new UniqueEntity("Alce"));
-   // alce->addOmni(context);
-	alce->addOmni(MinhaEntidadeFofinha::get());
 
-	Future fut = alce->send<double>( std::string("Hello world"));
-	alce->update();
-	auto answer = fut.getObject<double>();
-
-	Future fut2 = alce->send<double>(8.0, answer);
-	alce->update();
-
-	std::cout<< "answer:"<< fut2.getObject<double>() <<std::endl;
-*/
-
-   // Ack ack =context->send<Ack>(box);
     return 0;
 }
 

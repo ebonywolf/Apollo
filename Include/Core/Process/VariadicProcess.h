@@ -38,7 +38,7 @@ public:
        //TODO remove this useless constructor
        _callFunc( placeholder , ent, packet);
     }
-    VariadicProcess():Process( createKey<OUTPUT, INPUT...>())
+    VariadicProcess():Process( createKeyPair<OUTPUT, INPUT...>())
     {
     }
 
