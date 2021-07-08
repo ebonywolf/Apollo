@@ -22,6 +22,7 @@ using namespace ap;
 struct Calculator: public MultiInstance<Calculator>{
 	Calculator():MultiInstance(__CLASS_NAME__ ,doShit) {}
     static double doShit(Entityptr ptr, double a){
+        std::cout <<"Doing shit" <<std::endl;
         return a*2;
     }
 
@@ -55,7 +56,7 @@ struct Main : public Singleton<Main>{
 int main(int argc,char** argv)
 {
     Particle context = ap::makeParticle(new ap::JsonParticle("test.json"));
-    Particle result = context.send<double>(3.0);
+    Particle result = context.send<double>(3.0, 5);
  //   Particle result = context.run();
      cout<<result;
        // auto Main = context->getEntity("Main");

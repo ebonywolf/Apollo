@@ -43,12 +43,13 @@ public:
     }
 
 
-    template<class ...OUTPUT, class ...INPUT>
+    template<class OUTPUT, class ...INPUT>
     Particle send( INPUT... input) const {
-       auto global = pg::Entity::getGlobal();
-       pg::Datatypeptr outputptr = pg::Datatypeptr(new pg::VariadicDatatype<OUTPUT...>());
-       pg::Dataptr inputptr =  pg::Dataptr(new pg::DataTuple(input...));
-       return send(inputptr, outputptr, global);
+       pg::Processptr me = get()->getContext();
+
+       pg::Entityptr main = pg::Entity::getGlobal();
+       pg::Future answ  = me->send<OUTPUT>(input...);
+       return Particle( new FutureParticle(main, answ));
     }
 
 
