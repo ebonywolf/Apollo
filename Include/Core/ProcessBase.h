@@ -57,10 +57,9 @@ struct Process_Base: public DatatypeBase,
         return send(sentData, fromType, context);
     }
     template<class OUTPUT, class ...INPUT>
-    Future send(INPUT ... d)
+    Future send(Processptr context, INPUT ... d)
     {
         auto sentData = std::make_shared<DataTuple<INPUT...>>(d...);
-        Processptr context = shared_from_this();
         OUTPUT received;
         const auto fromType = Tools::getType(received);
         return send(sentData, fromType, context);

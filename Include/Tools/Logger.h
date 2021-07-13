@@ -1,7 +1,6 @@
 #pragma once
 #include <iostream>
 #include <string>
-
 #define _bitset(byte,nbit)   ((byte) |=  (1<<(nbit)))
 #define _bitclear(byte,nbit) ((byte) &= ~(1<<(nbit)))
 #define _bitflip(byte,nbit)  ((byte) ^=  (1<<(nbit)))
@@ -21,6 +20,7 @@ struct Logger {
         #ifdef DEBUG
            console_out()._base(t...);
            console_out().print("\n");
+        #else
         #endif
     }
     template<class ...T>

@@ -56,9 +56,9 @@ struct Main : public Singleton<Main>{
 int main(int argc,char** argv)
 {
     Particle context = ap::makeParticle(new ap::JsonParticle("test.json"));
-    Particle result = context.send<double>(3.0, 5);
- //   Particle result = context.run();
-     cout<<result;
+
+    Particle result = context.send<double>(3.0);
+    cout<<result;
        // auto Main = context->getEntity("Main");
 
 

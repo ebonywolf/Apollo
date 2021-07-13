@@ -48,7 +48,7 @@ public:
        pg::Processptr me = get()->getContext();
 
        pg::Entityptr main = pg::Entity::getGlobal();
-       pg::Future answ  = me->send<OUTPUT>(input...);
+       pg::Future answ  = me->send<OUTPUT>(main, input...);
        return Particle( new FutureParticle(main, answ));
     }
 

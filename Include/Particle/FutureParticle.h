@@ -24,7 +24,6 @@ public:
     }
 
     virtual pg::Dataptr getValue() const {
-        std::cout <<"before check"<< future.ready() <<std::endl;
         Debug("before check:", future.ready());
 
         context->update();
