@@ -7,12 +7,20 @@
 #include "Communication/Packet.h"
 #include "Process/Process.h"
 #include "MetaTools/GetData.h"
+
+namespace pg{
+
+#define GenericProcess VariadicProcess
+
+}
+/*
 namespace pg{
 
 
 template<class OUTPUT, class INPUT >
 struct GenericProcess: public Process
 {
+
     using Functiontype= std::function<OUTPUT(Entityptr,INPUT)>;
 
     template<class T>
@@ -73,8 +81,8 @@ struct GenericProcess: public Process
 private:
 
     Functiontype _func;
+
 };
 
-
-
 }
+*/

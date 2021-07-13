@@ -1,6 +1,6 @@
 #pragma once
 #include "Data.h"
-
+#include <sstream>
 namespace pg {
 
 template <class T>
@@ -16,16 +16,17 @@ struct GenericData: public Data {
     virtual Datatypeptr getType() const
     {
         return std::make_shared<Datatype>(name_id);
-
     }
     std::string toString() const
     {
-        return name_id;
+        std::stringstream ss;
+        ss<< *this;
+        return ss.str();
     }
     friend std::ostream& operator<<(std::ostream& os, const GenericData<T>& data )
     {
-   //     os<<"Data:"<<data.getType()<<":"<<data.get();
-        throw "todo";
+        T& me_ref = (T&)data;
+        os<<me_ref;
         return os;
     }
     std::string name_id;
