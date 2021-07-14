@@ -15,8 +15,7 @@ public:
     }
 
     Particle run() const;
-
-    Particle send(pg::Dataptr inputData, pg::Datatypeptr output, pg::Entityptr context) const {
+    Particle send(pg::Dataptr inputData, pg::Datatypeptr output, pg::Entityptr context = pg::Entity::getGlobal()) const {
         pg::Processptr me = get()->getContext();
 
         pg::Future answ  = me->send(inputData, output, context);

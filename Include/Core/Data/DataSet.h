@@ -24,8 +24,14 @@ struct DataSet: public  Data {
 
     virtual std::string toString() const {
         std::string alce="";
+        bool first = true;
         for(const auto& x: _internal){
-            alce+= x->toString() += " | ";
+            if(!first){
+                alce+="|";
+
+            }
+            first = false;
+            alce+= x->toString();
         }
         if(_internal.empty())
             alce = "Empty set:"+type->toString();

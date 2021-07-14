@@ -58,7 +58,13 @@ int main(int argc,char** argv)
     Particle context = ap::makeParticle(new ap::JsonParticle("test.json"));
 
     Particle result = context.send<double>(3.0);
+
     cout<<result;
+    auto alce = result.get();
+
+    double a = 2;
+    double b = a*2;
+    std::cout <<b <<std::endl;
        // auto Main = context->getEntity("Main");
 
 
