@@ -49,8 +49,8 @@ struct MultiInstance : public pg::GenericEntity<MY_TYPE> {
     template<typename ...T>
     MultiInstance(std::string args, T...t):GenericEntity<MY_TYPE>(args,t...){}
 
-    template<typename ...T>
-    MultiInstance( T...t):GenericEntity<MY_TYPE>( typeid(MY_TYPE).name(), t... ){}
+  //   template<typename ...T>
+  //  MultiInstance( T...t):GenericEntity<MY_TYPE>( typeid(MY_TYPE).name(), t... ){}
 
 
     static std::shared_ptr<MY_TYPE> get()

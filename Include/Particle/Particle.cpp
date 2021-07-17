@@ -1,12 +1,12 @@
 #include "Particle.h"
 
+#include "UnchargedParticle.h"
 #include "ChargedParticle.h"
 #include "Apollo.h"
 namespace ap
 {
 
-Particle Particle::run() const
-  {
+Particle Particle::run() const {
       auto me = get()->getContext();
       pg::Entity::getGlobal();
       pg::Dataptr input = pg::Null();
@@ -15,7 +15,14 @@ Particle Particle::run() const
       Particle letTherebeLight = Particle(alce) ;
       Particle result = interact(letTherebeLight);
       return result;
-  }
+ }
+
+Particle makeParticle(pg::Entityptr ptr){
+    ap::UnchargedParticle* alce = new ap::UnchargedParticle(ptr);
+    Particle newParticle = Particle(alce);
+    return newParticle;
+}
+
 
 
 }

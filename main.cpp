@@ -13,10 +13,26 @@
 #include <stdio.h>
 #include <unistd.h>
 #include "Include/Particle/JsonParticle.h"
-
+#include "Particle/ParticleViewer.h"
 using namespace std;
 using namespace pg;
 using namespace ap;
+
+
+template <class T>
+class BasicViewer : public ap::ParticleViewer<T> {
+private:
+
+    void read_value(const T& obj) override{
+        if(latestobj ==0)
+            latestobj = new T();
+        *latestobj = obj;
+    }
+    T& return_value()override{
+        return *latestobj;
+    }
+    T* latestobj=0;
+};
 
 
 struct Calculator: public MultiInstance<Calculator>{
@@ -59,7 +75,10 @@ int main(int argc,char** argv)
 
     Particle result = context.send<double>(3.0);
 
-    cout<<result;
+    BasicViewer<double>* resultViewer= new BasicViewer<double>();
+    double resp = resultViewer->view(result);
+
+    cout<<resp;
     auto alce = result.get();
 
     double a = 2;

@@ -85,6 +85,13 @@ Entityptr cast(T ptr)
     return std::dynamic_pointer_cast<Entity_Base>(ptr);
 }
 
+template<class T>
+std::shared_ptr<T> cast(Entityptr ptr)
+{
+    return std::dynamic_pointer_cast<T>(ptr);
+}
+
+
 struct EditableProcess: public Process_Base
 {
     virtual void addOmni(const Processptr obj) = 0;

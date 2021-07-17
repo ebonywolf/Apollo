@@ -9,13 +9,13 @@ namespace pg{
 
 
 template <class ...T>
-struct DataTuple : public std::tuple<T...>, public Data{
+struct DataTuple : public std::tuple<Tools::base_type<T>...>, public Data{
 
     DataTuple():
         _key(_createKey())
     {
     }
-    DataTuple(T...t): std::tuple<T...>(t...),
+    DataTuple(T...t): std::tuple<Tools::base_type<T>...>(t...),
            _key(_createKey_params(t...))
     {
     }

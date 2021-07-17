@@ -61,7 +61,7 @@ Particle makeParticle(T* t){
     return newParticle;
 }
 
-
+extern Particle makeParticle(pg::Entityptr ptr);
 
 
 }

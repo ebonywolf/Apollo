@@ -2,12 +2,15 @@
 
 #include "Data/GenericData.h"
 #include "SpecialDataTypes/PrimitiveData.h"
+
 namespace pg{
  class Future;
 }
 
 namespace Tools{
 
+template<typename T>
+using base_type = typename std::remove_cv<typename std::remove_reference<T>::type>::type;
 
 
 template <class T>

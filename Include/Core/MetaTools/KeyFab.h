@@ -2,7 +2,7 @@
 
 #include "Identification/KeyChain.h"
 #include "MetaTools/GetType.h"
-
+#include <type_traits>
 
 namespace pg{
 
@@ -11,14 +11,14 @@ namespace pg{
 template<class CURRENT_TYPE>
 void createKey_base(KeyChainptr createdKey)
 {
-    CURRENT_TYPE c;
+    Tools::base_type<CURRENT_TYPE> c;
     createdKey->join(Tools::getType(c));
 }
 
 template<class CURRENT_TYPE, class NEXT_TYPE, class ...TYPES>
 void createKey_base(KeyChainptr createdKey)
 {
-    CURRENT_TYPE c;
+    Tools::base_type<CURRENT_TYPE> c;
     createdKey->join(Tools::getType(c));
     createKey_base<NEXT_TYPE, TYPES...>(createdKey);
 }
@@ -51,7 +51,7 @@ KeyChainptr createKey()
 template<class OUTPUT, class ...INPUT>
 Datatypeptr createKeyPair()
 {
-    OUTPUT output;
+    Tools::base_type<OUTPUT> output;
     Datatypeptr outputKey = Tools::getType(output);
     KeyChainptr inputKeyset = createKey<INPUT...>();
 
