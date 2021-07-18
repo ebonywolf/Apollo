@@ -11,7 +11,6 @@ template<class T>
 class ParticleViewer : public pg::MultiInstance<ParticleViewer<T>>
 {
 
-
 private:
 
     virtual void read_value(const T& obj) {
@@ -28,8 +27,10 @@ public:
     ParticleViewer(): pg::MultiInstance<ParticleViewer<T>>(name(),readFunction){
     }
     virtual ~ParticleViewer(){}
+
     static pg::NullType readFunction(pg::Entityptr me, const T& obj)
     {
+        std::cout <<"reading" <<std::endl;
         auto meptr = pg::cast<ParticleViewer>(me);
         meptr->read_value(obj);
         return *pg::Null();
@@ -39,6 +40,7 @@ public:
     T& view(Particle p){
         auto alce = this->get();
         Particle meParticle = makeParticle(alce);
+      //  p.interact(meParticle)
         meParticle.interact(p);
         return return_value();
     }

@@ -14,20 +14,19 @@ struct Datatype: public EditableDatatype
 { //defines dataTypes, not data itself
     static const Datatypeptr getNull();
 
-    Datatype() :
-            Datatype("null")
+    Datatype() :_key( std::make_shared<KeySet>() )
     {
     }
     Datatype(std::string _name):
-        _key( std::make_shared<HashKey>(_name) )
+        _key( std::make_shared<KeySet>() )
     {
+        _key->join(std::make_shared<HashKey>(_name));
     }
     virtual bool contains(Datatypeptr d)const override{
         return _key->contains(d);
     }
 
     virtual void join( Datatypeptr other)override;
-
     virtual std::string toString() const override;
     virtual Datatypeptr getFrom() const override;
     virtual Datatypeptr getTo() const override;
@@ -38,7 +37,7 @@ struct Datatype: public EditableDatatype
 
 
 private:
-    Datatypeptr _key;
+    std::shared_ptr<KeySet> _key;
 };
 
 

@@ -16,6 +16,7 @@ class KeySet: public EditableDatatype {
 public:
     KeySet(){
     }
+
     virtual ~KeySet(){}
     virtual void join(const Datatypeptr other);
 

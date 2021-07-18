@@ -1,6 +1,7 @@
 #pragma once
 #include "Data.h"
 #include <sstream>
+#include "SpecialDataTypes/NullDataType.h"
 namespace pg {
 
 template <class T>

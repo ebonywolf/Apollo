@@ -28,22 +28,25 @@ Datatypeptr operator+(const Datatypeptr me, const Datatypeptr notme)
 
 
 
-void Datatype::join( Datatypeptr other)
+void Datatype::join(const Datatypeptr other)
 {
 
+    _key->join(other);
 }
 
 std::string Datatype::toString() const
 {
     return getHashKey()->toString();
 }
+
 Datatypeptr Datatype::getFrom() const
 {
-    throw "todo";
+   return pg::Null();
 }
+
 Datatypeptr Datatype::getTo() const
 {
-    throw "todo";
+  return shared_from_this();
 }
 Datatypeptr Datatype::getHashKey() const
 {

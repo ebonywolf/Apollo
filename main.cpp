@@ -24,6 +24,8 @@ class BasicViewer : public ap::ParticleViewer<T> {
 private:
 
     void read_value(const T& obj) override{
+        std::cout <<"Read Value" <<std::endl;
+
         if(latestobj ==0)
             latestobj = new T();
         *latestobj = obj;
