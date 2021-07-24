@@ -141,7 +141,7 @@ struct Entity : public Entity_Base {//Defines object that runs many functions an
         _receivers->extend( context );
     }
     Processptr getOmni() const override
-    {
+    {//Todo return interactor in set
         return _omni;
     }
     void update()

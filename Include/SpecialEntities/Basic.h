@@ -6,6 +6,8 @@
 namespace pg
 {
 
+
+
 template <class MY_TYPE>
 struct Singleton: public pg::GenericEntity<MY_TYPE> {
     Singleton(){}
@@ -29,6 +31,7 @@ struct Singleton: public pg::GenericEntity<MY_TYPE> {
         }
         if(!_me) {
             _me=std::make_shared<MY_TYPE>();
+            _me->addOmni(_me);
         }
         return _me;
     }
@@ -56,7 +59,9 @@ struct MultiInstance : public pg::GenericEntity<MY_TYPE> {
     static std::shared_ptr<MY_TYPE> get()
     {
         //TODO guarantee cleanup
-        return std::make_shared<MY_TYPE>();
+        auto me = std::make_shared<MY_TYPE>();
+        me->addOmni(me);
+        return me;
     }
 };
 

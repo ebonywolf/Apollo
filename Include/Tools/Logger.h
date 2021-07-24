@@ -5,12 +5,9 @@
 #define _bitclear(byte,nbit) ((byte) &= ~(1<<(nbit)))
 #define _bitflip(byte,nbit)  ((byte) ^=  (1<<(nbit)))
 #define _bitcheck(byte,nbit) ((byte) &   (1<<(nbit)))
-#define DEBUG
-
 #define Debug(...) Logger::debug (__PRETTY_FUNCTION__, __VA_ARGS__)
 #define Info(...) Logger::debug (__CLASS_NAME__, __VA_ARGS__)
 
-#define INFO
 struct Logger {
 
     Logger(std::ostream* out):_out(out){

@@ -19,28 +19,11 @@ using namespace pg;
 using namespace ap;
 
 
-template <class T>
-class BasicViewer : public ap::ParticleViewer<T> {
-private:
-
-    void read_value(const T& obj) override{
-        std::cout <<"Read Value" <<std::endl;
-
-        if(latestobj ==0)
-            latestobj = new T();
-        *latestobj = obj;
-    }
-    T& return_value()override{
-        return *latestobj;
-    }
-    T* latestobj=0;
-};
-
 
 struct Calculator: public MultiInstance<Calculator>{
 	Calculator():MultiInstance(__CLASS_NAME__ ,doShit) {}
     static double doShit(Entityptr ptr, double a){
-        std::cout <<"Doing shit" <<std::endl;
+        std::cout <<"Doing shit:"<<a*2 <<std::endl;
         return a*2;
     }
 
@@ -71,23 +54,25 @@ struct Main : public Singleton<Main>{
 
 };
 
+std::shared_ptr<double> fu(const double& alce){
+    std::shared_ptr<double> alceptr = std::make_shared<double>(alce);
+    return alceptr;
+}
+
+
 int main(int argc,char** argv)
 {
-    Particle context = ap::makeParticle(new ap::JsonParticle("test.json"));
 
-    Particle result = context.send<double>(3.0);
+    Particle calculator = ap::makeParticle(new ap::JsonParticle("test.json"));
 
-    BasicViewer<double>* resultViewer= new BasicViewer<double>();
-    double resp = resultViewer->view(result);
+    Particle result = calculator.send<double>(3.0);
 
-    cout<<resp;
-    auto alce = result.get();
+    cout<<"calc result:"<<result<<endl;
+    ParticleViewer<double> resultViewer= ParticleViewer<double>();
+    double resp = resultViewer.view(result);
+    cout<<"viewer:"<<resp<<endl;
 
-    double a = 2;
-    double b = a*2;
-    std::cout <<b <<std::endl;
-       // auto Main = context->getEntity("Main");
-
+    std::cout <<"end" <<std::endl;
 
     return 0;
 }

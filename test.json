@@ -1,14 +1,7 @@
 {
-	"Main":
-	{
-		"null": "null"
-	},
 	"Calculator":
 	{
 		"double":"double_double"
-	},
-	"Input":{
-		"double":"null"
 	}
 }
 

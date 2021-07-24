@@ -3,12 +3,11 @@
 #include "Data.h"
 
 namespace pg{
+//Not available due to many wavefunction interaction implementation. aka f( dataset, dataset)
 
 struct DataSet: public  Data {
-
     DataSet(Datatypeptr type):type(type){
     }
-
     void join( Dataptr other){
         //Todo update Type
         auto ptr = std::dynamic_pointer_cast<DataSet>(other);
@@ -40,6 +39,9 @@ struct DataSet: public  Data {
 
     virtual Datatypeptr getType() const{
         return type;
+    }
+    std::vector<Dataptr>& getData(){
+        return _internal;
     }
 
 private:

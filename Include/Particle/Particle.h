@@ -55,7 +55,7 @@ public:
 
 };
 
-template <class T>
+template <class T>//Particle_Base
 Particle makeParticle(T* t){
     Particle newParticle = Particle(t);
     return newParticle;
