@@ -58,6 +58,15 @@ void _getObject(std::shared_ptr<D>& attributer,  pg::Dataptr data)
 
 
 template <class T>
+void getObject(std::shared_ptr<T> attributer,  pg::Dataptr data)
+{
+
+
+    _getObject<T>(attributer, data);
+}
+
+
+template <class T>
 void getObject(T& attributer,  pg::Dataptr data)
 {
     _getObject<T>(attributer, data);

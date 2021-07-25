@@ -44,34 +44,26 @@ public:
 
 private:
 
-    template<class T>
-    void _callFunc_primitive(Entityptr& ent, pg::Primitive_Data<T>* primitive, Future& future){
-
-        OUTPUT output = Tools::applyTuple(_func, ent, primitive->getValue());
-        auto result = Tools::getData(output);
-        future.set(result);
-    }
-
-
 
     template<class T>
-    void _callFunc_set(Entityptr& ent, pg::DataSet* dataset, Future& future){
+    void _callFunc_set(Entityptr& ent, pg::DataSet* dataset, Packet& packet){
         for(Dataptr data :dataset->getData()){
             T *input = dynamic_cast<T*>(data.get());
             if(input == 0){
-                _callFunc_casts<T>(ent, data, future);
+           //     _callFunc_casts<T>(ent, data, packet.futureAnswer);
+                handle(ent, Packet(data, packet.futureAnswer, packet.context));
             }else{
-               _callFunc_result<T>(ent, data, future);
+               _callFunc_result<T>(ent, data,  packet);
             }
         }
     }
 
     template<class T>
-    void _callFunc_result(Entityptr& ent, Dataptr data, Future future){
+    void _callFunc_result(Entityptr& ent, Dataptr data, Packet& packet){
         T *input = dynamic_cast<T*>(data.get());
         OUTPUT output = Tools::applyTuple(_func, ent, *input);
         auto result = Tools::getData(output);
-        future.set(result);
+        packet.futureAnswer.set(result);
     }
 
     template<class T>
@@ -79,24 +71,19 @@ private:
     {
         T *input = dynamic_cast<T*>(packet.data.get());
         if(input == 0 ){
-            _callFunc_casts<T>(ent,packet.data,  packet.futureAnswer);
+            _callFunc_casts<T>(ent,packet.data,  packet);
         }else{
-            _callFunc_result<T>(ent,packet.data,  packet.futureAnswer);
+            _callFunc_result<T>(ent,packet.data,  packet);
         }
     }
 
     template<class T>
-    void _callFunc_casts(Entityptr& ent, Dataptr data, Future future){
+    void _callFunc_casts(Entityptr& ent, Dataptr data,  Packet& packet){
         pg::DataSet* setcast = dynamic_cast<DataSet*>(data.get());
         if( setcast != 0 ){
-           _callFunc_set<T>( ent,setcast, future);
+           _callFunc_set<T>( ent,setcast, packet);
         }else{
-            pg::Primitive_Data<T>* primitiveCast = dynamic_cast< pg::Primitive_Data<T>*>(data.get());
-            if( primitiveCast != 0){
-                _callFunc_primitive<T>(ent, primitiveCast, future );
-            }else{
-                throw std::runtime_error("Cast failed");
-            }
+           throw std::runtime_error("Cast failed");
         }
     }
 

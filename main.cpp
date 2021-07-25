@@ -21,11 +21,16 @@ using namespace ap;
 
 
 struct Calculator: public MultiInstance<Calculator>{
-	Calculator():MultiInstance(__CLASS_NAME__ ,doShit) {}
-    static double doShit(Entityptr ptr, double a){
-        std::cout <<"Doing shit:"<<a*2 <<std::endl;
-        return a*2;
+	Calculator():MultiInstance(__CLASS_NAME__ ,doShit,doShit2) {}
+    static double doShit(Entityptr ptr, double a,double b,double c){
+        std::cout <<"Doing shit:"<<a<<" "<<b<<" "<<c <<std::endl;
+        return a*b*c;
     }
+    static double doShit2(Entityptr ptr, double a){
+         std::cout <<"giving a shit:"<<a<<std::endl;;
+         return a;
+     }
+
 
 };
 
@@ -65,7 +70,9 @@ int main(int argc,char** argv)
 
     Particle calculator = ap::makeParticle(new ap::JsonParticle("test.json"));
 
-    Particle result = calculator.send<double>(3.0);
+    Particle val = calculator.send<double>(4.0);
+
+    Particle result = calculator.send<double>(3.0, 5.0, val);
 
     cout<<"calc result:"<<result<<endl;
     ParticleViewer<double> resultViewer= ParticleViewer<double>();

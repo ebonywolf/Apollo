@@ -7,15 +7,9 @@
 #include "Communication/Packet.h"
 #include "Process/Process.h"
 #include "MetaTools/GetData.h"
+#include "MetaTools/ApplyTuple.h"
 
 namespace pg{
-
-#define GenericProcess VariadicProcess
-
-}
-/*
-namespace pg{
-
 
 template<class OUTPUT, class INPUT >
 struct GenericProcess: public Process
@@ -43,35 +37,72 @@ struct GenericProcess: public Process
         return std::make_shared<GenericProcess>();
     }
 
-    //   virtual Dataptr handle(Entityptr ent, Dataptr d) const=0;
-   // virtual Dataptr handle(Entityptr ent, Dataptr d) const override
+    template<class T>
+    void _callFunc_set( pg::DataSet *dataset, Entityptr &ent, Future &future)
+    {
+        for (Dataptr data : dataset->getData())
+        {
+            _callFunc_cast<INPUT>(data, ent, future);
+        }
+    }
 
+
+    template<class T>
+    void _callFunc_tuple(pg::DataTuple<INPUT>* input, Entityptr& ent, Future& future){
+        OUTPUT output = Tools::applyTuple(_func, ent, *input);
+        auto result = Tools::getData(output);
+        future.set(result);
+    }
 
      template<class T>
-    void _callFunc(T& placeholder,Entityptr& ent, Packet& packet, std::true_type )
+    void _callFunc(Dataptr data, Entityptr& ent, Future& future, std::true_type )
     {
         using PrimitivePtr = std::shared_ptr< pg::Primitive_Data<INPUT>>;
-        PrimitivePtr input = std::dynamic_pointer_cast<pg::Primitive_Data<INPUT>>(packet.data);
-
+        PrimitivePtr input = std::dynamic_pointer_cast<pg::Primitive_Data<INPUT>>(data);
         OUTPUT output = _func(ent, input->getValue());
         auto result = Tools::getData(output);
-        packet.futureAnswer.set(result);
+        future.set(result);
     }
 
     template<class T>
-    void _callFunc(T& placeholder,Entityptr& ent, Packet& packet, std::false_type)
+    void _callFunc(Dataptr data, Entityptr& ent, Future& future, std::false_type)
     {
-        INPUT *input = dynamic_cast<INPUT*>(packet.data.get());
+        INPUT *input = dynamic_cast<INPUT*>(data.get());
         OUTPUT output = _func(ent, *input);
         auto result = Tools::getData(output);
-        packet.futureAnswer.set(result);
+        future.set(result);
     }
 
 
+    template<class T>
+    void _callFunc_cast(Dataptr data, Entityptr& ent, Future& future)
+    {
+        auto tupleCast =  dynamic_cast<pg::DataTuple<INPUT>*>(data.get() );
+        if(tupleCast){
+            _callFunc_tuple<T>(tupleCast, ent, future);
+            return;
+        }
+        auto setCast = dynamic_cast<DataSet*>(data.get());
+        if(setCast){
+            _callFunc_set<T>(setCast,ent,future);
+            return;
+        }
+
+        _callFunc<T>(data, ent, future, std::is_fundamental<INPUT>());
+
+    }
+
     virtual void handle(Entityptr ent, Packet packet)
     {
-        INPUT placeholder;
-        _callFunc( placeholder , ent, packet, std::is_fundamental<INPUT>());
+
+        auto tupleCast =  dynamic_cast<pg::DataTuple<INPUT>*>(packet.data.get() );
+       // INPUT placeholder;
+        if(tupleCast !=0 ){
+            _callFunc_tuple<INPUT>(tupleCast,ent,packet.futureAnswer);
+        }else{
+            _callFunc_cast<INPUT>(packet.data, ent, packet.futureAnswer);
+        }
+
     }
     GenericProcess():
         Process( std::make_shared<GenericDataPair<OUTPUT,INPUT>>() )
@@ -85,4 +116,4 @@ private:
 };
 
 }
-*/
+

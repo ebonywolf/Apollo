@@ -41,15 +41,7 @@ struct Future : public std::shared_ptr<FutureBase>, public DatatypeBase{
         auto alce = get();
         return alce->_returnData;
     }
-    template <class T>
-    std::shared_ptr<T> getObject()
-    {
-        if(!ready())throw "Future.h::getObject";
-        std::shared_ptr<T> attr;
 
-        Tools::getObject(attr, get()->_returnData );
-        return attr;
-    }
 
     void setReady()
     {

@@ -18,20 +18,20 @@ class ParticleViewer
         }
         void read_value(const Y &obj)
         {
-            std::cout <<"reading shit" <<std::endl;
             std::shared_ptr<Y> alceptr=std::make_shared<Y>(obj);
-           all_values.push_back(alceptr);
+            all_values.push_back(alceptr);
+            read=1;
         }
         std::shared_ptr<Y> at(int index)
         {
-            std::cout <<"returning shit" <<std::endl;
-           if(all_values.size()<=index)
+           if(all_values.size()<=index || !read)
                return std::shared_ptr<Y>(nullptr);
            return all_values[index];
         }
         int size(){
             return all_values.size();
         }
+        bool read=0;
         std::vector<std::shared_ptr<Y>> all_values;
     };
 
@@ -61,17 +61,28 @@ public:
 
         Particle result = meParticle.interact(p);
         result->getValue();//returns null
+        if(!readerParticle->read){
+            throw std::runtime_error("No values read");
+        }
+
         std::shared_ptr<T> alce = readerParticle->at(0);
-        if(alce.get() == nullptr)throw "foo";
+        if(alce.get() == nullptr)
+            throw std::runtime_error("read null value");
+
 
         return *(alce.get());
     }
-    std::vector<std::shared_ptr<T>> view_all(Particle p){
+    std::vector<std::shared_ptr<T>> view_all(Particle p)
+    {
+        auto readerParticle = Reader<T>::get();
+        Particle meParticle = makeParticle(readerParticle);
 
-    }
-    std::vector<std::shared_ptr<T>> all_values(){
+        Particle result = meParticle.interact(p);
+        result->getValue(); //returns null
 
+        return readerParticle->all_values;
     }
+
 
 
 };
