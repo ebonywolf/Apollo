@@ -36,9 +36,7 @@ void KeyChain::join( Datatypeptr other){
 }
 bool KeyChain::contains(Datatypeptr d) const
 {
-  auto my_str = toString();
-  auto other_str = d->toString();
-  return (my_str.find(other_str) != -1);
+    return toString()==d->toString();
 }
 Datatypeptr KeyChain::junction(Datatypeptr other) const {
     auto copy = std::make_shared<KeyChain>(*this);

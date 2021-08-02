@@ -33,7 +33,7 @@ struct Calculator: public MultiInstance<Calculator>{
 
 
 };
-
+/*
 struct Main : public Singleton<Main>{
     Main():Singleton(__CLASS_NAME__ ,relay,lie,truth) {}
 
@@ -58,7 +58,7 @@ struct Main : public Singleton<Main>{
 
 
 };
-
+*/
 std::shared_ptr<double> fu(const double& alce){
     std::shared_ptr<double> alceptr = std::make_shared<double>(alce);
     return alceptr;
@@ -72,7 +72,7 @@ int main(int argc,char** argv)
 
     Particle val = calculator.send<double>(4.0);
 
-    Particle result = calculator.send<double>(3.0, 5.0, val);
+    Particle result = calculator.send<double>(3.0, 5.0, 8.0);
 
     cout<<"calc result:"<<result<<endl;
     ParticleViewer<double> resultViewer= ParticleViewer<double>();
