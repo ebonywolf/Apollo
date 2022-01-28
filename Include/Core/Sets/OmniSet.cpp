@@ -22,7 +22,10 @@ int OmniSet::size()const
 {
     return _internal.size();
 }
-
+bool OmniSet::isNull()const
+{
+    return _internal.empty();
+}
 
 void OmniSet::omniUpdate(const Processptr context)
 {

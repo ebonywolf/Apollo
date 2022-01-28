@@ -29,6 +29,7 @@ public:
     virtual bool hasOmni(Datatypeptr name) const;
     virtual int size() const ;
     virtual bool contains(Datatypeptr d)const override;
+    virtual bool isNull() const;
 
 
     virtual std::string toString() const;

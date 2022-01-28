@@ -8,6 +8,8 @@ namespace pg{
 template <class T>
 struct Primitive_Data : public pg::GenericData<T>{
 
+    static_assert(std::is_fundamental<T>::value, "PrimitiveData can only inherit primitive types");
+
     Primitive_Data(T val):val(val)
     {
     }

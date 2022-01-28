@@ -2,6 +2,7 @@
 
 #include "Data/GenericData.h"
 #include "SpecialDataTypes/PrimitiveData.h"
+//Extracts a Datatypeptr from object
 
 namespace pg{
  class Future;

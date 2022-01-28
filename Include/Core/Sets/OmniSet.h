@@ -45,6 +45,7 @@ public:
     virtual bool hasEurus(Datatypeptr) const;
     virtual bool hasOmni(Datatypeptr name) const;
     virtual int size() const ;
+    virtual bool isNull() const;
 
     virtual void join( Datatypeptr other) ;
     virtual bool contains(Datatypeptr d)const override;

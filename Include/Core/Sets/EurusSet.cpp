@@ -26,6 +26,10 @@ int EurusSet::size()const
     }
     return sum;
 }
+bool EurusSet::isNull() const
+{
+    return this->size() == 0;
+}
 Datatypeptr EurusSet::getHashKey()const
 {
    return _key;

@@ -13,7 +13,10 @@ public:
     Particle(T* t):std::shared_ptr<Particle_Base>(t)
     {
     }
-
+    template <class T>
+    Particle(std::shared_ptr<T> t):std::shared_ptr<Particle_Base>(t)
+    {
+    }
     Particle run() const;
     Particle send(pg::Dataptr inputData, pg::Datatypeptr output, pg::Entityptr context = pg::Entity::getGlobal()) const {
         pg::Processptr me = get()->getContext();
@@ -26,8 +29,7 @@ public:
         auto fromType = type->getFrom();
         auto toType = type->getTo();
         auto value = other->getValue();
-        auto me = get()->getContext();
-   //     Particle alce2 = other.send(value, fromType,  );
+    //     Particle alce2 = other.send(value, fromType,  );
         Particle alce = send(value, fromType, other->getContext() );
         return alce;
 
@@ -54,14 +56,6 @@ public:
 
 
 };
-
-template <class T>//Particle_Base
-Particle makeParticle(T* t){
-    Particle newParticle = Particle(t);
-    return newParticle;
-}
-
-extern Particle makeParticle(pg::Entityptr ptr);
 
 
 }

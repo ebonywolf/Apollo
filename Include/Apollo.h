@@ -13,6 +13,7 @@
 #include "Data/GenericData.h"
 
 #include "SpecialEntities/Basic.h"
+#include "SpecialEntities/PrimitiveEntity.h"
 
 
 #include "SpecialDataTypes/NullDataType.h"
@@ -29,6 +30,6 @@ std::string extern className(const std::string& prettyFunction);
 #define __CLASS_NAME__ className(__PRETTY_FUNCTION__)
 
 #include "Particle/Particle.h"
-
+#include "Particle/ParticleMaker.h"
 
 #endif

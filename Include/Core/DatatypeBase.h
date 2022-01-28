@@ -16,7 +16,7 @@ class HashKey;
 class DatatypeBase : public enable_shared_from_this_virtual<DatatypeBase>
 {
 public:
-
+    virtual ~DatatypeBase(){}
    // virtual void join( Datatypeptr other) =0;
     virtual std::string toString() const=0;
     virtual Datatypeptr junction( Datatypeptr other)const =0;
@@ -37,7 +37,6 @@ public:
         return aCb && bCa;
     }
 
-   // virtual Datatypeptr getNull() const = 0;
 
     virtual bool equals(const Datatypeptr other) const{
         //omni equals

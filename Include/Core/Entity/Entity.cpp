@@ -7,15 +7,12 @@ namespace pg
 
 void Entity::addEurus(const Processptr obj)
 {
-  //  std::cout<<"Adding:"<<obj->toString()<<std::endl;
-    //if(_eurus.count(obj))throw "repeat
-
      _eurus->extend(obj);
  }
 std::ostream& operator<<(std::ostream& os, const Processptr data){
         os << data->toString();
         return os;
-    }
+ }
 
 
 Entityptr Entity::getGlobal()

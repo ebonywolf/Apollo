@@ -2,6 +2,9 @@
 
 #include "SpecialDataTypes/PrimitiveData.h"
 
+//Extracts object from Dataptr
+
+
 namespace Tools{
 
 

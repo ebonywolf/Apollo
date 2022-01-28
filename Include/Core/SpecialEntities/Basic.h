@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Entity/GenericEntity.h>
+#include "Entity/GenericEntity.h"
 #include <memory>
 
 namespace pg
